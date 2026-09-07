@@ -248,6 +248,21 @@ def build_parser() -> argparse.ArgumentParser:
     )
     cal.add_argument("--instances", type=int, default=300)
 
+    cur = sub.add_parser(
+        "curvature",
+        parents=[common],
+        help="is the objective submodular? (it is not; greedy gets no guarantee)",
+    )
+    cur.add_argument("--instances", type=int, default=200)
+    cur.add_argument("--samples", type=int, default=40)
+
+    hyb = sub.add_parser(
+        "hybrid",
+        parents=[common],
+        help="should short-lived credentials go to hybrid rather than pure PQC?",
+    )
+    hyb.add_argument("--instances", type=int, default=300)
+
     c = sub.add_parser("cbom", parents=[common], help="export a CycloneDX CBOM")
     c.add_argument("--input", required=True)
 
@@ -335,6 +350,19 @@ def main(argv: Sequence[str] | None = None) -> int:
             )
         else:
             report = provenance()
+    elif args.command == "curvature":
+        from .experiments.curvature import run
+
+        report = run(
+            instances=args.instances,
+            samples_per_instance=args.samples,
+            seed=args.seed,
+            weights=weights,
+        )
+    elif args.command == "hybrid":
+        from .experiments.hybrid_ladder import run
+
+        report = run(instances=args.instances, seed=args.seed, weights=weights)
     elif args.command == "cbom":
         from .cbom import to_cbom
         from .experiments.benchmark import load_case

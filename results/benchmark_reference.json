@@ -1,6 +1,6 @@
 {
   "experiment": "benchmark",
-  "qshield_version": "0.7.0",
+  "qshield_version": "0.8.0",
   "instance": {
     "assets": 5,
     "edges": 6,

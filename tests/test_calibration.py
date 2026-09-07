@@ -254,14 +254,20 @@ def test_calibrated_factor_stays_on_the_unit_scale():
             assert 0.0 <= value <= 1.0
 
 
-def test_config_bundles_the_three_knobs():
+def test_config_bundles_every_knob_and_reports_them():
+    """Bundled so the set cannot drift apart between call sites, and serialised
+    in full so a report records the assumptions behind its numbers."""
     config = CalibrationConfig(
-        EXPERT_FORECASTS["aggressive"], doubling_time_years=1.0, pqc_residual_risk=0.02
+        EXPERT_FORECASTS["aggressive"],
+        doubling_time_years=1.0,
+        pqc_residual_risk=0.02,
+        composition_risk=0.03,
     )
     assert config.as_dict() == {
         "forecast": "aggressive",
         "doubling_time_years": 1.0,
         "pqc_residual_risk": 0.02,
+        "composition_risk": 0.03,
     }
     assert config.probability("ML-KEM", 10) == 0.02
 

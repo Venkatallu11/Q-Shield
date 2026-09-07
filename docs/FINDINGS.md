@@ -335,6 +335,93 @@ averages **95.4%**, worst case **85.0%**. The recommendation is robust; the
 crossover horizon is not, ranging from 0.05 to 5.9 years over the same settings.
 Quote the plan, not the number.
 
+## 14. The objective is supermodular, so greedy gets no guarantee (0.8)
+
+A reviewer proposed testing the risk-reduction function for **submodularity**,
+hoping it would hold: a monotone submodular objective hands greedy maximisation
+the classic `1 - 1/e` bound, which would upgrade "greedy matched the optimum on
+80.3% of instances" from an observation into a theorem.
+
+It fails, and it fails in the direction that makes the bound unavailable.
+Measured over 200 instances per suite with 40 nested set pairs each
+(`results/curvature.json`):
+
+| suite | submodularity violated | supermodularity violated |
+|---|---|---|
+| PKI with delegation | 38.8% of pairs | **0%** |
+| generic, no delegation | 67.7% of pairs | **0%** |
+
+The objective is **supermodular** — increasing returns — on every pair sampled,
+in both suites. Migration actions are *complements*, not substitutes.
+
+**The cause is more general than trust hierarchies.** Path risk composes as a
+noisy-OR, `risk = 1 - prod(1 - p_v)`, so the benefit of migrating one node is
+proportional to `prod(1 - p_v)` over the *other* nodes on the path. That factor
+grows as those nodes are migrated, and the effect compounds with path length —
+about 2.4x at length two, 35x at length five. Delegation is simply the limiting
+case: a leaf's benefit is exactly **zero** until its anchor moves, and positive
+afterwards.
+
+So no approximation guarantee of that family applies to Q-SHIELD's objective, and
+the 80.3% greedy-optimal rate stays an empirical observation. The negative result
+is worth more than the theorem would have been: it says *why* greedy has no
+bound here, and it is a property of the noisy-OR composition rather than of this
+particular model.
+
+**The follow-up hypothesis failed too.** If complementarity explained where greedy
+loses, it would be a useful diagnostic. It does not: Spearman correlation between
+an instance's violation rate and greedy's optimality gap is **0.019** (PKI) and
+**0.143** (generic), and the optimality rates split by median complementarity have
+overlapping intervals (0.859 [0.788, 0.919] against 0.750 [0.660, 0.830]). The
+curvature finding is theoretically real and operationally inert as a predictor.
+
+## 15. Hybrid deployments rescue the short-lived credentials (0.8)
+
+Section 13 left an uncomfortable conclusion: under calibration, migrating a
+90-day certificate to pure post-quantum *raises* modelled risk, because below a
+3.7-year crossover the chance a CRQC arrives is smaller than the residual risk of
+a young primitive. The model's advice was to leave most of a certificate estate
+alone.
+
+That was an artifact of offering one destination. A hybrid is broken only if
+**both** halves are, so it is covered against the CRQC *and* against cryptanalysis
+of the young primitive. Composing the two probabilities moves the crossover:
+
+| migration | to pure PQC | to hybrid |
+|---|---|---|
+| `ECDSA` | 3.7 years | **0.15 years** |
+| `ED25519` | 3.7 years | **0.15 years** |
+| `X25519` | 3.7 years | **0.15 years** |
+| `RSA-2048` | 5.3 years | **1.8 years** |
+
+Eight weeks is shorter than a TLS leaf certificate's life, so the advice inverts:
+migrate them, to a hybrid.
+
+**Whether that changes the plan depends entirely on the estate**
+(`results/hybrid_ladder.json`, 300 instances per suite):
+
+| suite | pure policy | ladder policy |
+|---|---|---|
+| flat, short-lived credentials | **0 assets migrated**, 0 risk reduction | 2.58 assets, 0.031 reduction |
+| | 0 of 1643 short-lived credentials | **775 of 1643** |
+| PKI with delegation | 3.546 reduction | 3.560 (+0.4%) |
+| | 0 of 1500 short-lived | 0 of 1500 |
+
+On a flat estate of workload identities and service certificates, the
+pure-post-quantum policy is **completely paralysed** — across 300 instances it
+migrates nothing at all — and hybrid unblocks it. On a certificate hierarchy it
+changes almost nothing, because trust inheritance had already excluded those
+leaves for an entirely unrelated reason.
+
+Two of this project's findings interact, and one subsumes the other: **where a
+trust hierarchy exists, the delegation effect dominates the crossover effect.**
+The crossover matters where there is no anchor above the credential.
+
+Given the choice, the ladder took the hybrid rung **every time** (866 of 866, and
+782 of 782). The advantage holds while the composition is safer than the primitive
+it protects; a `composition_risk` above the PQC residual removes it, and that
+parameter is Tier C.
+
 ## What none of this establishes
 
 - **Nothing here is validated against reality.** Quantum factors and objective
@@ -379,6 +466,20 @@ Quote the plan, not the number.
   the same as a model checked against reality.
 - **The expert survey is an elicitation.** It records what 26 people believed in
   2025, and its own authors publish it as a range because they disagree.
+- **Supermodularity is measured on sampled pairs, not proved.** Section 14
+  reports that no sampled pair violated supermodularity; that is strong evidence
+  and not a proof over all subsets. The noisy-OR argument explains the mechanism
+  but is not a formal theorem covering the full objective, which also carries
+  node and rotation terms.
+- **The hybrid composition assumes independent breaks.** A CRQC solving
+  elliptic-curve discrete log gives no purchase on a lattice problem, so the
+  product is defensible for the *mathematics*; correlated **implementation**
+  failure is real and is priced as `composition_risk`, which is itself an
+  assumption.
+- **Attack-path hops are still modelled as independent.** Shared HSMs, identity
+  providers, cloud accounts and administrators create common-cause failures the
+  path term does not represent. Delegation edges capture one such pattern; the
+  general case is not modelled and remains the largest known structural gap.
 - **The ingested estate is a test fixture.** It is a real, correctly-signed
   OpenSSL hierarchy, not a production estate, and it is small. The agreement
   between it and the constructed case is encouraging, not conclusive.

@@ -51,7 +51,7 @@ import math
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 
-from .algorithms import Family, family, normalize
+from .algorithms import Family, family, hybrid_components, normalize
 from .threat import ThreatClass
 
 __all__ = [
@@ -351,11 +351,17 @@ class CalibrationConfig:
     forecast: CRQCForecast = DEFAULT_FORECAST
     doubling_time_years: float = DEFAULT_QUBIT_DOUBLING_YEARS
     pqc_residual_risk: float = PQC_RESIDUAL_RISK
+    # Risk that a hybrid composition fails even though neither half is broken:
+    # a bad combiner, a downgrade path, one half silently not negotiated. Tier C,
+    # and the floor on how safe a hybrid can be.
+    composition_risk: float = 0.01
 
     def probability(self, algorithm: str, horizon_years: float) -> float:
         fam = family(algorithm)
         if fam is Family.POST_QUANTUM:
             return self.pqc_residual_risk
+        if fam is Family.HYBRID:
+            return self._hybrid_probability(algorithm, horizon_years)
         return capability_probability(
             algorithm,
             horizon_years,
@@ -363,11 +369,31 @@ class CalibrationConfig:
             doubling_time_years=self.doubling_time_years,
         )
 
+    def _hybrid_probability(self, algorithm: str, horizon_years: float) -> float:
+        """A hybrid is broken only if both halves are.
+
+        The product treats the two breaks as independent, which is the honest
+        reading: a CRQC that solves elliptic-curve discrete log gives no purchase
+        on a lattice problem, and lattice cryptanalysis gives none on discrete
+        log. Correlated *implementation* failure is real, and it is priced
+        explicitly as ``composition_risk`` rather than left out.
+        """
+        parts = hybrid_components(algorithm)
+        if parts is None:  # pragma: no cover - family() already established this
+            return capability_probability(algorithm, horizon_years)
+        classical, post_quantum = parts
+        both = self.probability(classical, horizon_years) * self.probability(
+            post_quantum, horizon_years
+        )
+        combined = both + self.composition_risk - both * self.composition_risk
+        return max(self.composition_risk, min(1.0, combined))
+
     def as_dict(self) -> dict[str, object]:
         return {
             "forecast": self.forecast.name,
             "doubling_time_years": self.doubling_time_years,
             "pqc_residual_risk": self.pqc_residual_risk,
+            "composition_risk": self.composition_risk,
         }
 
 

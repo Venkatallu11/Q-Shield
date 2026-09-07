@@ -1,0 +1,232 @@
+{
+  "experiment": "hybrid_ladder",
+  "question": "Does offering a hybrid destination change what a budget should buy, and does it rescue the short-lived credentials the pure-post-quantum crossover told us to leave alone?",
+  "design": {
+    "instances_per_suite": 300,
+    "suites": {
+      "pki_with_delegation": "three-tier certificate authority hierarchies",
+      "flat_short_lived": "service credentials rotated far faster than any plausible CRQC timeline, with no trust hierarchy above them"
+    },
+    "policies": {
+      "pure": "classical -> post-quantum, the policy assumed through 0.7",
+      "hybrid": "classical -> hybrid only",
+      "ladder": "both rungs, chosen per asset by its exposure horizon"
+    },
+    "not_a_win_rate": "ladder has a superset of pure's options so it cannot score worse; what is measured is the size of the improvement and which rung each asset takes",
+    "calibration": {
+      "forecast": "central",
+      "doubling_time_years": 2.0,
+      "pqc_residual_risk": 0.05,
+      "composition_risk": 0.01
+    },
+    "weights": [
+      0.55,
+      0.3,
+      0.15
+    ],
+    "seed": 20260907
+  },
+  "suites": {
+    "pki_with_delegation": {
+      "instances": 300,
+      "risk_reduction_achieved": {
+        "pure": {
+          "n": 300,
+          "mean": 3.545793,
+          "stdev": 3.714132,
+          "p05": 0.0,
+          "p50": 2.613658,
+          "p95": 10.112771
+        },
+        "hybrid": {
+          "n": 300,
+          "mean": 3.559737,
+          "stdev": 3.727272,
+          "p05": 0.0,
+          "p50": 2.614533,
+          "p95": 10.119448
+        },
+        "ladder": {
+          "n": 300,
+          "mean": 3.559737,
+          "stdev": 3.727272,
+          "p05": 0.0,
+          "p50": 2.614533,
+          "p95": 10.119448
+        }
+      },
+      "spend": {
+        "pure": {
+          "n": 300,
+          "mean": 1.975,
+          "stdev": 1.661649,
+          "p05": 0.0,
+          "p50": 3.0,
+          "p95": 4.5
+        },
+        "hybrid": {
+          "n": 300,
+          "mean": 1.975,
+          "stdev": 1.661649,
+          "p05": 0.0,
+          "p50": 3.0,
+          "p95": 4.5
+        },
+        "ladder": {
+          "n": 300,
+          "mean": 1.975,
+          "stdev": 1.661649,
+          "p05": 0.0,
+          "p50": 3.0,
+          "p95": 4.5
+        }
+      },
+      "plan_size": {
+        "pure": {
+          "n": 300,
+          "mean": 0.743333,
+          "stdev": 0.667538,
+          "p05": 0.0,
+          "p50": 1.0,
+          "p95": 2.0
+        },
+        "hybrid": {
+          "n": 300,
+          "mean": 0.743333,
+          "stdev": 0.667538,
+          "p05": 0.0,
+          "p50": 1.0,
+          "p95": 2.0
+        },
+        "ladder": {
+          "n": 300,
+          "mean": 0.743333,
+          "stdev": 0.667538,
+          "p05": 0.0,
+          "p50": 1.0,
+          "p95": 2.0
+        }
+      },
+      "ladder_rung_chosen": {
+        "hybrid": 866,
+        "pure": 0
+      },
+      "short_lived_credentials": {
+        "total": 1500,
+        "migrated_under_pure_policy": 0,
+        "migrated_under_ladder_policy": 0,
+        "note": "credentials with an exposure horizon under one year -- the ones the pure-post-quantum crossover at 3.7 years told us to leave alone"
+      }
+    },
+    "flat_short_lived": {
+      "instances": 300,
+      "risk_reduction_achieved": {
+        "pure": {
+          "n": 300,
+          "mean": 0.0,
+          "stdev": 0.0,
+          "p05": 0.0,
+          "p50": 0.0,
+          "p95": 0.0
+        },
+        "hybrid": {
+          "n": 300,
+          "mean": 0.030803,
+          "stdev": 0.011566,
+          "p05": 0.014689,
+          "p50": 0.029632,
+          "p95": 0.05273
+        },
+        "ladder": {
+          "n": 300,
+          "mean": 0.030803,
+          "stdev": 0.011566,
+          "p05": 0.014689,
+          "p50": 0.029632,
+          "p95": 0.05273
+        }
+      },
+      "spend": {
+        "pure": {
+          "n": 300,
+          "mean": 0.0,
+          "stdev": 0.0,
+          "p05": 0.0,
+          "p50": 0.0,
+          "p95": 0.0
+        },
+        "hybrid": {
+          "n": 300,
+          "mean": 2.382772,
+          "stdev": 0.755721,
+          "p05": 1.204611,
+          "p50": 2.351504,
+          "p95": 3.591615
+        },
+        "ladder": {
+          "n": 300,
+          "mean": 2.382772,
+          "stdev": 0.755721,
+          "p05": 1.204611,
+          "p50": 2.351504,
+          "p95": 3.591615
+        }
+      },
+      "plan_size": {
+        "pure": {
+          "n": 300,
+          "mean": 0.0,
+          "stdev": 0.0,
+          "p05": 0.0,
+          "p50": 0.0,
+          "p95": 0.0
+        },
+        "hybrid": {
+          "n": 300,
+          "mean": 2.583333,
+          "stdev": 0.855665,
+          "p05": 1.0,
+          "p50": 3.0,
+          "p95": 4.0
+        },
+        "ladder": {
+          "n": 300,
+          "mean": 2.583333,
+          "stdev": 0.855665,
+          "p05": 1.0,
+          "p50": 3.0,
+          "p95": 4.0
+        }
+      },
+      "ladder_rung_chosen": {
+        "hybrid": 782,
+        "pure": 0
+      },
+      "short_lived_credentials": {
+        "total": 1643,
+        "migrated_under_pure_policy": 0,
+        "migrated_under_ladder_policy": 775,
+        "note": "credentials with an exposure horizon under one year -- the ones the pure-post-quantum crossover at 3.7 years told us to leave alone"
+      }
+    }
+  },
+  "crossover_comparison": {
+    "ECDSA": {
+      "to_pure": 3.7,
+      "to_hybrid": 0.15
+    },
+    "ED25519": {
+      "to_pure": 3.7,
+      "to_hybrid": 0.15
+    },
+    "X25519": {
+      "to_pure": 3.7,
+      "to_hybrid": 0.15
+    },
+    "RSA-2048": {
+      "to_pure": 5.3,
+      "to_hybrid": 1.8
+    },
+    "_reading": "years of exposure horizon above which the migration lowers modelled risk; a TLS leaf certificate lives about 0.25 years"
+  }
+}

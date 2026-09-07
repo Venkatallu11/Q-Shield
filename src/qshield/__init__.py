@@ -12,13 +12,14 @@ Public surface::
     planner.choose                                       -- picks one that finishes
     sample_worlds, paired_comparison                     -- uncertainty
     qshield.calibration                                  -- published estimates in
+    qshield.hybrid                                       -- classical+PQC deployments
     qshield.ingest.x509                                  -- real certificates in
     qshield.report.render                                -- a readable report out
     qshield.experiments.{benchmark,ablation,generalization,sensitivity,
                          tail_risk,hierarchy,threat_class,personal,robustness}
 """
 
-__version__ = "0.7.0"
+__version__ = "0.8.0"
 
 from .algorithms import Family, Primitive, normalize, primitive, quantum_factor
 from .calibration import (
@@ -28,6 +29,7 @@ from .calibration import (
     capability_probability,
     mosca_verdict,
 )
+from .hybrid import Deployment, classify_deployment, migration_ladder
 from .model import (
     DEFAULT_WEIGHTS,
     NODE_ONLY_WEIGHTS,
@@ -64,6 +66,9 @@ from .uncertainty import (
 
 __all__ = [
     "__version__",
+    "migration_ladder",
+    "classify_deployment",
+    "Deployment",
     "mosca_verdict",
     "capability_probability",
     "DEFAULT_CALIBRATION",

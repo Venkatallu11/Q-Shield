@@ -43,6 +43,8 @@ jobs:
           qshield calibration --quiet --output /tmp/cal.json
           qshield calibration --impact --instances 8 --quiet --output /tmp/ci.json
           qshield calibration --sweep --instances 6 --quiet --output /tmp/cs.json
+          qshield curvature --instances 8 --samples 10 --quiet --output /tmp/cv.json
+          qshield hybrid --instances 8 --quiet --output /tmp/hy.json
       - name: Fixtures are rebuildable
         run: |
           bash scripts/make_fixtures.sh

@@ -20,6 +20,26 @@ qshield report --input case.json --draws 1000 --output migration.md
 
 ---
 
+## Two results worth knowing
+
+**Migration actions are complements, not substitutes — so greedy planning has no
+approximation guarantee.** The risk-reduction function is *supermodular* on every
+sampled pair, in both suites, with and without trust hierarchies: 0% supermodularity
+violations against 38.8%/67.7% submodularity violations. The cause is the noisy-OR
+path composition — the benefit of migrating one node is proportional to
+`prod(1 - p)` over the others, which *grows* as they are migrated. Delegation is the
+limiting case, where a leaf's benefit is exactly zero until its anchor moves. So the
+`1 - 1/e` bound is unavailable and the 80.3% greedy-optimal rate stays an empirical
+observation.
+
+**Hybrid deployments rescue short-lived credentials.** Pure post-quantum only pays
+off above a 3.7-year horizon; a TLS leaf certificate lives 90 days, so the
+calibrated model said leave it alone. A hybrid is broken only if *both* halves are,
+which moves the crossover to **0.15 years**. On a flat estate of short-lived service
+credentials the pure policy migrates **nothing at all** across 300 instances, while
+the hybrid ladder migrates 775 of 1643 credentials. On a certificate hierarchy it
+changes almost nothing — trust inheritance had already excluded those leaves.
+
 ## Is it calibrated?
 
 **Not against outcomes, and it cannot be.** No cryptographically relevant quantum
@@ -256,6 +276,7 @@ qshield/
   optimizer.py      exhaustive / greedy planners, Pareto frontier
   planner.py        picks a planner that will finish, and says when it downgraded
   calibration.py    published resource estimates, CRQC forecasts, Mosca's rule
+  hybrid.py         classical+PQC compositions and the migration ladder
   uncertainty.py    common-random-number sampling, paired stats, bootstrap CIs
   ingest/           real artifacts in: X.509 parsing, TLS scanning, provenance
   report.py         the Markdown a person actually reads
@@ -263,7 +284,7 @@ qshield/
   cli.py            qshield <command>
   experiments/      generator, pki, benchmark, ablation, generalization,
                     sensitivity, tail_risk, hierarchy, threat_class, personal,
-                    robustness, calibration_impact
+                    robustness, calibration_impact, curvature, hybrid_ladder
 ```
 
 The objective is a weighted mean of node risk, path risk and key-rotation
@@ -303,7 +324,7 @@ can lose. See **[docs/METHODOLOGY.md](docs/METHODOLOGY.md)**.
 ## Tests
 
 ```bash
-pytest                  # 340 tests
+pytest                  # 367 tests
 pytest -m "not slow"    # skip the full-experiment smoke tests
 ```
 

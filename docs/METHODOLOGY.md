@@ -77,6 +77,21 @@ two assets, migrating one from RSA-2048 to ML-KEM moved the objective from
 construction, across every feasible plan of randomised instances, and under
 randomised weightings.
 
+## Curvature
+
+The risk-reduction function `B(S) = R(empty) - R(S)` is **monotone** on the
+uncalibrated path (see above) and **supermodular** — increasing returns. Migration
+actions are complements: the benefit of migrating a node is proportional to
+`prod(1 - p_v)` over the other nodes on its path, and that factor grows as they
+are migrated. Delegation is the limiting case, where a leaf contributes exactly
+zero until its issuer moves.
+
+This matters for one specific reason: monotone **submodular** maximisation admits
+a `1 - 1/e` greedy guarantee, and monotone **supermodular** maximisation does not.
+Q-SHIELD's greedy planner therefore has no approximation bound, and its 80.3%
+optimality rate is an observation rather than a theorem. Measured in
+`qshield.experiments.curvature`.
+
 ## Planners
 
 | planner | method | guarantee |

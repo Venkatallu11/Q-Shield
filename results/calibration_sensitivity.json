@@ -9,7 +9,8 @@
     "baseline": {
       "forecast": "central",
       "doubling_time_years": 2.0,
-      "pqc_residual_risk": 0.05
+      "pqc_residual_risk": 0.05,
+      "composition_risk": 0.01
     },
     "seed": 20260907
   },

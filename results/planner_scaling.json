@@ -25,70 +25,70 @@
       "feasible_plans": 32,
       "exhaustive_seconds": 0.0019,
       "greedy_seconds": 0.0007,
-      "speedup": 2.7
+      "speedup": 2.9
     },
     {
       "nodes": 8,
       "migration_candidates": 7,
       "attack_paths": 3,
       "feasible_plans": 128,
-      "exhaustive_seconds": 0.0058,
-      "greedy_seconds": 0.0016,
-      "speedup": 3.7
+      "exhaustive_seconds": 0.0049,
+      "greedy_seconds": 0.0014,
+      "speedup": 3.5
     },
     {
       "nodes": 10,
       "migration_candidates": 9,
       "attack_paths": 8,
       "feasible_plans": 512,
-      "exhaustive_seconds": 0.0368,
-      "greedy_seconds": 0.004,
-      "speedup": 9.2
+      "exhaustive_seconds": 0.0299,
+      "greedy_seconds": 0.0032,
+      "speedup": 9.5
     },
     {
       "nodes": 12,
       "migration_candidates": 11,
       "attack_paths": 26,
       "feasible_plans": 2048,
-      "exhaustive_seconds": 0.2957,
+      "exhaustive_seconds": 0.2523,
       "greedy_seconds": 0.0122,
-      "speedup": 24.3
+      "speedup": 20.7
     },
     {
       "nodes": 14,
       "migration_candidates": 13,
       "attack_paths": 13,
       "feasible_plans": 8192,
-      "exhaustive_seconds": 0.9708,
-      "greedy_seconds": 0.0114,
-      "speedup": 85.1
+      "exhaustive_seconds": 0.7708,
+      "greedy_seconds": 0.0093,
+      "speedup": 82.5
     },
     {
       "nodes": 16,
       "migration_candidates": 14,
       "attack_paths": 18,
       "feasible_plans": 16384,
-      "exhaustive_seconds": 2.4319,
-      "greedy_seconds": 0.0186,
-      "speedup": 130.4
+      "exhaustive_seconds": 1.9017,
+      "greedy_seconds": 0.0137,
+      "speedup": 138.6
     },
     {
       "nodes": 18,
       "migration_candidates": 16,
       "attack_paths": 18,
       "feasible_plans": 65536,
-      "exhaustive_seconds": 10.0128,
-      "greedy_seconds": 0.0223,
-      "speedup": 449.9
+      "exhaustive_seconds": 8.1328,
+      "greedy_seconds": 0.0185,
+      "speedup": 439.6
     },
     {
       "nodes": 20,
       "migration_candidates": 17,
       "attack_paths": 11,
       "feasible_plans": 131072,
-      "exhaustive_seconds": 14.5287,
-      "greedy_seconds": 0.018,
-      "speedup": 807.4
+      "exhaustive_seconds": 15.3005,
+      "greedy_seconds": 0.0223,
+      "speedup": 687.0
     }
   ],
   "reading": "Each additional migration candidate roughly doubles the exact planner's cost while the greedy planner is flat. The threshold in qshield/planner.py is set from this table; above it the planner downgrades and says so."

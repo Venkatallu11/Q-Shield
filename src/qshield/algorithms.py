@@ -31,6 +31,7 @@ class Family(str, Enum):
     SHOR_VULNERABLE = "shor-vulnerable"      # public-key, broken by a CRQC
     GROVER_WEAKENED = "grover-weakened"      # symmetric/hash, effective strength halved
     POST_QUANTUM = "post-quantum"            # NIST PQC selections
+    HYBRID = "hybrid"                        # classical + PQC, broken only if both are
     UNKNOWN = "unknown"
 
 
@@ -108,13 +109,46 @@ class UnknownAlgorithmError(KeyError):
     """Raised in strict mode when an algorithm is absent from the registry."""
 
 
+HYBRID_SEPARATOR = "+"
+
+
+def hybrid_components(algorithm: str) -> tuple[str, str] | None:
+    """Split ``classical+post-quantum`` into its halves, or return None.
+
+    Lives here rather than in :mod:`qshield.hybrid` so that ``family``,
+    ``primitive`` and ``quantum_factor`` can recognise a hybrid without importing
+    that module, which would be circular. The deployed-suite catalogue and the
+    probability composition stay there.
+    """
+    key = algorithm.strip().upper().replace("_", "-")
+    if HYBRID_SEPARATOR not in key:
+        return None
+    left, _, right = key.partition(HYBRID_SEPARATOR)
+    left, right = normalize(left), normalize(right)
+    entries = (_REGISTRY.get(left), _REGISTRY.get(right))
+    if None in entries:
+        return None
+    families = [entry[0] for entry in entries]
+    if Family.SHOR_VULNERABLE not in families or Family.POST_QUANTUM not in families:
+        return None
+    classical = left if families[0] is Family.SHOR_VULNERABLE else right
+    post_quantum = right if classical == left else left
+    return classical, post_quantum
+
+
 def normalize(algorithm: str) -> str:
     """Canonicalise an algorithm string.
 
     Case, surrounding whitespace and ``_``/``-`` separator choice are all
-    insignificant. Alias resolution happens here so every caller agrees.
+    insignificant. Alias resolution happens here so every caller agrees. A
+    hybrid is canonicalised to ``CLASSICAL+POST-QUANTUM`` with both halves
+    resolved and the classical half first, so the two orderings name one thing.
     """
     key = algorithm.strip().upper().replace("_", "-")
+    if HYBRID_SEPARATOR in key:
+        parts = hybrid_components(key)
+        if parts is not None:
+            return f"{parts[0]}{HYBRID_SEPARATOR}{parts[1]}"
     while "--" in key:
         key = key.replace("--", "-")
     return _ALIASES.get(key, key)
@@ -125,12 +159,18 @@ def is_known(algorithm: str) -> bool:
 
 
 def family(algorithm: str) -> Family:
+    if hybrid_components(algorithm) is not None:
+        return Family.HYBRID
     entry = _REGISTRY.get(normalize(algorithm))
     return entry[0] if entry else Family.UNKNOWN
 
 
 def primitive(algorithm: str) -> Primitive:
     """What the algorithm is used for. Drives the default threat class."""
+    parts = hybrid_components(algorithm)
+    if parts is not None:
+        # A hybrid does the job of its post-quantum half.
+        return primitive(parts[1])
     entry = _REGISTRY.get(normalize(algorithm))
     return entry[2] if entry else Primitive.UNKNOWN
 
@@ -143,6 +183,12 @@ def quantum_factor(algorithm: str, *, strict: bool = False) -> float:
     typo in an input file fails loudly rather than perturbing every downstream
     number by a factor of two.
     """
+    parts = hybrid_components(algorithm)
+    if parts is not None:
+        # Broken only if both halves are, so on this uncalibrated scale a hybrid
+        # is no more susceptible than its stronger half. The calibrated path in
+        # qshield.hybrid composes the two probabilities properly.
+        return min(quantum_factor(parts[0]), quantum_factor(parts[1]))
     entry = _REGISTRY.get(normalize(algorithm))
     if entry is not None:
         return entry[1]
@@ -155,7 +201,7 @@ def quantum_factor(algorithm: str, *, strict: bool = False) -> float:
     return UNKNOWN_QUANTUM_FACTOR
 
 
-def default_replacement(algorithm: str) -> str | None:
+def default_replacement(algorithm: str) -> str | None:  # noqa: D401
     """Conventional post-quantum successor for a Shor-vulnerable primitive.
 
     Key-establishment primitives map to ML-KEM, signature primitives to ML-DSA.
