@@ -1,0 +1,19 @@
+{
+  "_comment": "CONSTRUCTED ILLUSTRATION, NOT EVIDENCE. Hand-built to exhibit the mechanism the model is about. 'service-mesh-ca' sits on every path from the entrypoint to the target but scores LOWER on standalone node risk than 'archive-signing', which no path to the target crosses. The budget affords exactly one of them. Flat asset-priority ranking and a node-only optimizer both choose archive-signing; only the path-aware objective chooses the chokepoint. Do not cite this as a result -- it demonstrates that the mechanism exists, not how often it matters. See docs/FINDINGS.md for measured effects over randomised instances.",
+  "budget": 1.5,
+  "entrypoints": ["edge-gateway"],
+  "targets": ["customer-db"],
+  "assets": [
+    {"name":"edge-gateway","algorithm":"X25519","sensitivity":0.45,"exposure":0.95,"data_lifetime_years":3,"dependency_count":6,"rotation_hours":12,"migration_cost":2.5,"business_criticality":0.8},
+    {"name":"service-mesh-ca","algorithm":"ECDSA","sensitivity":0.6,"exposure":0.8,"data_lifetime_years":10,"dependency_count":9,"rotation_hours":24,"migration_cost":1.5,"business_criticality":0.9},
+    {"name":"archive-signing","algorithm":"RSA-2048","sensitivity":1.0,"exposure":0.5,"data_lifetime_years":20,"dependency_count":2,"rotation_hours":72,"migration_cost":1.5,"business_criticality":0.7},
+    {"name":"cold-storage","algorithm":"AES-256","sensitivity":1.0,"exposure":0.2,"data_lifetime_years":20,"dependency_count":1,"rotation_hours":0,"migration_cost":0.5,"business_criticality":0.6},
+    {"name":"customer-db","algorithm":"AES-256","sensitivity":1.0,"exposure":0.3,"data_lifetime_years":12,"dependency_count":4,"rotation_hours":48,"migration_cost":0.5,"business_criticality":1.0}
+  ],
+  "edges": [
+    {"source":"edge-gateway","target":"service-mesh-ca","reliability":0.9},
+    {"source":"service-mesh-ca","target":"customer-db","reliability":0.95},
+    {"source":"archive-signing","target":"cold-storage","reliability":0.9}
+  ],
+  "replacements": {"X25519":"ML-KEM","ECDSA":"ML-DSA","RSA-2048":"ML-KEM"}
+}

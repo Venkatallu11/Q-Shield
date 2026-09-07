@@ -1,0 +1,524 @@
+{
+  "experiment": "weight_sensitivity",
+  "question": "Is the recommended plan stable under the uncalibrated weights?",
+  "design": {
+    "weightings_evaluated": 26,
+    "grid_deduplicated_on_simplex": true,
+    "reference_weights": [
+      0.55,
+      0.3,
+      0.15
+    ]
+  },
+  "distinct_plans": 1,
+  "modal_plan": {
+    "selected": [
+      "identity",
+      "public-api"
+    ],
+    "chosen_under": 26,
+    "share": 1.0,
+    "regret_vs_per_weighting_optimum": {
+      "n": 26,
+      "mean": 0.0,
+      "stdev": 0.0,
+      "p05": -0.0,
+      "p50": 0.0,
+      "p95": 0.0
+    }
+  },
+  "reference_plan": {
+    "selected": [
+      "identity",
+      "public-api"
+    ],
+    "regret_vs_per_weighting_optimum": {
+      "n": 26,
+      "mean": 0.0,
+      "stdev": 0.0,
+      "p05": -0.0,
+      "p50": 0.0,
+      "p95": 0.0
+    },
+    "max_regret": 0.0
+  },
+  "plan_frequency": [
+    {
+      "selected": [
+        "identity",
+        "public-api"
+      ],
+      "weightings": 26
+    }
+  ],
+  "per_weighting": [
+    {
+      "weights": [
+        0.2,
+        0.2,
+        0.1
+      ],
+      "normalized": [
+        0.4,
+        0.4,
+        0.2
+      ],
+      "selected": [
+        "identity",
+        "public-api"
+      ],
+      "cost": 2.5,
+      "objective": 11.242439
+    },
+    {
+      "weights": [
+        0.2,
+        0.2,
+        0.3
+      ],
+      "normalized": [
+        0.285714286,
+        0.285714286,
+        0.428571429
+      ],
+      "selected": [
+        "identity",
+        "public-api"
+      ],
+      "cost": 2.5,
+      "objective": 8.725548
+    },
+    {
+      "weights": [
+        0.2,
+        0.2,
+        0.5
+      ],
+      "normalized": [
+        0.222222222,
+        0.222222222,
+        0.555555556
+      ],
+      "selected": [
+        "identity",
+        "public-api"
+      ],
+      "cost": 2.5,
+      "objective": 7.327275
+    },
+    {
+      "weights": [
+        0.2,
+        0.4,
+        0.1
+      ],
+      "normalized": [
+        0.285714286,
+        0.571428571,
+        0.142857143
+      ],
+      "selected": [
+        "identity",
+        "public-api"
+      ],
+      "cost": 2.5,
+      "objective": 12.450938
+    },
+    {
+      "weights": [
+        0.2,
+        0.4,
+        0.3
+      ],
+      "normalized": [
+        0.222222222,
+        0.444444444,
+        0.333333333
+      ],
+      "selected": [
+        "identity",
+        "public-api"
+      ],
+      "cost": 2.5,
+      "objective": 10.224801
+    },
+    {
+      "weights": [
+        0.2,
+        0.4,
+        0.5
+      ],
+      "normalized": [
+        0.181818182,
+        0.363636364,
+        0.454545455
+      ],
+      "selected": [
+        "identity",
+        "public-api"
+      ],
+      "cost": 2.5,
+      "objective": 8.808168
+    },
+    {
+      "weights": [
+        0.2,
+        0.6,
+        0.1
+      ],
+      "normalized": [
+        0.222222222,
+        0.666666667,
+        0.111111111
+      ],
+      "selected": [
+        "identity",
+        "public-api"
+      ],
+      "cost": 2.5,
+      "objective": 13.122326
+    },
+    {
+      "weights": [
+        0.2,
+        0.6,
+        0.3
+      ],
+      "normalized": [
+        0.181818182,
+        0.545454545,
+        0.272727273
+      ],
+      "selected": [
+        "identity",
+        "public-api"
+      ],
+      "cost": 2.5,
+      "objective": 11.178871
+    },
+    {
+      "weights": [
+        0.2,
+        0.6,
+        0.5
+      ],
+      "normalized": [
+        0.153846154,
+        0.461538462,
+        0.384615385
+      ],
+      "selected": [
+        "identity",
+        "public-api"
+      ],
+      "cost": 2.5,
+      "objective": 9.833402
+    },
+    {
+      "weights": [
+        0.4,
+        0.2,
+        0.1
+      ],
+      "normalized": [
+        0.571428571,
+        0.285714286,
+        0.142857143
+      ],
+      "selected": [
+        "identity",
+        "public-api"
+      ],
+      "cost": 2.5,
+      "objective": 11.292385
+    },
+    {
+      "weights": [
+        0.4,
+        0.2,
+        0.3
+      ],
+      "normalized": [
+        0.444444444,
+        0.222222222,
+        0.333333333
+      ],
+      "selected": [
+        "identity",
+        "public-api"
+      ],
+      "cost": 2.5,
+      "objective": 9.323704
+    },
+    {
+      "weights": [
+        0.4,
+        0.2,
+        0.5
+      ],
+      "normalized": [
+        0.363636364,
+        0.181818182,
+        0.454545455
+      ],
+      "selected": [
+        "identity",
+        "public-api"
+      ],
+      "cost": 2.5,
+      "objective": 8.070907
+    },
+    {
+      "weights": [
+        0.4,
+        0.4,
+        0.1
+      ],
+      "normalized": [
+        0.444444444,
+        0.444444444,
+        0.111111111
+      ],
+      "selected": [
+        "identity",
+        "public-api"
+      ],
+      "cost": 2.5,
+      "objective": 12.221229
+    },
+    {
+      "weights": [
+        0.4,
+        0.4,
+        0.3
+      ],
+      "normalized": [
+        0.363636364,
+        0.363636364,
+        0.272727273
+      ],
+      "selected": [
+        "identity",
+        "public-api"
+      ],
+      "cost": 2.5,
+      "objective": 10.44161
+    },
+    {
+      "weights": [
+        0.4,
+        0.4,
+        0.5
+      ],
+      "normalized": [
+        0.307692308,
+        0.307692308,
+        0.384615385
+      ],
+      "selected": [
+        "identity",
+        "public-api"
+      ],
+      "cost": 2.5,
+      "objective": 9.209565
+    },
+    {
+      "weights": [
+        0.4,
+        0.6,
+        0.1
+      ],
+      "normalized": [
+        0.363636364,
+        0.545454545,
+        0.090909091
+      ],
+      "selected": [
+        "identity",
+        "public-api"
+      ],
+      "cost": 2.5,
+      "objective": 12.812312
+    },
+    {
+      "weights": [
+        0.4,
+        0.6,
+        0.3
+      ],
+      "normalized": [
+        0.307692308,
+        0.461538462,
+        0.230769231
+      ],
+      "selected": [
+        "identity",
+        "public-api"
+      ],
+      "cost": 2.5,
+      "objective": 11.215544
+    },
+    {
+      "weights": [
+        0.4,
+        0.6,
+        0.5
+      ],
+      "normalized": [
+        0.266666667,
+        0.4,
+        0.333333333
+      ],
+      "selected": [
+        "identity",
+        "public-api"
+      ],
+      "cost": 2.5,
+      "objective": 10.044581
+    },
+    {
+      "weights": [
+        0.6,
+        0.2,
+        0.1
+      ],
+      "normalized": [
+        0.666666667,
+        0.222222222,
+        0.111111111
+      ],
+      "selected": [
+        "identity",
+        "public-api"
+      ],
+      "cost": 2.5,
+      "objective": 11.320133
+    },
+    {
+      "weights": [
+        0.6,
+        0.2,
+        0.3
+      ],
+      "normalized": [
+        0.545454545,
+        0.181818182,
+        0.272727273
+      ],
+      "selected": [
+        "identity",
+        "public-api"
+      ],
+      "cost": 2.5,
+      "objective": 9.704349
+    },
+    {
+      "weights": [
+        0.6,
+        0.2,
+        0.5
+      ],
+      "normalized": [
+        0.461538462,
+        0.153846154,
+        0.384615385
+      ],
+      "selected": [
+        "identity",
+        "public-api"
+      ],
+      "cost": 2.5,
+      "objective": 8.585729
+    },
+    {
+      "weights": [
+        0.6,
+        0.4,
+        0.1
+      ],
+      "normalized": [
+        0.545454545,
+        0.363636364,
+        0.090909091
+      ],
+      "selected": [
+        "identity",
+        "public-api"
+      ],
+      "cost": 2.5,
+      "objective": 12.075051
+    },
+    {
+      "weights": [
+        0.6,
+        0.4,
+        0.3
+      ],
+      "normalized": [
+        0.461538462,
+        0.307692308,
+        0.230769231
+      ],
+      "selected": [
+        "identity",
+        "public-api"
+      ],
+      "cost": 2.5,
+      "objective": 10.591708
+    },
+    {
+      "weights": [
+        0.6,
+        0.4,
+        0.5
+      ],
+      "normalized": [
+        0.4,
+        0.266666667,
+        0.333333333
+      ],
+      "selected": [
+        "identity",
+        "public-api"
+      ],
+      "cost": 2.5,
+      "objective": 9.503923
+    },
+    {
+      "weights": [
+        0.6,
+        0.6,
+        0.1
+      ],
+      "normalized": [
+        0.461538462,
+        0.461538462,
+        0.076923077
+      ],
+      "selected": [
+        "identity",
+        "public-api"
+      ],
+      "cost": 2.5,
+      "objective": 12.597687
+    },
+    {
+      "weights": [
+        0.6,
+        0.6,
+        0.5
+      ],
+      "normalized": [
+        0.352941176,
+        0.352941176,
+        0.294117647
+      ],
+      "selected": [
+        "identity",
+        "public-api"
+      ],
+      "cost": 2.5,
+      "objective": 10.206072
+    }
+  ]
+}

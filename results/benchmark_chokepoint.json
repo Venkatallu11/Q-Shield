@@ -1,0 +1,306 @@
+{
+  "experiment": "benchmark",
+  "qshield_version": "0.4.0",
+  "instance": {
+    "assets": 5,
+    "edges": 3,
+    "entrypoints": [
+      "edge-gateway"
+    ],
+    "targets": [
+      "customer-db"
+    ],
+    "attack_paths": 1,
+    "migration_candidates": [
+      "edge-gateway",
+      "service-mesh-ca",
+      "archive-signing"
+    ],
+    "budget": 1.5,
+    "feasible_plans": 3
+  },
+  "assumptions": {
+    "weights": [
+      0.55,
+      0.3,
+      0.15
+    ],
+    "monte_carlo_trials": 4000,
+    "seed": 20260907,
+    "common_random_numbers": true,
+    "perturbation": {
+      "unit_spread": 0.08,
+      "lifetime_spread": 0.15,
+      "reliability_low": 0.9,
+      "reliability_high": 1.05,
+      "quantum_factor_spread": 0.25,
+      "weight_spread": 0.2
+    },
+    "algorithm_registry": {
+      "AES-128": {
+        "family": "grover-weakened",
+        "quantum_factor": 0.15
+      },
+      "AES-256": {
+        "family": "grover-weakened",
+        "quantum_factor": 0.08
+      },
+      "CHACHA20": {
+        "family": "grover-weakened",
+        "quantum_factor": 0.08
+      },
+      "DH": {
+        "family": "shor-vulnerable",
+        "quantum_factor": 1.0
+      },
+      "DSA": {
+        "family": "shor-vulnerable",
+        "quantum_factor": 1.0
+      },
+      "ECC": {
+        "family": "shor-vulnerable",
+        "quantum_factor": 1.0
+      },
+      "ECDH": {
+        "family": "shor-vulnerable",
+        "quantum_factor": 1.0
+      },
+      "ECDSA": {
+        "family": "shor-vulnerable",
+        "quantum_factor": 1.0
+      },
+      "ED25519": {
+        "family": "shor-vulnerable",
+        "quantum_factor": 1.0
+      },
+      "ED448": {
+        "family": "shor-vulnerable",
+        "quantum_factor": 1.0
+      },
+      "FN-DSA": {
+        "family": "post-quantum",
+        "quantum_factor": 0.05
+      },
+      "HQC": {
+        "family": "post-quantum",
+        "quantum_factor": 0.05
+      },
+      "ML-DSA": {
+        "family": "post-quantum",
+        "quantum_factor": 0.05
+      },
+      "ML-KEM": {
+        "family": "post-quantum",
+        "quantum_factor": 0.05
+      },
+      "RSA": {
+        "family": "shor-vulnerable",
+        "quantum_factor": 1.0
+      },
+      "RSA-1024": {
+        "family": "shor-vulnerable",
+        "quantum_factor": 1.0
+      },
+      "RSA-2048": {
+        "family": "shor-vulnerable",
+        "quantum_factor": 1.0
+      },
+      "RSA-3072": {
+        "family": "shor-vulnerable",
+        "quantum_factor": 1.0
+      },
+      "RSA-4096": {
+        "family": "shor-vulnerable",
+        "quantum_factor": 1.0
+      },
+      "SHA-256": {
+        "family": "grover-weakened",
+        "quantum_factor": 0.08
+      },
+      "SHA-384": {
+        "family": "grover-weakened",
+        "quantum_factor": 0.08
+      },
+      "SHA-512": {
+        "family": "grover-weakened",
+        "quantum_factor": 0.08
+      },
+      "SLH-DSA": {
+        "family": "post-quantum",
+        "quantum_factor": 0.05
+      },
+      "X25519": {
+        "family": "shor-vulnerable",
+        "quantum_factor": 1.0
+      }
+    }
+  },
+  "baseline": {
+    "objective": 15.729445,
+    "node_mean": 12.4729,
+    "path_mean": 27.43039,
+    "path_max": 27.43039,
+    "rotation_pressure": 4.268223,
+    "node_scores": {
+      "edge-gateway": 6.4125,
+      "service-mesh-ca": 24.0,
+      "archive-signing": 30.0,
+      "cold-storage": 0.8,
+      "customer-db": 1.152
+    },
+    "path_risks": [
+      27.43039
+    ],
+    "paths": [
+      [
+        "edge-gateway",
+        "service-mesh-ca",
+        "customer-db"
+      ]
+    ]
+  },
+  "plans": {
+    "do_nothing": {
+      "strategy": "do_nothing",
+      "selected": [],
+      "cost": 0.0,
+      "objective": 15.729445,
+      "improvement": 0.0,
+      "improvement_per_cost": null
+    },
+    "flat_priority": {
+      "strategy": "flat_priority",
+      "selected": [
+        "archive-signing"
+      ],
+      "cost": 1.5,
+      "objective": 12.13641,
+      "improvement": 3.593036,
+      "improvement_per_cost": 2.395357
+    },
+    "greedy_marginal": {
+      "strategy": "greedy_marginal",
+      "selected": [
+        "service-mesh-ca"
+      ],
+      "cost": 1.5,
+      "objective": 7.401107,
+      "improvement": 8.328338,
+      "improvement_per_cost": 5.552226
+    },
+    "path_aware": {
+      "strategy": "path_aware",
+      "selected": [
+        "service-mesh-ca"
+      ],
+      "cost": 1.5,
+      "objective": 7.401107,
+      "improvement": 8.328338,
+      "improvement_per_cost": 5.552226
+    }
+  },
+  "uncertainty": {
+    "do_nothing": {
+      "n": 4000,
+      "mean": 14.417246,
+      "stdev": 1.284225,
+      "p05": 12.289155,
+      "p50": 14.398878,
+      "p95": 16.553465
+    },
+    "flat_priority": {
+      "n": 4000,
+      "mean": 11.273508,
+      "stdev": 1.211056,
+      "p05": 9.29837,
+      "p50": 11.273121,
+      "p95": 13.292794
+    },
+    "greedy_marginal": {
+      "n": 4000,
+      "mean": 6.714712,
+      "stdev": 0.542558,
+      "p05": 5.81344,
+      "p50": 6.723509,
+      "p95": 7.602218
+    },
+    "path_aware": {
+      "n": 4000,
+      "mean": 6.714712,
+      "stdev": 0.542558,
+      "p05": 5.81344,
+      "p50": 6.723509,
+      "p95": 7.602218
+    }
+  },
+  "paired_comparisons": {
+    "flat_priority_vs_path_aware": {
+      "comparison": "flat_priority - path_aware",
+      "instances": 4000,
+      "path_aware_better": 4000,
+      "flat_priority_better": 0,
+      "ties": 0,
+      "tie_rate": 0.0,
+      "mean_delta": 4.558796,
+      "mean_delta_ci95": [
+        4.522182,
+        4.592822
+      ],
+      "median_delta": 4.546077,
+      "max_delta": 8.507866,
+      "min_delta": 1.060572,
+      "decisive_instances": 4000,
+      "mean_delta_when_decisive": 4.558796,
+      "mean_delta_when_decisive_ci95": [
+        4.522848,
+        4.593898
+      ],
+      "win_rate_given_decisive": 1.0,
+      "note": "paired over shared Monte Carlo worlds; positive means path_aware scored lower (better) in that world"
+    },
+    "greedy_marginal_vs_path_aware": {
+      "comparison": "greedy_marginal - path_aware",
+      "instances": 4000,
+      "path_aware_better": 0,
+      "greedy_marginal_better": 0,
+      "ties": 4000,
+      "tie_rate": 1.0,
+      "mean_delta": 0.0,
+      "mean_delta_ci95": [
+        0.0,
+        0.0
+      ],
+      "median_delta": 0.0,
+      "max_delta": 0.0,
+      "min_delta": 0.0,
+      "decisive_instances": 0,
+      "mean_delta_when_decisive": 0.0,
+      "note": "paired over shared Monte Carlo worlds; positive means path_aware scored lower (better) in that world"
+    }
+  },
+  "pareto_frontier": [
+    {
+      "strategy": "path_aware",
+      "selected": [],
+      "cost": 0,
+      "objective": 15.729445,
+      "improvement": 0.0,
+      "improvement_per_cost": null
+    },
+    {
+      "strategy": "path_aware",
+      "selected": [
+        "service-mesh-ca"
+      ],
+      "cost": 1.5,
+      "objective": 7.401107,
+      "improvement": 8.328338,
+      "improvement_per_cost": 5.552226
+    }
+  ],
+  "caveats": [
+    "Quantum factors and objective weights are uncalibrated hypotheses; a lower objective does not establish that a system is safer in reality.",
+    "path_aware minimises the reported objective over every budget-feasible plan, so it cannot score worse than any other strategy on that metric. See qshield.experiments.ablation for comparisons on held-out metrics.",
+    "Path risk treats hops as independent, which real infrastructure is not."
+  ]
+}

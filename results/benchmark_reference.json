@@ -1,0 +1,338 @@
+{
+  "experiment": "benchmark",
+  "qshield_version": "0.4.0",
+  "instance": {
+    "assets": 5,
+    "edges": 6,
+    "entrypoints": [
+      "public-api"
+    ],
+    "targets": [
+      "database"
+    ],
+    "attack_paths": 3,
+    "migration_candidates": [
+      "public-api",
+      "identity",
+      "vpn",
+      "backup-signing"
+    ],
+    "budget": 3.0,
+    "feasible_plans": 12
+  },
+  "assumptions": {
+    "weights": [
+      0.55,
+      0.3,
+      0.15
+    ],
+    "monte_carlo_trials": 4000,
+    "seed": 20260907,
+    "common_random_numbers": true,
+    "perturbation": {
+      "unit_spread": 0.08,
+      "lifetime_spread": 0.15,
+      "reliability_low": 0.9,
+      "reliability_high": 1.05,
+      "quantum_factor_spread": 0.25,
+      "weight_spread": 0.2
+    },
+    "algorithm_registry": {
+      "AES-128": {
+        "family": "grover-weakened",
+        "quantum_factor": 0.15
+      },
+      "AES-256": {
+        "family": "grover-weakened",
+        "quantum_factor": 0.08
+      },
+      "CHACHA20": {
+        "family": "grover-weakened",
+        "quantum_factor": 0.08
+      },
+      "DH": {
+        "family": "shor-vulnerable",
+        "quantum_factor": 1.0
+      },
+      "DSA": {
+        "family": "shor-vulnerable",
+        "quantum_factor": 1.0
+      },
+      "ECC": {
+        "family": "shor-vulnerable",
+        "quantum_factor": 1.0
+      },
+      "ECDH": {
+        "family": "shor-vulnerable",
+        "quantum_factor": 1.0
+      },
+      "ECDSA": {
+        "family": "shor-vulnerable",
+        "quantum_factor": 1.0
+      },
+      "ED25519": {
+        "family": "shor-vulnerable",
+        "quantum_factor": 1.0
+      },
+      "ED448": {
+        "family": "shor-vulnerable",
+        "quantum_factor": 1.0
+      },
+      "FN-DSA": {
+        "family": "post-quantum",
+        "quantum_factor": 0.05
+      },
+      "HQC": {
+        "family": "post-quantum",
+        "quantum_factor": 0.05
+      },
+      "ML-DSA": {
+        "family": "post-quantum",
+        "quantum_factor": 0.05
+      },
+      "ML-KEM": {
+        "family": "post-quantum",
+        "quantum_factor": 0.05
+      },
+      "RSA": {
+        "family": "shor-vulnerable",
+        "quantum_factor": 1.0
+      },
+      "RSA-1024": {
+        "family": "shor-vulnerable",
+        "quantum_factor": 1.0
+      },
+      "RSA-2048": {
+        "family": "shor-vulnerable",
+        "quantum_factor": 1.0
+      },
+      "RSA-3072": {
+        "family": "shor-vulnerable",
+        "quantum_factor": 1.0
+      },
+      "RSA-4096": {
+        "family": "shor-vulnerable",
+        "quantum_factor": 1.0
+      },
+      "SHA-256": {
+        "family": "grover-weakened",
+        "quantum_factor": 0.08
+      },
+      "SHA-384": {
+        "family": "grover-weakened",
+        "quantum_factor": 0.08
+      },
+      "SHA-512": {
+        "family": "grover-weakened",
+        "quantum_factor": 0.08
+      },
+      "SLH-DSA": {
+        "family": "post-quantum",
+        "quantum_factor": 0.05
+      },
+      "X25519": {
+        "family": "shor-vulnerable",
+        "quantum_factor": 1.0
+      }
+    }
+  },
+  "baseline": {
+    "objective": 39.79826,
+    "node_mean": 31.809,
+    "path_mean": 72.062011,
+    "path_max": 84.616481,
+    "rotation_pressure": 4.564714,
+    "node_scores": {
+      "public-api": 64.125,
+      "identity": 43.2,
+      "vpn": 28.8,
+      "backup-signing": 21.0,
+      "database": 1.92
+    },
+    "path_risks": [
+      67.272351,
+      64.2972,
+      84.616481
+    ],
+    "paths": [
+      [
+        "public-api",
+        "backup-signing",
+        "database"
+      ],
+      [
+        "public-api",
+        "database"
+      ],
+      [
+        "public-api",
+        "identity",
+        "vpn",
+        "database"
+      ]
+    ]
+  },
+  "plans": {
+    "do_nothing": {
+      "strategy": "do_nothing",
+      "selected": [],
+      "cost": 0.0,
+      "objective": 39.79826,
+      "improvement": 0.0,
+      "improvement_per_cost": null
+    },
+    "flat_priority": {
+      "strategy": "flat_priority",
+      "selected": [
+        "identity",
+        "public-api"
+      ],
+      "cost": 2.5,
+      "objective": 11.286141,
+      "improvement": 28.512119,
+      "improvement_per_cost": 11.404848
+    },
+    "greedy_marginal": {
+      "strategy": "greedy_marginal",
+      "selected": [
+        "identity",
+        "public-api"
+      ],
+      "cost": 2.5,
+      "objective": 11.286141,
+      "improvement": 28.512119,
+      "improvement_per_cost": 11.404848
+    },
+    "path_aware": {
+      "strategy": "path_aware",
+      "selected": [
+        "identity",
+        "public-api"
+      ],
+      "cost": 2.5,
+      "objective": 11.286141,
+      "improvement": 28.512119,
+      "improvement_per_cost": 11.404848
+    }
+  },
+  "uncertainty": {
+    "do_nothing": {
+      "n": 4000,
+      "mean": 37.177613,
+      "stdev": 2.919636,
+      "p05": 32.230795,
+      "p50": 37.231254,
+      "p95": 41.905858
+    },
+    "flat_priority": {
+      "n": 4000,
+      "mean": 10.430767,
+      "stdev": 0.850134,
+      "p05": 9.0395,
+      "p50": 10.418188,
+      "p95": 11.841875
+    },
+    "greedy_marginal": {
+      "n": 4000,
+      "mean": 10.430767,
+      "stdev": 0.850134,
+      "p05": 9.0395,
+      "p50": 10.418188,
+      "p95": 11.841875
+    },
+    "path_aware": {
+      "n": 4000,
+      "mean": 10.430767,
+      "stdev": 0.850134,
+      "p05": 9.0395,
+      "p50": 10.418188,
+      "p95": 11.841875
+    }
+  },
+  "paired_comparisons": {
+    "flat_priority_vs_path_aware": {
+      "comparison": "flat_priority - path_aware",
+      "instances": 4000,
+      "path_aware_better": 0,
+      "flat_priority_better": 0,
+      "ties": 4000,
+      "tie_rate": 1.0,
+      "mean_delta": 0.0,
+      "mean_delta_ci95": [
+        0.0,
+        0.0
+      ],
+      "median_delta": 0.0,
+      "max_delta": 0.0,
+      "min_delta": 0.0,
+      "decisive_instances": 0,
+      "mean_delta_when_decisive": 0.0,
+      "note": "paired over shared Monte Carlo worlds; positive means path_aware scored lower (better) in that world"
+    },
+    "greedy_marginal_vs_path_aware": {
+      "comparison": "greedy_marginal - path_aware",
+      "instances": 4000,
+      "path_aware_better": 0,
+      "greedy_marginal_better": 0,
+      "ties": 4000,
+      "tie_rate": 1.0,
+      "mean_delta": 0.0,
+      "mean_delta_ci95": [
+        0.0,
+        0.0
+      ],
+      "median_delta": 0.0,
+      "max_delta": 0.0,
+      "min_delta": 0.0,
+      "decisive_instances": 0,
+      "mean_delta_when_decisive": 0.0,
+      "note": "paired over shared Monte Carlo worlds; positive means path_aware scored lower (better) in that world"
+    }
+  },
+  "pareto_frontier": [
+    {
+      "strategy": "path_aware",
+      "selected": [],
+      "cost": 0,
+      "objective": 39.79826,
+      "improvement": 0.0,
+      "improvement_per_cost": null
+    },
+    {
+      "strategy": "path_aware",
+      "selected": [
+        "identity"
+      ],
+      "cost": 1.0,
+      "objective": 34.207978,
+      "improvement": 5.590282,
+      "improvement_per_cost": 5.590282
+    },
+    {
+      "strategy": "path_aware",
+      "selected": [
+        "public-api"
+      ],
+      "cost": 1.5,
+      "objective": 18.603805,
+      "improvement": 21.194455,
+      "improvement_per_cost": 14.129637
+    },
+    {
+      "strategy": "path_aware",
+      "selected": [
+        "identity",
+        "public-api"
+      ],
+      "cost": 2.5,
+      "objective": 11.286141,
+      "improvement": 28.512119,
+      "improvement_per_cost": 11.404848
+    }
+  ],
+  "caveats": [
+    "Quantum factors and objective weights are uncalibrated hypotheses; a lower objective does not establish that a system is safer in reality.",
+    "path_aware minimises the reported objective over every budget-feasible plan, so it cannot score worse than any other strategy on that metric. See qshield.experiments.ablation for comparisons on held-out metrics.",
+    "Path risk treats hops as independent, which real infrastructure is not."
+  ]
+}

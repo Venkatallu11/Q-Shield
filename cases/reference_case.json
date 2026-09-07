@@ -1,0 +1,21 @@
+{
+  "budget": 3,
+  "entrypoints": ["public-api"],
+  "targets": ["database"],
+  "assets": [
+    {"name":"public-api","algorithm":"RSA-2048","sensitivity":0.9,"exposure":0.95,"data_lifetime_years":15,"dependency_count":8,"rotation_hours":24,"migration_cost":1.5,"business_criticality":0.9},
+    {"name":"identity","algorithm":"ED25519","sensitivity":0.9,"exposure":0.8,"data_lifetime_years":12,"dependency_count":6,"rotation_hours":8,"migration_cost":1.0,"business_criticality":0.9},
+    {"name":"vpn","algorithm":"X25519","sensitivity":0.8,"exposure":0.8,"data_lifetime_years":10,"dependency_count":5,"rotation_hours":12,"migration_cost":1.0,"business_criticality":0.8},
+    {"name":"backup-signing","algorithm":"ECDSA","sensitivity":1.0,"exposure":0.35,"data_lifetime_years":20,"dependency_count":2,"rotation_hours":72,"migration_cost":1.0,"business_criticality":0.95},
+    {"name":"database","algorithm":"AES-256","sensitivity":1.0,"exposure":0.4,"data_lifetime_years":15,"dependency_count":4,"rotation_hours":48,"migration_cost":0.5,"business_criticality":1.0}
+  ],
+  "edges": [
+    {"source":"public-api","target":"identity","reliability":0.95},
+    {"source":"identity","target":"vpn","reliability":0.9},
+    {"source":"vpn","target":"database","reliability":0.95},
+    {"source":"public-api","target":"database","reliability":0.25},
+    {"source":"public-api","target":"backup-signing","reliability":0.35},
+    {"source":"backup-signing","target":"database","reliability":0.8}
+  ],
+  "replacements": {"RSA-2048":"ML-KEM","X25519":"ML-KEM","ED25519":"ML-DSA","ECDSA":"ML-DSA"}
+}

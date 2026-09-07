@@ -1,0 +1,20 @@
+{
+  "experiment": "greedy_optimality_gap",
+  "question": "Does the tractable greedy planner recover the exact optimum?",
+  "design": {
+    "instances": 300,
+    "seed": 20260907
+  },
+  "identical_plan_chosen": 241,
+  "identical_plan_rate": 0.803333,
+  "optimality_gap": {
+    "n": 300,
+    "mean": 0.247524,
+    "stdev": 0.720596,
+    "p05": 0.0,
+    "p50": 0.0,
+    "p95": 1.580662
+  },
+  "max_gap": 4.813301,
+  "note": "gap is greedy_marginal objective minus the exhaustive optimum, so it is non-negative by construction; the question is its magnitude"
+}

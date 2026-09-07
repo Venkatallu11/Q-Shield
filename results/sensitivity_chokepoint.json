@@ -1,0 +1,495 @@
+{
+  "experiment": "weight_sensitivity",
+  "question": "Is the recommended plan stable under the uncalibrated weights?",
+  "design": {
+    "weightings_evaluated": 26,
+    "grid_deduplicated_on_simplex": true,
+    "reference_weights": [
+      0.55,
+      0.3,
+      0.15
+    ]
+  },
+  "distinct_plans": 1,
+  "modal_plan": {
+    "selected": [
+      "service-mesh-ca"
+    ],
+    "chosen_under": 26,
+    "share": 1.0,
+    "regret_vs_per_weighting_optimum": {
+      "n": 26,
+      "mean": -0.0,
+      "stdev": 0.0,
+      "p05": -0.0,
+      "p50": 0.0,
+      "p95": 0.0
+    }
+  },
+  "reference_plan": {
+    "selected": [
+      "service-mesh-ca"
+    ],
+    "regret_vs_per_weighting_optimum": {
+      "n": 26,
+      "mean": -0.0,
+      "stdev": 0.0,
+      "p05": -0.0,
+      "p50": 0.0,
+      "p95": 0.0
+    },
+    "max_regret": 0.0
+  },
+  "plan_frequency": [
+    {
+      "selected": [
+        "service-mesh-ca"
+      ],
+      "weightings": 26
+    }
+  ],
+  "per_weighting": [
+    {
+      "weights": [
+        0.2,
+        0.2,
+        0.1
+      ],
+      "normalized": [
+        0.4,
+        0.4,
+        0.2
+      ],
+      "selected": [
+        "service-mesh-ca"
+      ],
+      "cost": 1.5,
+      "objective": 7.23051
+    },
+    {
+      "weights": [
+        0.2,
+        0.2,
+        0.3
+      ],
+      "normalized": [
+        0.285714286,
+        0.285714286,
+        0.428571429
+      ],
+      "selected": [
+        "service-mesh-ca"
+      ],
+      "cost": 1.5,
+      "objective": 6.151489
+    },
+    {
+      "weights": [
+        0.2,
+        0.2,
+        0.5
+      ],
+      "normalized": [
+        0.222222222,
+        0.222222222,
+        0.555555556
+      ],
+      "selected": [
+        "service-mesh-ca"
+      ],
+      "cost": 1.5,
+      "objective": 5.552033
+    },
+    {
+      "weights": [
+        0.2,
+        0.4,
+        0.1
+      ],
+      "normalized": [
+        0.285714286,
+        0.571428571,
+        0.142857143
+      ],
+      "selected": [
+        "service-mesh-ca"
+      ],
+      "cost": 1.5,
+      "objective": 7.575051
+    },
+    {
+      "weights": [
+        0.2,
+        0.4,
+        0.3
+      ],
+      "normalized": [
+        0.222222222,
+        0.444444444,
+        0.333333333
+      ],
+      "selected": [
+        "service-mesh-ca"
+      ],
+      "cost": 1.5,
+      "objective": 6.659248
+    },
+    {
+      "weights": [
+        0.2,
+        0.4,
+        0.5
+      ],
+      "normalized": [
+        0.181818182,
+        0.363636364,
+        0.454545455
+      ],
+      "selected": [
+        "service-mesh-ca"
+      ],
+      "cost": 1.5,
+      "objective": 6.076464
+    },
+    {
+      "weights": [
+        0.2,
+        0.6,
+        0.1
+      ],
+      "normalized": [
+        0.222222222,
+        0.666666667,
+        0.111111111
+      ],
+      "selected": [
+        "service-mesh-ca"
+      ],
+      "cost": 1.5,
+      "objective": 7.766463
+    },
+    {
+      "weights": [
+        0.2,
+        0.6,
+        0.3
+      ],
+      "normalized": [
+        0.181818182,
+        0.545454545,
+        0.272727273
+      ],
+      "selected": [
+        "service-mesh-ca"
+      ],
+      "cost": 1.5,
+      "objective": 6.982368
+    },
+    {
+      "weights": [
+        0.2,
+        0.6,
+        0.5
+      ],
+      "normalized": [
+        0.153846154,
+        0.461538462,
+        0.384615385
+      ],
+      "selected": [
+        "service-mesh-ca"
+      ],
+      "cost": 1.5,
+      "objective": 6.439532
+    },
+    {
+      "weights": [
+        0.4,
+        0.2,
+        0.1
+      ],
+      "normalized": [
+        0.571428571,
+        0.285714286,
+        0.142857143
+      ],
+      "selected": [
+        "service-mesh-ca"
+      ],
+      "cost": 1.5,
+      "objective": 7.425478
+    },
+    {
+      "weights": [
+        0.4,
+        0.2,
+        0.3
+      ],
+      "normalized": [
+        0.444444444,
+        0.222222222,
+        0.333333333
+      ],
+      "selected": [
+        "service-mesh-ca"
+      ],
+      "cost": 1.5,
+      "objective": 6.542914
+    },
+    {
+      "weights": [
+        0.4,
+        0.2,
+        0.5
+      ],
+      "normalized": [
+        0.363636364,
+        0.181818182,
+        0.454545455
+      ],
+      "selected": [
+        "service-mesh-ca"
+      ],
+      "cost": 1.5,
+      "objective": 5.981282
+    },
+    {
+      "weights": [
+        0.4,
+        0.4,
+        0.1
+      ],
+      "normalized": [
+        0.444444444,
+        0.444444444,
+        0.111111111
+      ],
+      "selected": [
+        "service-mesh-ca"
+      ],
+      "cost": 1.5,
+      "objective": 7.650129
+    },
+    {
+      "weights": [
+        0.4,
+        0.4,
+        0.3
+      ],
+      "normalized": [
+        0.363636364,
+        0.363636364,
+        0.272727273
+      ],
+      "selected": [
+        "service-mesh-ca"
+      ],
+      "cost": 1.5,
+      "objective": 6.887185
+    },
+    {
+      "weights": [
+        0.4,
+        0.4,
+        0.5
+      ],
+      "normalized": [
+        0.307692308,
+        0.307692308,
+        0.384615385
+      ],
+      "selected": [
+        "service-mesh-ca"
+      ],
+      "cost": 1.5,
+      "objective": 6.358993
+    },
+    {
+      "weights": [
+        0.4,
+        0.6,
+        0.1
+      ],
+      "normalized": [
+        0.363636364,
+        0.545454545,
+        0.090909091
+      ],
+      "selected": [
+        "service-mesh-ca"
+      ],
+      "cost": 1.5,
+      "objective": 7.793088
+    },
+    {
+      "weights": [
+        0.4,
+        0.6,
+        0.3
+      ],
+      "normalized": [
+        0.307692308,
+        0.461538462,
+        0.230769231
+      ],
+      "selected": [
+        "service-mesh-ca"
+      ],
+      "cost": 1.5,
+      "objective": 7.125526
+    },
+    {
+      "weights": [
+        0.4,
+        0.6,
+        0.5
+      ],
+      "normalized": [
+        0.266666667,
+        0.4,
+        0.333333333
+      ],
+      "selected": [
+        "service-mesh-ca"
+      ],
+      "cost": 1.5,
+      "objective": 6.635981
+    },
+    {
+      "weights": [
+        0.6,
+        0.2,
+        0.1
+      ],
+      "normalized": [
+        0.666666667,
+        0.222222222,
+        0.111111111
+      ],
+      "selected": [
+        "service-mesh-ca"
+      ],
+      "cost": 1.5,
+      "objective": 7.533794
+    },
+    {
+      "weights": [
+        0.6,
+        0.2,
+        0.3
+      ],
+      "normalized": [
+        0.545454545,
+        0.181818182,
+        0.272727273
+      ],
+      "selected": [
+        "service-mesh-ca"
+      ],
+      "cost": 1.5,
+      "objective": 6.792002
+    },
+    {
+      "weights": [
+        0.6,
+        0.2,
+        0.5
+      ],
+      "normalized": [
+        0.461538462,
+        0.153846154,
+        0.384615385
+      ],
+      "selected": [
+        "service-mesh-ca"
+      ],
+      "cost": 1.5,
+      "objective": 6.278454
+    },
+    {
+      "weights": [
+        0.6,
+        0.4,
+        0.1
+      ],
+      "normalized": [
+        0.545454545,
+        0.363636364,
+        0.090909091
+      ],
+      "selected": [
+        "service-mesh-ca"
+      ],
+      "cost": 1.5,
+      "objective": 7.697905
+    },
+    {
+      "weights": [
+        0.6,
+        0.4,
+        0.3
+      ],
+      "normalized": [
+        0.461538462,
+        0.307692308,
+        0.230769231
+      ],
+      "selected": [
+        "service-mesh-ca"
+      ],
+      "cost": 1.5,
+      "objective": 7.044987
+    },
+    {
+      "weights": [
+        0.6,
+        0.4,
+        0.5
+      ],
+      "normalized": [
+        0.4,
+        0.266666667,
+        0.333333333
+      ],
+      "selected": [
+        "service-mesh-ca"
+      ],
+      "cost": 1.5,
+      "objective": 6.566181
+    },
+    {
+      "weights": [
+        0.6,
+        0.6,
+        0.1
+      ],
+      "normalized": [
+        0.461538462,
+        0.461538462,
+        0.076923077
+      ],
+      "selected": [
+        "service-mesh-ca"
+      ],
+      "cost": 1.5,
+      "objective": 7.811521
+    },
+    {
+      "weights": [
+        0.6,
+        0.6,
+        0.5
+      ],
+      "normalized": [
+        0.352941176,
+        0.352941176,
+        0.294117647
+      ],
+      "selected": [
+        "service-mesh-ca"
+      ],
+      "cost": 1.5,
+      "objective": 6.786207
+    }
+  ]
+}

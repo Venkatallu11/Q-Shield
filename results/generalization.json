@@ -1,0 +1,1779 @@
+{
+  "experiment": "generalization",
+  "question": "Do plans chosen under the default objective weights remain better when the weights are misspecified?",
+  "design": {
+    "instances": 300,
+    "train_weights": [
+      0.55,
+      0.3,
+      0.15
+    ],
+    "eval_weightings": 26,
+    "grid_deduplicated_on_simplex": true,
+    "structural_guarantee": "none: under eval weights different from the training weights, the exhaustive planner minimises a different function than it is scored on, so every arm can lose",
+    "generator": {
+      "nodes": 7,
+      "cross_links": 7,
+      "budget_low": 1.5,
+      "budget_high": 4.0,
+      "reliability_low": 0.2,
+      "reliability_high": 1.0,
+      "backbone_reliability_low": 0.7
+    },
+    "seed": 20260907
+  },
+  "pooled": {
+    "node_only_vs_path_aware": {
+      "comparison": "node_only - path_aware",
+      "instances": 7800,
+      "path_aware_better": 2289,
+      "node_only_better": 77,
+      "ties": 5434,
+      "tie_rate": 0.696667,
+      "mean_delta": 0.757945,
+      "mean_delta_ci95": [
+        0.719148,
+        0.796329
+      ],
+      "median_delta": 0.0,
+      "max_delta": 16.494678,
+      "min_delta": -1.356094,
+      "decisive_instances": 2366,
+      "mean_delta_when_decisive": 2.498721,
+      "mean_delta_when_decisive_ci95": [
+        2.40269,
+        2.594665
+      ],
+      "win_rate_given_decisive": 0.967456,
+      "mean_delta_ci95_pooled": [
+        0.719148,
+        0.796329
+      ]
+    },
+    "flat_priority_vs_path_aware": {
+      "comparison": "flat_priority - path_aware",
+      "instances": 7800,
+      "path_aware_better": 2750,
+      "flat_priority_better": 84,
+      "ties": 4966,
+      "tie_rate": 0.636667,
+      "mean_delta": 0.988562,
+      "mean_delta_ci95": [
+        0.946559,
+        1.032102
+      ],
+      "median_delta": 0.0,
+      "max_delta": 17.779872,
+      "min_delta": -1.356094,
+      "decisive_instances": 2834,
+      "mean_delta_when_decisive": 2.720812,
+      "mean_delta_when_decisive_ci95": [
+        2.635867,
+        2.807481
+      ],
+      "win_rate_given_decisive": 0.97036,
+      "mean_delta_ci95_pooled": [
+        0.946559,
+        1.032102
+      ]
+    }
+  },
+  "robustness": {
+    "node_only_vs_path_aware": {
+      "weightings": 26,
+      "path_aware_better_ci_excludes_zero": 26,
+      "path_aware_worse_ci_excludes_zero": 0,
+      "inconclusive": 0,
+      "fraction_favourable": 1.0,
+      "mean_delta_across_weightings": {
+        "n": 26,
+        "mean": 0.757946,
+        "stdev": 0.356583,
+        "p05": 0.259088,
+        "p50": 0.742932,
+        "p95": 1.293627
+      }
+    },
+    "flat_priority_vs_path_aware": {
+      "weightings": 26,
+      "path_aware_better_ci_excludes_zero": 26,
+      "path_aware_worse_ci_excludes_zero": 0,
+      "inconclusive": 0,
+      "fraction_favourable": 1.0,
+      "mean_delta_across_weightings": {
+        "n": 26,
+        "mean": 0.988562,
+        "stdev": 0.399809,
+        "p05": 0.433918,
+        "p50": 0.973338,
+        "p95": 1.589707
+      }
+    }
+  },
+  "per_weighting": [
+    {
+      "eval_weights": [
+        0.2,
+        0.2,
+        0.1
+      ],
+      "normalized": [
+        0.4,
+        0.4,
+        0.2
+      ],
+      "is_training_point": false,
+      "mean_objective": {
+        "flat_priority": 17.607394,
+        "node_only": 17.359716,
+        "path_aware": 16.520146
+      },
+      "node_only_vs_path_aware": {
+        "comparison": "node_only - path_aware",
+        "instances": 300,
+        "path_aware_better": 91,
+        "node_only_better": 0,
+        "ties": 209,
+        "tie_rate": 0.696667,
+        "mean_delta": 0.83957,
+        "mean_delta_ci95": [
+          0.651431,
+          1.038085
+        ],
+        "median_delta": 0.0,
+        "max_delta": 9.451682,
+        "min_delta": 0.0,
+        "decisive_instances": 91,
+        "mean_delta_when_decisive": 2.767813,
+        "mean_delta_when_decisive_ci95": [
+          2.349866,
+          3.20121
+        ],
+        "win_rate_given_decisive": 1.0
+      },
+      "flat_priority_vs_path_aware": {
+        "comparison": "flat_priority - path_aware",
+        "instances": 300,
+        "path_aware_better": 108,
+        "flat_priority_better": 1,
+        "ties": 191,
+        "tie_rate": 0.636667,
+        "mean_delta": 1.087248,
+        "mean_delta_ci95": [
+          0.866855,
+          1.312649
+        ],
+        "median_delta": 0.0,
+        "max_delta": 10.122232,
+        "min_delta": -0.230886,
+        "decisive_instances": 109,
+        "mean_delta_when_decisive": 2.992425,
+        "mean_delta_when_decisive_ci95": [
+          2.596651,
+          3.390918
+        ],
+        "win_rate_given_decisive": 0.990826
+      }
+    },
+    {
+      "eval_weights": [
+        0.2,
+        0.2,
+        0.3
+      ],
+      "normalized": [
+        0.285714286,
+        0.285714286,
+        0.428571429
+      ],
+      "is_training_point": false,
+      "mean_objective": {
+        "flat_priority": 13.33099,
+        "node_only": 13.138657,
+        "path_aware": 12.563867
+      },
+      "node_only_vs_path_aware": {
+        "comparison": "node_only - path_aware",
+        "instances": 300,
+        "path_aware_better": 90,
+        "node_only_better": 1,
+        "ties": 209,
+        "tie_rate": 0.696667,
+        "mean_delta": 0.57479,
+        "mean_delta_ci95": [
+          0.44552,
+          0.708939
+        ],
+        "median_delta": 0.0,
+        "max_delta": 6.307105,
+        "min_delta": -0.066485,
+        "decisive_instances": 91,
+        "mean_delta_when_decisive": 1.894913,
+        "mean_delta_when_decisive_ci95": [
+          1.606016,
+          2.18672
+        ],
+        "win_rate_given_decisive": 0.989011
+      },
+      "flat_priority_vs_path_aware": {
+        "comparison": "flat_priority - path_aware",
+        "instances": 300,
+        "path_aware_better": 108,
+        "flat_priority_better": 1,
+        "ties": 191,
+        "tie_rate": 0.636667,
+        "mean_delta": 0.767123,
+        "mean_delta_ci95": [
+          0.608672,
+          0.928108
+        ],
+        "median_delta": 0.0,
+        "max_delta": 6.546456,
+        "min_delta": -0.722402,
+        "decisive_instances": 109,
+        "mean_delta_when_decisive": 2.111347,
+        "mean_delta_when_decisive_ci95": [
+          1.822677,
+          2.405509
+        ],
+        "win_rate_given_decisive": 0.990826
+      }
+    },
+    {
+      "eval_weights": [
+        0.2,
+        0.2,
+        0.5
+      ],
+      "normalized": [
+        0.222222222,
+        0.222222222,
+        0.555555556
+      ],
+      "is_training_point": false,
+      "mean_objective": {
+        "flat_priority": 10.955209,
+        "node_only": 10.793625,
+        "path_aware": 10.365934
+      },
+      "node_only_vs_path_aware": {
+        "comparison": "node_only - path_aware",
+        "instances": 300,
+        "path_aware_better": 88,
+        "node_only_better": 3,
+        "ties": 209,
+        "tie_rate": 0.696667,
+        "mean_delta": 0.427691,
+        "mean_delta_ci95": [
+          0.328019,
+          0.531055
+        ],
+        "median_delta": 0.0,
+        "max_delta": 4.828608,
+        "min_delta": -0.125526,
+        "decisive_instances": 91,
+        "mean_delta_when_decisive": 1.409969,
+        "mean_delta_when_decisive_ci95": [
+          1.185653,
+          1.645469
+        ],
+        "win_rate_given_decisive": 0.967033
+      },
+      "flat_priority_vs_path_aware": {
+        "comparison": "flat_priority - path_aware",
+        "instances": 300,
+        "path_aware_better": 104,
+        "flat_priority_better": 5,
+        "ties": 191,
+        "tie_rate": 0.636667,
+        "mean_delta": 0.589275,
+        "mean_delta_ci95": [
+          0.464808,
+          0.717795
+        ],
+        "median_delta": 0.0,
+        "max_delta": 5.482335,
+        "min_delta": -0.995466,
+        "decisive_instances": 109,
+        "mean_delta_when_decisive": 1.621859,
+        "mean_delta_when_decisive_ci95": [
+          1.384653,
+          1.867661
+        ],
+        "win_rate_given_decisive": 0.954128
+      }
+    },
+    {
+      "eval_weights": [
+        0.2,
+        0.4,
+        0.1
+      ],
+      "normalized": [
+        0.285714286,
+        0.571428571,
+        0.142857143
+      ],
+      "is_training_point": false,
+      "mean_objective": {
+        "flat_priority": 22.232323,
+        "node_only": 21.93109,
+        "path_aware": 20.62701
+      },
+      "node_only_vs_path_aware": {
+        "comparison": "node_only - path_aware",
+        "instances": 300,
+        "path_aware_better": 91,
+        "node_only_better": 0,
+        "ties": 209,
+        "tie_rate": 0.696667,
+        "mean_delta": 1.30408,
+        "mean_delta_ci95": [
+          1.016937,
+          1.610523
+        ],
+        "median_delta": 0.0,
+        "max_delta": 13.979322,
+        "min_delta": 0.0,
+        "decisive_instances": 91,
+        "mean_delta_when_decisive": 4.299166,
+        "mean_delta_when_decisive_ci95": [
+          3.672245,
+          4.94525
+        ],
+        "win_rate_given_decisive": 1.0
+      },
+      "flat_priority_vs_path_aware": {
+        "comparison": "flat_priority - path_aware",
+        "instances": 300,
+        "path_aware_better": 108,
+        "flat_priority_better": 1,
+        "ties": 191,
+        "tie_rate": 0.636667,
+        "mean_delta": 1.605313,
+        "mean_delta_ci95": [
+          1.287137,
+          1.928928
+        ],
+        "median_delta": 0.0,
+        "max_delta": 15.045001,
+        "min_delta": -0.616211,
+        "decisive_instances": 109,
+        "mean_delta_when_decisive": 4.418293,
+        "mean_delta_when_decisive_ci95": [
+          3.835787,
+          4.988642
+        ],
+        "win_rate_given_decisive": 0.990826
+      }
+    },
+    {
+      "eval_weights": [
+        0.2,
+        0.4,
+        0.3
+      ],
+      "normalized": [
+        0.222222222,
+        0.444444444,
+        0.333333333
+      ],
+      "is_training_point": false,
+      "mean_objective": {
+        "flat_priority": 17.878469,
+        "node_only": 17.632184,
+        "path_aware": 16.637267
+      },
+      "node_only_vs_path_aware": {
+        "comparison": "node_only - path_aware",
+        "instances": 300,
+        "path_aware_better": 91,
+        "node_only_better": 0,
+        "ties": 209,
+        "tie_rate": 0.696667,
+        "mean_delta": 0.994916,
+        "mean_delta_ci95": [
+          0.776299,
+          1.224628
+        ],
+        "median_delta": 0.0,
+        "max_delta": 10.527398,
+        "min_delta": 0.0,
+        "decisive_instances": 91,
+        "mean_delta_when_decisive": 3.279944,
+        "mean_delta_when_decisive_ci95": [
+          2.816919,
+          3.766885
+        ],
+        "win_rate_given_decisive": 1.0
+      },
+      "flat_priority_vs_path_aware": {
+        "comparison": "flat_priority - path_aware",
+        "instances": 300,
+        "path_aware_better": 108,
+        "flat_priority_better": 1,
+        "ties": 191,
+        "tie_rate": 0.636667,
+        "mean_delta": 1.241201,
+        "mean_delta_ci95": [
+          0.994122,
+          1.489212
+        ],
+        "median_delta": 0.0,
+        "max_delta": 11.169893,
+        "min_delta": -0.912874,
+        "decisive_instances": 109,
+        "mean_delta_when_decisive": 3.41615,
+        "mean_delta_when_decisive_ci95": [
+          2.965681,
+          3.855286
+        ],
+        "win_rate_given_decisive": 0.990826
+      }
+    },
+    {
+      "eval_weights": [
+        0.2,
+        0.4,
+        0.5
+      ],
+      "normalized": [
+        0.181818182,
+        0.363636364,
+        0.454545455
+      ],
+      "is_training_point": false,
+      "mean_objective": {
+        "flat_priority": 15.107834,
+        "node_only": 14.896516,
+        "path_aware": 14.09834
+      },
+      "node_only_vs_path_aware": {
+        "comparison": "node_only - path_aware",
+        "instances": 300,
+        "path_aware_better": 90,
+        "node_only_better": 1,
+        "ties": 209,
+        "tie_rate": 0.696667,
+        "mean_delta": 0.798175,
+        "mean_delta_ci95": [
+          0.623975,
+          0.978701
+        ],
+        "median_delta": 0.0,
+        "max_delta": 8.330718,
+        "min_delta": -0.036683,
+        "decisive_instances": 91,
+        "mean_delta_when_decisive": 2.631347,
+        "mean_delta_when_decisive_ci95": [
+          2.258375,
+          3.005724
+        ],
+        "win_rate_given_decisive": 0.989011
+      },
+      "flat_priority_vs_path_aware": {
+        "comparison": "flat_priority - path_aware",
+        "instances": 300,
+        "path_aware_better": 108,
+        "flat_priority_better": 1,
+        "ties": 191,
+        "tie_rate": 0.636667,
+        "mean_delta": 1.009494,
+        "mean_delta_ci95": [
+          0.808184,
+          1.214358
+        ],
+        "median_delta": 0.0,
+        "max_delta": 8.703915,
+        "min_delta": -1.101658,
+        "decisive_instances": 109,
+        "mean_delta_when_decisive": 2.778423,
+        "mean_delta_when_decisive_ci95": [
+          2.408747,
+          3.140742
+        ],
+        "win_rate_given_decisive": 0.990826
+      }
+    },
+    {
+      "eval_weights": [
+        0.2,
+        0.6,
+        0.1
+      ],
+      "normalized": [
+        0.222222222,
+        0.666666667,
+        0.111111111
+      ],
+      "is_training_point": false,
+      "mean_objective": {
+        "flat_priority": 24.801728,
+        "node_only": 24.470743,
+        "path_aware": 22.908601
+      },
+      "node_only_vs_path_aware": {
+        "comparison": "node_only - path_aware",
+        "instances": 300,
+        "path_aware_better": 91,
+        "node_only_better": 0,
+        "ties": 209,
+        "tie_rate": 0.696667,
+        "mean_delta": 1.562142,
+        "mean_delta_ci95": [
+          1.21852,
+          1.925238
+        ],
+        "median_delta": 0.0,
+        "max_delta": 16.494678,
+        "min_delta": 0.0,
+        "decisive_instances": 91,
+        "mean_delta_when_decisive": 5.149918,
+        "mean_delta_when_decisive_ci95": [
+          4.404921,
+          5.921685
+        ],
+        "win_rate_given_decisive": 1.0
+      },
+      "flat_priority_vs_path_aware": {
+        "comparison": "flat_priority - path_aware",
+        "instances": 300,
+        "path_aware_better": 107,
+        "flat_priority_better": 2,
+        "ties": 191,
+        "tie_rate": 0.636667,
+        "mean_delta": 1.893127,
+        "mean_delta_ci95": [
+          1.519408,
+          2.274757
+        ],
+        "median_delta": 0.0,
+        "max_delta": 17.779872,
+        "min_delta": -0.830281,
+        "decisive_instances": 109,
+        "mean_delta_when_decisive": 5.210442,
+        "mean_delta_when_decisive_ci95": [
+          4.536858,
+          5.890169
+        ],
+        "win_rate_given_decisive": 0.981651
+      }
+    },
+    {
+      "eval_weights": [
+        0.2,
+        0.6,
+        0.3
+      ],
+      "normalized": [
+        0.181818182,
+        0.545454545,
+        0.272727273
+      ],
+      "is_training_point": false,
+      "mean_objective": {
+        "flat_priority": 20.772319,
+        "node_only": 20.4917,
+        "path_aware": 19.229431
+      },
+      "node_only_vs_path_aware": {
+        "comparison": "node_only - path_aware",
+        "instances": 300,
+        "path_aware_better": 91,
+        "node_only_better": 0,
+        "ties": 209,
+        "tie_rate": 0.696667,
+        "mean_delta": 1.262269,
+        "mean_delta_ci95": [
+          0.984711,
+          1.556261
+        ],
+        "median_delta": 0.0,
+        "max_delta": 13.213038,
+        "min_delta": 0.0,
+        "decisive_instances": 91,
+        "mean_delta_when_decisive": 4.161327,
+        "mean_delta_when_decisive_ci95": [
+          3.572296,
+          4.772154
+        ],
+        "win_rate_given_decisive": 1.0
+      },
+      "flat_priority_vs_path_aware": {
+        "comparison": "flat_priority - path_aware",
+        "instances": 300,
+        "path_aware_better": 108,
+        "flat_priority_better": 1,
+        "ties": 191,
+        "tie_rate": 0.636667,
+        "mean_delta": 1.542888,
+        "mean_delta_ci95": [
+          1.235077,
+          1.853073
+        ],
+        "median_delta": 0.0,
+        "max_delta": 14.11208,
+        "min_delta": -1.034083,
+        "decisive_instances": 109,
+        "mean_delta_when_decisive": 4.24648,
+        "mean_delta_when_decisive_ci95": [
+          3.685509,
+          4.791984
+        ],
+        "win_rate_given_decisive": 0.990826
+      }
+    },
+    {
+      "eval_weights": [
+        0.2,
+        0.6,
+        0.5
+      ],
+      "normalized": [
+        0.153846154,
+        0.461538462,
+        0.384615385
+      ],
+      "is_training_point": false,
+      "mean_objective": {
+        "flat_priority": 17.982728,
+        "node_only": 17.736979,
+        "path_aware": 16.682314
+      },
+      "node_only_vs_path_aware": {
+        "comparison": "node_only - path_aware",
+        "instances": 300,
+        "path_aware_better": 91,
+        "node_only_better": 0,
+        "ties": 209,
+        "tie_rate": 0.696667,
+        "mean_delta": 1.054665,
+        "mean_delta_ci95": [
+          0.824312,
+          1.297937
+        ],
+        "median_delta": 0.0,
+        "max_delta": 10.941134,
+        "min_delta": 0.0,
+        "decisive_instances": 91,
+        "mean_delta_when_decisive": 3.476917,
+        "mean_delta_when_decisive_ci95": [
+          2.99531,
+          3.984255
+        ],
+        "win_rate_given_decisive": 1.0
+      },
+      "flat_priority_vs_path_aware": {
+        "comparison": "flat_priority - path_aware",
+        "instances": 300,
+        "path_aware_better": 108,
+        "flat_priority_better": 1,
+        "ties": 191,
+        "tie_rate": 0.636667,
+        "mean_delta": 1.300414,
+        "mean_delta_ci95": [
+          1.040847,
+          1.560976
+        ],
+        "median_delta": 0.0,
+        "max_delta": 11.572839,
+        "min_delta": -1.175176,
+        "decisive_instances": 109,
+        "mean_delta_when_decisive": 3.579121,
+        "mean_delta_when_decisive_ci95": [
+          3.10526,
+          4.035046
+        ],
+        "win_rate_given_decisive": 0.990826
+      }
+    },
+    {
+      "eval_weights": [
+        0.4,
+        0.2,
+        0.1
+      ],
+      "normalized": [
+        0.571428571,
+        0.285714286,
+        0.142857143
+      ],
+      "is_training_point": false,
+      "mean_objective": {
+        "flat_priority": 15.120667,
+        "node_only": 14.898871,
+        "path_aware": 14.391422
+      },
+      "node_only_vs_path_aware": {
+        "comparison": "node_only - path_aware",
+        "instances": 300,
+        "path_aware_better": 90,
+        "node_only_better": 1,
+        "ties": 209,
+        "tie_rate": 0.696667,
+        "mean_delta": 0.507449,
+        "mean_delta_ci95": [
+          0.385952,
+          0.636936
+        ],
+        "median_delta": 0.0,
+        "max_delta": 6.496331,
+        "min_delta": -0.011528,
+        "decisive_instances": 91,
+        "mean_delta_when_decisive": 1.672909,
+        "mean_delta_when_decisive_ci95": [
+          1.36938,
+          1.986324
+        ],
+        "win_rate_given_decisive": 0.989011
+      },
+      "flat_priority_vs_path_aware": {
+        "comparison": "flat_priority - path_aware",
+        "instances": 300,
+        "path_aware_better": 108,
+        "flat_priority_better": 1,
+        "ties": 191,
+        "tie_rate": 0.636667,
+        "mean_delta": 0.729245,
+        "mean_delta_ci95": [
+          0.57485,
+          0.887777
+        ],
+        "median_delta": 0.0,
+        "max_delta": 6.987352,
+        "min_delta": -0.011528,
+        "decisive_instances": 109,
+        "mean_delta_when_decisive": 2.007096,
+        "mean_delta_when_decisive_ci95": [
+          1.717752,
+          2.308276
+        ],
+        "win_rate_given_decisive": 0.990826
+      }
+    },
+    {
+      "eval_weights": [
+        0.4,
+        0.2,
+        0.3
+      ],
+      "normalized": [
+        0.444444444,
+        0.222222222,
+        0.333333333
+      ],
+      "is_training_point": false,
+      "mean_objective": {
+        "flat_priority": 12.347181,
+        "node_only": 12.16268,
+        "path_aware": 11.787366
+      },
+      "node_only_vs_path_aware": {
+        "comparison": "node_only - path_aware",
+        "instances": 300,
+        "path_aware_better": 86,
+        "node_only_better": 5,
+        "ties": 209,
+        "tie_rate": 0.696667,
+        "mean_delta": 0.375314,
+        "mean_delta_ci95": [
+          0.283467,
+          0.471068
+        ],
+        "median_delta": 0.0,
+        "max_delta": 4.796875,
+        "min_delta": -0.471755,
+        "decisive_instances": 91,
+        "mean_delta_when_decisive": 1.237299,
+        "mean_delta_when_decisive_ci95": [
+          1.007477,
+          1.468647
+        ],
+        "win_rate_given_decisive": 0.945055
+      },
+      "flat_priority_vs_path_aware": {
+        "comparison": "flat_priority - path_aware",
+        "instances": 300,
+        "path_aware_better": 104,
+        "flat_priority_better": 5,
+        "ties": 191,
+        "tie_rate": 0.636667,
+        "mean_delta": 0.559815,
+        "mean_delta_ci95": [
+          0.438619,
+          0.685002
+        ],
+        "median_delta": 0.0,
+        "max_delta": 5.448758,
+        "min_delta": -0.471755,
+        "decisive_instances": 109,
+        "mean_delta_when_decisive": 1.540775,
+        "mean_delta_when_decisive_ci95": [
+          1.299725,
+          1.782515
+        ],
+        "win_rate_given_decisive": 0.954128
+      }
+    },
+    {
+      "eval_weights": [
+        0.4,
+        0.2,
+        0.5
+      ],
+      "normalized": [
+        0.363636364,
+        0.181818182,
+        0.454545455
+      ],
+      "is_training_point": false,
+      "mean_objective": {
+        "flat_priority": 10.582235,
+        "node_only": 10.421467,
+        "path_aware": 10.130239
+      },
+      "node_only_vs_path_aware": {
+        "comparison": "node_only - path_aware",
+        "instances": 300,
+        "path_aware_better": 79,
+        "node_only_better": 12,
+        "ties": 209,
+        "tie_rate": 0.696667,
+        "mean_delta": 0.291228,
+        "mean_delta_ci95": [
+          0.214805,
+          0.369823
+        ],
+        "median_delta": 0.0,
+        "max_delta": 3.876167,
+        "min_delta": -0.780445,
+        "decisive_instances": 91,
+        "mean_delta_when_decisive": 0.960093,
+        "mean_delta_when_decisive_ci95": [
+          0.760145,
+          1.158595
+        ],
+        "win_rate_given_decisive": 0.868132
+      },
+      "flat_priority_vs_path_aware": {
+        "comparison": "flat_priority - path_aware",
+        "instances": 300,
+        "path_aware_better": 96,
+        "flat_priority_better": 13,
+        "ties": 191,
+        "tie_rate": 0.636667,
+        "mean_delta": 0.451996,
+        "mean_delta_ci95": [
+          0.350296,
+          0.55911
+        ],
+        "median_delta": 0.0,
+        "max_delta": 4.800029,
+        "min_delta": -0.780445,
+        "decisive_instances": 109,
+        "mean_delta_when_decisive": 1.244025,
+        "mean_delta_when_decisive_ci95": [
+          1.035087,
+          1.46614
+        ],
+        "win_rate_given_decisive": 0.880734
+      }
+    },
+    {
+      "eval_weights": [
+        0.4,
+        0.4,
+        0.1
+      ],
+      "normalized": [
+        0.444444444,
+        0.444444444,
+        0.111111111
+      ],
+      "is_training_point": false,
+      "mean_objective": {
+        "flat_priority": 19.27044,
+        "node_only": 19.001239,
+        "path_aware": 18.058699
+      },
+      "node_only_vs_path_aware": {
+        "comparison": "node_only - path_aware",
+        "instances": 300,
+        "path_aware_better": 91,
+        "node_only_better": 0,
+        "ties": 209,
+        "tie_rate": 0.696667,
+        "mean_delta": 0.94254,
+        "mean_delta_ci95": [
+          0.72995,
+          1.166924
+        ],
+        "median_delta": 0.0,
+        "max_delta": 10.674574,
+        "min_delta": 0.0,
+        "decisive_instances": 91,
+        "mean_delta_when_decisive": 3.107274,
+        "mean_delta_when_decisive_ci95": [
+          2.630831,
+          3.598363
+        ],
+        "win_rate_given_decisive": 1.0
+      },
+      "flat_priority_vs_path_aware": {
+        "comparison": "flat_priority - path_aware",
+        "instances": 300,
+        "path_aware_better": 108,
+        "flat_priority_better": 1,
+        "ties": 191,
+        "tie_rate": 0.636667,
+        "mean_delta": 1.211741,
+        "mean_delta_ci95": [
+          0.967653,
+          1.461685
+        ],
+        "median_delta": 0.0,
+        "max_delta": 11.512812,
+        "min_delta": -0.039741,
+        "decisive_instances": 109,
+        "mean_delta_when_decisive": 3.335067,
+        "mean_delta_when_decisive_ci95": [
+          2.894075,
+          3.777472
+        ],
+        "win_rate_given_decisive": 0.990826
+      }
+    },
+    {
+      "eval_weights": [
+        0.4,
+        0.4,
+        0.3
+      ],
+      "normalized": [
+        0.363636364,
+        0.363636364,
+        0.272727273
+      ],
+      "is_training_point": false,
+      "mean_objective": {
+        "flat_priority": 16.24672,
+        "node_only": 16.016652,
+        "path_aware": 15.26133
+      },
+      "node_only_vs_path_aware": {
+        "comparison": "node_only - path_aware",
+        "instances": 300,
+        "path_aware_better": 91,
+        "node_only_better": 0,
+        "ties": 209,
+        "tie_rate": 0.696667,
+        "mean_delta": 0.755322,
+        "mean_delta_ci95": [
+          0.586971,
+          0.933642
+        ],
+        "median_delta": 0.0,
+        "max_delta": 8.451135,
+        "min_delta": 0.0,
+        "decisive_instances": 91,
+        "mean_delta_when_decisive": 2.490072,
+        "mean_delta_when_decisive_ci95": [
+          2.116176,
+          2.882198
+        ],
+        "win_rate_given_decisive": 1.0
+      },
+      "flat_priority_vs_path_aware": {
+        "comparison": "flat_priority - path_aware",
+        "instances": 300,
+        "path_aware_better": 108,
+        "flat_priority_better": 1,
+        "ties": 191,
+        "tie_rate": 0.636667,
+        "mean_delta": 0.98539,
+        "mean_delta_ci95": [
+          0.78501,
+          1.189207
+        ],
+        "median_delta": 0.0,
+        "max_delta": 8.984485,
+        "min_delta": -0.387278,
+        "decisive_instances": 109,
+        "mean_delta_when_decisive": 2.712082,
+        "mean_delta_when_decisive_ci95": [
+          2.353384,
+          3.076382
+        ],
+        "win_rate_given_decisive": 0.990826
+      }
+    },
+    {
+      "eval_weights": [
+        0.4,
+        0.4,
+        0.5
+      ],
+      "normalized": [
+        0.307692308,
+        0.307692308,
+        0.384615385
+      ],
+      "is_training_point": false,
+      "mean_objective": {
+        "flat_priority": 14.153375,
+        "node_only": 13.950399,
+        "path_aware": 13.32469
+      },
+      "node_only_vs_path_aware": {
+        "comparison": "node_only - path_aware",
+        "instances": 300,
+        "path_aware_better": 90,
+        "node_only_better": 1,
+        "ties": 209,
+        "tie_rate": 0.696667,
+        "mean_delta": 0.62571,
+        "mean_delta_ci95": [
+          0.486478,
+          0.770986
+        ],
+        "median_delta": 0.0,
+        "max_delta": 6.911831,
+        "min_delta": -0.046048,
+        "decisive_instances": 91,
+        "mean_delta_when_decisive": 2.062779,
+        "mean_delta_when_decisive_ci95": [
+          1.74749,
+          2.376745
+        ],
+        "win_rate_given_decisive": 0.989011
+      },
+      "flat_priority_vs_path_aware": {
+        "comparison": "flat_priority - path_aware",
+        "instances": 300,
+        "path_aware_better": 108,
+        "flat_priority_better": 1,
+        "ties": 191,
+        "tie_rate": 0.636667,
+        "mean_delta": 0.828685,
+        "mean_delta_ci95": [
+          0.659508,
+          1.000617
+        ],
+        "median_delta": 0.0,
+        "max_delta": 7.234105,
+        "min_delta": -0.62788,
+        "decisive_instances": 109,
+        "mean_delta_when_decisive": 2.280785,
+        "mean_delta_when_decisive_ci95": [
+          1.971558,
+          2.593605
+        ],
+        "win_rate_given_decisive": 0.990826
+      }
+    },
+    {
+      "eval_weights": [
+        0.4,
+        0.6,
+        0.1
+      ],
+      "normalized": [
+        0.363636364,
+        0.545454545,
+        0.090909091
+      ],
+      "is_training_point": false,
+      "mean_objective": {
+        "flat_priority": 21.911205,
+        "node_only": 21.611836,
+        "path_aware": 20.392421
+      },
+      "node_only_vs_path_aware": {
+        "comparison": "node_only - path_aware",
+        "instances": 300,
+        "path_aware_better": 91,
+        "node_only_better": 0,
+        "ties": 209,
+        "tie_rate": 0.696667,
+        "mean_delta": 1.219416,
+        "mean_delta_ci95": [
+          0.947584,
+          1.505465
+        ],
+        "median_delta": 0.0,
+        "max_delta": 13.333455,
+        "min_delta": 0.0,
+        "decisive_instances": 91,
+        "mean_delta_when_decisive": 4.020051,
+        "mean_delta_when_decisive_ci95": [
+          3.420581,
+          4.636547
+        ],
+        "win_rate_given_decisive": 1.0
+      },
+      "flat_priority_vs_path_aware": {
+        "comparison": "flat_priority - path_aware",
+        "instances": 300,
+        "path_aware_better": 108,
+        "flat_priority_better": 1,
+        "ties": 191,
+        "tie_rate": 0.636667,
+        "mean_delta": 1.518784,
+        "mean_delta_ci95": [
+          1.216849,
+          1.828629
+        ],
+        "median_delta": 0.0,
+        "max_delta": 14.39265,
+        "min_delta": -0.319702,
+        "decisive_instances": 109,
+        "mean_delta_when_decisive": 4.180139,
+        "mean_delta_when_decisive_ci95": [
+          3.625371,
+          4.720147
+        ],
+        "win_rate_given_decisive": 0.990826
+      }
+    },
+    {
+      "eval_weights": [
+        0.4,
+        0.6,
+        0.3
+      ],
+      "normalized": [
+        0.307692308,
+        0.461538462,
+        0.230769231
+      ],
+      "is_training_point": false,
+      "mean_objective": {
+        "flat_priority": 18.946401,
+        "node_only": 18.684786,
+        "path_aware": 17.666382
+      },
+      "node_only_vs_path_aware": {
+        "comparison": "node_only - path_aware",
+        "instances": 300,
+        "path_aware_better": 91,
+        "node_only_better": 0,
+        "ties": 209,
+        "tie_rate": 0.696667,
+        "mean_delta": 1.018404,
+        "mean_delta_ci95": [
+          0.792953,
+          1.256094
+        ],
+        "median_delta": 0.0,
+        "max_delta": 11.043025,
+        "min_delta": 0.0,
+        "decisive_instances": 91,
+        "mean_delta_when_decisive": 3.357376,
+        "mean_delta_when_decisive_ci95": [
+          2.866895,
+          3.865351
+        ],
+        "win_rate_given_decisive": 1.0
+      },
+      "flat_priority_vs_path_aware": {
+        "comparison": "flat_priority - path_aware",
+        "instances": 300,
+        "path_aware_better": 108,
+        "flat_priority_better": 1,
+        "ties": 191,
+        "tie_rate": 0.636667,
+        "mean_delta": 1.280019,
+        "mean_delta_ci95": [
+          1.024597,
+          1.538267
+        ],
+        "median_delta": 0.0,
+        "max_delta": 11.810245,
+        "min_delta": -0.5707,
+        "decisive_instances": 109,
+        "mean_delta_when_decisive": 3.522987,
+        "mean_delta_when_decisive_ci95": [
+          3.057424,
+          3.98329
+        ],
+        "win_rate_given_decisive": 0.990826
+      }
+    },
+    {
+      "eval_weights": [
+        0.4,
+        0.6,
+        0.5
+      ],
+      "normalized": [
+        0.266666667,
+        0.4,
+        0.333333333
+      ],
+      "is_training_point": false,
+      "mean_objective": {
+        "flat_priority": 16.772211,
+        "node_only": 16.538283,
+        "path_aware": 15.667287
+      },
+      "node_only_vs_path_aware": {
+        "comparison": "node_only - path_aware",
+        "instances": 300,
+        "path_aware_better": 91,
+        "node_only_better": 0,
+        "ties": 209,
+        "tie_rate": 0.696667,
+        "mean_delta": 0.870996,
+        "mean_delta_ci95": [
+          0.678911,
+          1.072449
+        ],
+        "median_delta": 0.0,
+        "max_delta": 9.363377,
+        "min_delta": 0.0,
+        "decisive_instances": 91,
+        "mean_delta_when_decisive": 2.871415,
+        "mean_delta_when_decisive_ci95": [
+          2.458404,
+          3.302193
+        ],
+        "win_rate_given_decisive": 1.0
+      },
+      "flat_priority_vs_path_aware": {
+        "comparison": "flat_priority - path_aware",
+        "instances": 300,
+        "path_aware_better": 108,
+        "flat_priority_better": 1,
+        "ties": 191,
+        "tie_rate": 0.636667,
+        "mean_delta": 1.104924,
+        "mean_delta_ci95": [
+          0.883179,
+          1.328483
+        ],
+        "median_delta": 0.0,
+        "max_delta": 9.916481,
+        "min_delta": -0.754766,
+        "decisive_instances": 109,
+        "mean_delta_when_decisive": 3.041075,
+        "mean_delta_when_decisive_ci95": [
+          2.640136,
+          3.434886
+        ],
+        "win_rate_given_decisive": 0.990826
+      }
+    },
+    {
+      "eval_weights": [
+        0.6,
+        0.2,
+        0.1
+      ],
+      "normalized": [
+        0.666666667,
+        0.222222222,
+        0.111111111
+      ],
+      "is_training_point": false,
+      "mean_objective": {
+        "flat_priority": 13.739152,
+        "node_only": 13.531735,
+        "path_aware": 13.208797
+      },
+      "node_only_vs_path_aware": {
+        "comparison": "node_only - path_aware",
+        "instances": 300,
+        "path_aware_better": 76,
+        "node_only_better": 15,
+        "ties": 209,
+        "tie_rate": 0.696667,
+        "mean_delta": 0.322938,
+        "mean_delta_ci95": [
+          0.234632,
+          0.41705
+        ],
+        "median_delta": 0.0,
+        "max_delta": 4.85447,
+        "min_delta": -0.99456,
+        "decisive_instances": 91,
+        "mean_delta_when_decisive": 1.06463,
+        "mean_delta_when_decisive_ci95": [
+          0.82102,
+          1.317802
+        ],
+        "win_rate_given_decisive": 0.835165
+      },
+      "flat_priority_vs_path_aware": {
+        "comparison": "flat_priority - path_aware",
+        "instances": 300,
+        "path_aware_better": 99,
+        "flat_priority_better": 10,
+        "ties": 191,
+        "tie_rate": 0.636667,
+        "mean_delta": 0.530355,
+        "mean_delta_ci95": [
+          0.411985,
+          0.654604
+        ],
+        "median_delta": 0.0,
+        "max_delta": 5.41518,
+        "min_delta": -0.99456,
+        "decisive_instances": 109,
+        "mean_delta_when_decisive": 1.459692,
+        "mean_delta_when_decisive_ci95": [
+          1.215564,
+          1.711259
+        ],
+        "win_rate_given_decisive": 0.908257
+      }
+    },
+    {
+      "eval_weights": [
+        0.6,
+        0.2,
+        0.3
+      ],
+      "normalized": [
+        0.545454545,
+        0.181818182,
+        0.272727273
+      ],
+      "is_training_point": false,
+      "mean_objective": {
+        "flat_priority": 11.721121,
+        "node_only": 11.541603,
+        "path_aware": 11.293229
+      },
+      "node_only_vs_path_aware": {
+        "comparison": "node_only - path_aware",
+        "instances": 300,
+        "path_aware_better": 76,
+        "node_only_better": 15,
+        "ties": 209,
+        "tie_rate": 0.696667,
+        "mean_delta": 0.248375,
+        "mean_delta_ci95": [
+          0.176604,
+          0.323935
+        ],
+        "median_delta": 0.0,
+        "max_delta": 3.850204,
+        "min_delta": -1.208194,
+        "decisive_instances": 91,
+        "mean_delta_when_decisive": 0.818818,
+        "mean_delta_when_decisive_ci95": [
+          0.616932,
+          1.023913
+        ],
+        "win_rate_given_decisive": 0.835165
+      },
+      "flat_priority_vs_path_aware": {
+        "comparison": "flat_priority - path_aware",
+        "instances": 300,
+        "path_aware_better": 96,
+        "flat_priority_better": 13,
+        "ties": 191,
+        "tie_rate": 0.636667,
+        "mean_delta": 0.427892,
+        "mean_delta_ci95": [
+          0.328059,
+          0.531351
+        ],
+        "median_delta": 0.0,
+        "max_delta": 4.772557,
+        "min_delta": -1.208194,
+        "decisive_instances": 109,
+        "mean_delta_when_decisive": 1.177684,
+        "mean_delta_when_decisive_ci95": [
+          0.956046,
+          1.399062
+        ],
+        "win_rate_given_decisive": 0.880734
+      }
+    },
+    {
+      "eval_weights": [
+        0.6,
+        0.2,
+        0.5
+      ],
+      "normalized": [
+        0.461538462,
+        0.153846154,
+        0.384615385
+      ],
+      "is_training_point": false,
+      "mean_objective": {
+        "flat_priority": 10.324022,
+        "node_only": 10.16382,
+        "path_aware": 9.967066
+      },
+      "node_only_vs_path_aware": {
+        "comparison": "node_only - path_aware",
+        "instances": 300,
+        "path_aware_better": 71,
+        "node_only_better": 20,
+        "ties": 209,
+        "tie_rate": 0.696667,
+        "mean_delta": 0.196754,
+        "mean_delta_ci95": [
+          0.133768,
+          0.261795
+        ],
+        "median_delta": 0.0,
+        "max_delta": 3.216785,
+        "min_delta": -1.356094,
+        "decisive_instances": 91,
+        "mean_delta_when_decisive": 0.64864,
+        "mean_delta_when_decisive_ci95": [
+          0.46765,
+          0.829146
+        ],
+        "win_rate_given_decisive": 0.78022
+      },
+      "flat_priority_vs_path_aware": {
+        "comparison": "flat_priority - path_aware",
+        "instances": 300,
+        "path_aware_better": 90,
+        "flat_priority_better": 19,
+        "ties": 191,
+        "tie_rate": 0.636667,
+        "mean_delta": 0.356956,
+        "mean_delta_ci95": [
+          0.26812,
+          0.450273
+        ],
+        "median_delta": 0.0,
+        "max_delta": 4.327663,
+        "min_delta": -1.356094,
+        "decisive_instances": 109,
+        "mean_delta_when_decisive": 0.982448,
+        "mean_delta_when_decisive_ci95": [
+          0.781082,
+          1.184282
+        ],
+        "win_rate_given_decisive": 0.825688
+      }
+    },
+    {
+      "eval_weights": [
+        0.6,
+        0.4,
+        0.1
+      ],
+      "normalized": [
+        0.545454545,
+        0.363636364,
+        0.090909091
+      ],
+      "is_training_point": false,
+      "mean_objective": {
+        "flat_priority": 17.385605,
+        "node_only": 17.136788,
+        "path_aware": 16.42432
+      },
+      "node_only_vs_path_aware": {
+        "comparison": "node_only - path_aware",
+        "instances": 300,
+        "path_aware_better": 91,
+        "node_only_better": 0,
+        "ties": 209,
+        "tie_rate": 0.696667,
+        "mean_delta": 0.712468,
+        "mean_delta_ci95": [
+          0.547568,
+          0.887837
+        ],
+        "median_delta": 0.0,
+        "max_delta": 8.571552,
+        "min_delta": 0.0,
+        "decisive_instances": 91,
+        "mean_delta_when_decisive": 2.348797,
+        "mean_delta_when_decisive_ci95": [
+          1.968474,
+          2.750461
+        ],
+        "win_rate_given_decisive": 1.0
+      },
+      "flat_priority_vs_path_aware": {
+        "comparison": "flat_priority - path_aware",
+        "instances": 300,
+        "path_aware_better": 109,
+        "flat_priority_better": 0,
+        "ties": 191,
+        "tie_rate": 0.636667,
+        "mean_delta": 0.961286,
+        "mean_delta_ci95": [
+          0.763718,
+          1.164087
+        ],
+        "median_delta": 0.0,
+        "max_delta": 9.265055,
+        "min_delta": 0.0,
+        "decisive_instances": 109,
+        "mean_delta_when_decisive": 2.645741,
+        "mean_delta_when_decisive_ci95": [
+          2.283538,
+          3.017268
+        ],
+        "win_rate_given_decisive": 1.0
+      }
+    },
+    {
+      "eval_weights": [
+        0.6,
+        0.4,
+        0.3
+      ],
+      "normalized": [
+        0.461538462,
+        0.307692308,
+        0.230769231
+      ],
+      "is_training_point": false,
+      "mean_objective": {
+        "flat_priority": 15.117047,
+        "node_only": 14.898207,
+        "path_aware": 14.308758
+      },
+      "node_only_vs_path_aware": {
+        "comparison": "node_only - path_aware",
+        "instances": 300,
+        "path_aware_better": 90,
+        "node_only_better": 1,
+        "ties": 209,
+        "tie_rate": 0.696667,
+        "mean_delta": 0.589449,
+        "mean_delta_ci95": [
+          0.454371,
+          0.734018
+        ],
+        "median_delta": 0.0,
+        "max_delta": 7.013723,
+        "min_delta": -0.009953,
+        "decisive_instances": 91,
+        "mean_delta_when_decisive": 1.943238,
+        "mean_delta_when_decisive_ci95": [
+          1.62484,
+          2.266745
+        ],
+        "win_rate_given_decisive": 0.989011
+      },
+      "flat_priority_vs_path_aware": {
+        "comparison": "flat_priority - path_aware",
+        "instances": 300,
+        "path_aware_better": 108,
+        "flat_priority_better": 1,
+        "ties": 191,
+        "tie_rate": 0.636667,
+        "mean_delta": 0.80829,
+        "mean_delta_ci95": [
+          0.641794,
+          0.979972
+        ],
+        "median_delta": 0.0,
+        "max_delta": 7.471511,
+        "min_delta": -0.023404,
+        "decisive_instances": 109,
+        "mean_delta_when_decisive": 2.22465,
+        "mean_delta_when_decisive_ci95": [
+          1.918047,
+          2.536982
+        ],
+        "win_rate_given_decisive": 0.990826
+      }
+    },
+    {
+      "eval_weights": [
+        0.6,
+        0.4,
+        0.5
+      ],
+      "normalized": [
+        0.4,
+        0.266666667,
+        0.333333333
+      ],
+      "is_training_point": false,
+      "mean_objective": {
+        "flat_priority": 13.453438,
+        "node_only": 13.256581,
+        "path_aware": 12.757346
+      },
+      "node_only_vs_path_aware": {
+        "comparison": "node_only - path_aware",
+        "instances": 300,
+        "path_aware_better": 90,
+        "node_only_better": 1,
+        "ties": 209,
+        "tie_rate": 0.696667,
+        "mean_delta": 0.499235,
+        "mean_delta_ci95": [
+          0.384083,
+          0.62045
+        ],
+        "median_delta": 0.0,
+        "max_delta": 5.871314,
+        "min_delta": -0.052916,
+        "decisive_instances": 91,
+        "mean_delta_when_decisive": 1.645828,
+        "mean_delta_when_decisive_ci95": [
+          1.375041,
+          1.9219
+        ],
+        "win_rate_given_decisive": 0.989011
+      },
+      "flat_priority_vs_path_aware": {
+        "comparison": "flat_priority - path_aware",
+        "instances": 300,
+        "path_aware_better": 108,
+        "flat_priority_better": 1,
+        "ties": 191,
+        "tie_rate": 0.636667,
+        "mean_delta": 0.696092,
+        "mean_delta_ci95": [
+          0.550197,
+          0.845095
+        ],
+        "median_delta": 0.0,
+        "max_delta": 6.182506,
+        "min_delta": -0.280442,
+        "decisive_instances": 109,
+        "mean_delta_when_decisive": 1.91585,
+        "mean_delta_when_decisive_ci95": [
+          1.644846,
+          2.193285
+        ],
+        "win_rate_given_decisive": 0.990826
+      }
+    },
+    {
+      "eval_weights": [
+        0.6,
+        0.6,
+        0.1
+      ],
+      "normalized": [
+        0.461538462,
+        0.461538462,
+        0.076923077
+      ],
+      "is_training_point": false,
+      "mean_objective": {
+        "flat_priority": 19.910073,
+        "node_only": 19.632594,
+        "path_aware": 18.65045
+      },
+      "node_only_vs_path_aware": {
+        "comparison": "node_only - path_aware",
+        "instances": 300,
+        "path_aware_better": 91,
+        "node_only_better": 0,
+        "ties": 209,
+        "tie_rate": 0.696667,
+        "mean_delta": 0.982144,
+        "mean_delta_ci95": [
+          0.759975,
+          1.216893
+        ],
+        "median_delta": 0.0,
+        "max_delta": 11.144916,
+        "min_delta": 0.0,
+        "decisive_instances": 91,
+        "mean_delta_when_decisive": 3.237836,
+        "mean_delta_when_decisive_ci95": [
+          2.737814,
+          3.749453
+        ],
+        "win_rate_given_decisive": 1.0
+      },
+      "flat_priority_vs_path_aware": {
+        "comparison": "flat_priority - path_aware",
+        "instances": 300,
+        "path_aware_better": 109,
+        "flat_priority_better": 0,
+        "ties": 191,
+        "tie_rate": 0.636667,
+        "mean_delta": 1.259623,
+        "mean_delta_ci95": [
+          1.006379,
+          1.518062
+        ],
+        "median_delta": 0.0,
+        "max_delta": 12.04765,
+        "min_delta": 0.0,
+        "decisive_instances": 109,
+        "mean_delta_when_decisive": 3.466852,
+        "mean_delta_when_decisive_ci95": [
+          3.011689,
+          3.938981
+        ],
+        "win_rate_given_decisive": 1.0
+      }
+    },
+    {
+      "eval_weights": [
+        0.6,
+        0.6,
+        0.5
+      ],
+      "normalized": [
+        0.352941176,
+        0.352941176,
+        0.294117647
+      ],
+      "is_training_point": false,
+      "mean_objective": {
+        "flat_priority": 15.846522,
+        "node_only": 15.621633,
+        "path_aware": 14.89109
+      },
+      "node_only_vs_path_aware": {
+        "comparison": "node_only - path_aware",
+        "instances": 300,
+        "path_aware_better": 90,
+        "node_only_better": 1,
+        "ties": 209,
+        "tie_rate": 0.696667,
+        "mean_delta": 0.730543,
+        "mean_delta_ci95": [
+          0.568638,
+          0.902483
+        ],
+        "median_delta": 0.0,
+        "max_delta": 8.156856,
+        "min_delta": -0.003971,
+        "decisive_instances": 91,
+        "mean_delta_when_decisive": 2.408384,
+        "mean_delta_when_decisive_ci95": [
+          2.043633,
+          2.771226
+        ],
+        "win_rate_given_decisive": 0.989011
+      },
+      "flat_priority_vs_path_aware": {
+        "comparison": "flat_priority - path_aware",
+        "instances": 300,
+        "path_aware_better": 108,
+        "flat_priority_better": 1,
+        "ties": 191,
+        "tie_rate": 0.636667,
+        "mean_delta": 0.955432,
+        "mean_delta_ci95": [
+          0.761479,
+          1.153665
+        ],
+        "median_delta": 0.0,
+        "max_delta": 8.649854,
+        "min_delta": -0.433275,
+        "decisive_instances": 109,
+        "mean_delta_when_decisive": 2.629628,
+        "mean_delta_when_decisive_ci95": [
+          2.280436,
+          2.98305
+        ],
+        "win_rate_given_decisive": 0.990826
+      }
+    }
+  ]
+}

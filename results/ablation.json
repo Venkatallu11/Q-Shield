@@ -1,0 +1,422 @@
+{
+  "experiment": "ablation",
+  "question": "Is the benefit attributable to attack-path awareness, or to exhaustive search over migration plans?",
+  "design": {
+    "arms": {
+      "flat_priority": "graph-blind greedy heuristic (no search, no paths)",
+      "node_only": "exhaustive search minimising node risk only (search, no paths)",
+      "path_aware": "exhaustive search minimising the full objective (search + paths)"
+    },
+    "controls_for": "path_aware - node_only isolates path-awareness at equal search power; node_only - flat_priority isolates search power at equal path-blindness",
+    "held_out_metrics": [
+      "path_max",
+      "expected_objective"
+    ],
+    "in_objective_metrics": [
+      "objective"
+    ],
+    "instances": 400,
+    "monte_carlo_trials_per_instance": 200,
+    "common_random_numbers": true,
+    "weights": [
+      0.55,
+      0.3,
+      0.15
+    ],
+    "perturbation": {
+      "unit_spread": 0.08,
+      "lifetime_spread": 0.15,
+      "reliability_low": 0.9,
+      "reliability_high": 1.05,
+      "quantum_factor_spread": 0.25,
+      "weight_spread": 0.2
+    },
+    "generator": {
+      "nodes": 7,
+      "cross_links": 7,
+      "budget_low": 1.5,
+      "budget_high": 4.0,
+      "reliability_low": 0.2,
+      "reliability_high": 1.0,
+      "backbone_reliability_low": 0.7
+    },
+    "seed": 20260907
+  },
+  "marginal_distributions": {
+    "flat_priority": {
+      "objective": {
+        "n": 400,
+        "mean": 15.349085,
+        "stdev": 7.325198,
+        "p05": 5.049114,
+        "p50": 14.720999,
+        "p95": 29.943317
+      },
+      "path_max": {
+        "n": 400,
+        "mean": 43.279337,
+        "stdev": 17.208845,
+        "p05": 15.423384,
+        "p50": 42.379175,
+        "p95": 73.42994
+      },
+      "expected_objective": {
+        "n": 400,
+        "mean": 14.381842,
+        "stdev": 6.854899,
+        "p05": 4.768585,
+        "p50": 13.73643,
+        "p95": 28.031357
+      },
+      "cost": {
+        "n": 400,
+        "mean": 2.355615,
+        "stdev": 0.732723,
+        "p05": 1.25125,
+        "p50": 2.3955,
+        "p95": 3.541
+      }
+    },
+    "node_only": {
+      "objective": {
+        "n": 400,
+        "mean": 15.147435,
+        "stdev": 7.289597,
+        "p05": 4.811899,
+        "p50": 14.392857,
+        "p95": 29.179732
+      },
+      "path_max": {
+        "n": 400,
+        "mean": 42.770775,
+        "stdev": 17.143551,
+        "p05": 15.423384,
+        "p50": 41.906868,
+        "p95": 72.214725
+      },
+      "expected_objective": {
+        "n": 400,
+        "mean": 14.186545,
+        "stdev": 6.809165,
+        "p05": 4.60468,
+        "p50": 13.43681,
+        "p95": 27.253126
+      },
+      "cost": {
+        "n": 400,
+        "mean": 2.429807,
+        "stdev": 0.733409,
+        "p05": 1.26795,
+        "p50": 2.461,
+        "p95": 3.5911
+      }
+    },
+    "path_aware": {
+      "objective": {
+        "n": 400,
+        "mean": 14.604295,
+        "stdev": 7.038526,
+        "p05": 4.798756,
+        "p50": 14.101181,
+        "p95": 28.200914
+      },
+      "path_max": {
+        "n": 400,
+        "mean": 43.506403,
+        "stdev": 17.522532,
+        "p05": 15.423384,
+        "p50": 42.149234,
+        "p95": 73.795143
+      },
+      "expected_objective": {
+        "n": 400,
+        "mean": 13.671659,
+        "stdev": 6.572756,
+        "p05": 4.599223,
+        "p50": 13.210186,
+        "p95": 26.385941
+      },
+      "cost": {
+        "n": 400,
+        "mean": 2.41519,
+        "stdev": 0.733729,
+        "p05": 1.2794,
+        "p50": 2.413,
+        "p95": 3.59145
+      }
+    }
+  },
+  "contrasts": {
+    "node_only_vs_path_aware": {
+      "objective": {
+        "comparison": "node_only - path_aware",
+        "instances": 400,
+        "path_aware_better": 125,
+        "node_only_better": 0,
+        "ties": 275,
+        "tie_rate": 0.6875,
+        "mean_delta": 0.54314,
+        "mean_delta_ci95": [
+          0.43235,
+          0.659269
+        ],
+        "median_delta": 0.0,
+        "max_delta": 6.86575,
+        "min_delta": 0.0,
+        "decisive_instances": 125,
+        "mean_delta_when_decisive": 1.738048,
+        "mean_delta_when_decisive_ci95": [
+          1.494757,
+          1.993698
+        ],
+        "win_rate_given_decisive": 1.0,
+        "metric": "objective",
+        "held_out": false
+      },
+      "path_max": {
+        "comparison": "node_only - path_aware",
+        "instances": 400,
+        "path_aware_better": 39,
+        "node_only_better": 86,
+        "ties": 275,
+        "tie_rate": 0.6875,
+        "mean_delta": -0.735628,
+        "mean_delta_ci95": [
+          -0.970851,
+          -0.51568
+        ],
+        "median_delta": 0.0,
+        "max_delta": 5.782397,
+        "min_delta": -16.234194,
+        "decisive_instances": 125,
+        "mean_delta_when_decisive": -2.35401,
+        "mean_delta_when_decisive_ci95": [
+          -3.039754,
+          -1.714652
+        ],
+        "win_rate_given_decisive": 0.312,
+        "metric": "path_max",
+        "held_out": true
+      },
+      "expected_objective": {
+        "comparison": "node_only - path_aware",
+        "instances": 400,
+        "path_aware_better": 124,
+        "node_only_better": 1,
+        "ties": 275,
+        "tie_rate": 0.6875,
+        "mean_delta": 0.514886,
+        "mean_delta_ci95": [
+          0.409183,
+          0.623956
+        ],
+        "median_delta": 0.0,
+        "max_delta": 6.801967,
+        "min_delta": -0.045141,
+        "decisive_instances": 125,
+        "mean_delta_when_decisive": 1.647634,
+        "mean_delta_when_decisive_ci95": [
+          1.421335,
+          1.882966
+        ],
+        "win_rate_given_decisive": 0.992,
+        "metric": "expected_objective",
+        "held_out": true
+      },
+      "cost_delta": {
+        "n": 400,
+        "mean": 0.014618,
+        "stdev": 0.18986,
+        "p05": -0.22605,
+        "p50": 0.0,
+        "p95": 0.37955
+      }
+    },
+    "flat_priority_vs_node_only": {
+      "objective": {
+        "comparison": "flat_priority - node_only",
+        "instances": 400,
+        "node_only_better": 57,
+        "flat_priority_better": 34,
+        "ties": 309,
+        "tie_rate": 0.7725,
+        "mean_delta": 0.20165,
+        "mean_delta_ci95": [
+          0.093456,
+          0.317306
+        ],
+        "median_delta": 0.0,
+        "max_delta": 6.087898,
+        "min_delta": -5.308412,
+        "decisive_instances": 91,
+        "mean_delta_when_decisive": 0.886374,
+        "mean_delta_when_decisive_ci95": [
+          0.425566,
+          1.330762
+        ],
+        "win_rate_given_decisive": 0.626374,
+        "metric": "objective",
+        "held_out": false
+      },
+      "path_max": {
+        "comparison": "flat_priority - node_only",
+        "instances": 400,
+        "node_only_better": 67,
+        "flat_priority_better": 24,
+        "ties": 309,
+        "tie_rate": 0.7725,
+        "mean_delta": 0.508562,
+        "mean_delta_ci95": [
+          0.330393,
+          0.698542
+        ],
+        "median_delta": 0.0,
+        "max_delta": 11.375832,
+        "min_delta": -8.541509,
+        "decisive_instances": 91,
+        "mean_delta_when_decisive": 2.235437,
+        "mean_delta_when_decisive_ci95": [
+          1.532687,
+          2.919203
+        ],
+        "win_rate_given_decisive": 0.736264,
+        "metric": "path_max",
+        "held_out": true
+      },
+      "expected_objective": {
+        "comparison": "flat_priority - node_only",
+        "instances": 400,
+        "node_only_better": 58,
+        "flat_priority_better": 33,
+        "ties": 309,
+        "tie_rate": 0.7725,
+        "mean_delta": 0.195297,
+        "mean_delta_ci95": [
+          0.093889,
+          0.304268
+        ],
+        "median_delta": 0.0,
+        "max_delta": 5.630393,
+        "min_delta": -5.053925,
+        "decisive_instances": 91,
+        "mean_delta_when_decisive": 0.85845,
+        "mean_delta_when_decisive_ci95": [
+          0.423474,
+          1.280564
+        ],
+        "win_rate_given_decisive": 0.637363,
+        "metric": "expected_objective",
+        "held_out": true
+      },
+      "cost_delta": {
+        "n": 400,
+        "mean": -0.074192,
+        "stdev": 0.191046,
+        "p05": -0.5391,
+        "p50": 0.0,
+        "p95": 0.0
+      }
+    },
+    "flat_priority_vs_path_aware": {
+      "objective": {
+        "comparison": "flat_priority - path_aware",
+        "instances": 400,
+        "path_aware_better": 146,
+        "flat_priority_better": 0,
+        "ties": 254,
+        "tie_rate": 0.635,
+        "mean_delta": 0.74479,
+        "mean_delta_ci95": [
+          0.609884,
+          0.883378
+        ],
+        "median_delta": 0.0,
+        "max_delta": 7.379212,
+        "min_delta": 0.0,
+        "decisive_instances": 146,
+        "mean_delta_when_decisive": 2.040521,
+        "mean_delta_when_decisive_ci95": [
+          1.798595,
+          2.303247
+        ],
+        "win_rate_given_decisive": 1.0,
+        "metric": "objective",
+        "held_out": false
+      },
+      "path_max": {
+        "comparison": "flat_priority - path_aware",
+        "instances": 400,
+        "path_aware_better": 72,
+        "flat_priority_better": 74,
+        "ties": 254,
+        "tie_rate": 0.635,
+        "mean_delta": -0.227066,
+        "mean_delta_ci95": [
+          -0.502953,
+          0.039105
+        ],
+        "median_delta": 0.0,
+        "max_delta": 11.375832,
+        "min_delta": -16.234194,
+        "decisive_instances": 146,
+        "mean_delta_when_decisive": -0.622099,
+        "mean_delta_when_decisive_ci95": [
+          -1.391276,
+          0.102174
+        ],
+        "win_rate_given_decisive": 0.493151,
+        "metric": "path_max",
+        "held_out": true
+      },
+      "expected_objective": {
+        "comparison": "flat_priority - path_aware",
+        "instances": 400,
+        "path_aware_better": 146,
+        "flat_priority_better": 0,
+        "ties": 254,
+        "tie_rate": 0.635,
+        "mean_delta": 0.710183,
+        "mean_delta_ci95": [
+          0.581581,
+          0.842585
+        ],
+        "median_delta": 0.0,
+        "max_delta": 7.179376,
+        "min_delta": 0.0,
+        "decisive_instances": 146,
+        "mean_delta_when_decisive": 1.945707,
+        "mean_delta_when_decisive_ci95": [
+          1.718651,
+          2.192295
+        ],
+        "win_rate_given_decisive": 1.0,
+        "metric": "expected_objective",
+        "held_out": true
+      },
+      "cost_delta": {
+        "n": 400,
+        "mean": -0.059575,
+        "stdev": 0.224824,
+        "p05": -0.54195,
+        "p50": 0.0,
+        "p95": 0.20255
+      }
+    }
+  },
+  "structural_check": {
+    "claim": "path_aware can never score worse than flat_priority on the objective it minimises, because the heuristic's plan is inside the exhaustive search space; a 'win rate' on that metric is not evidence",
+    "instances": 400,
+    "in_objective_losses": 0,
+    "in_objective_losses_are_possible": false,
+    "held_out_losses_observed": {
+      "path_max": 74,
+      "expected_objective": 0
+    },
+    "held_out_losses_are_possible": true
+  },
+  "plan_agreement": {
+    "path_aware_equals_node_only": 0.6875,
+    "path_aware_equals_flat_priority": 0.635,
+    "node_only_equals_flat_priority": 0.7725
+  }
+}
