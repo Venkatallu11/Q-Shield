@@ -134,3 +134,76 @@ def test_migrating_an_issuer_helps_at_least_as_much_as_migrating_its_leaves():
         root_gain = base - problem.evaluate(roots).value
         leaf_gain = base - problem.evaluate(leaves).value
         assert root_gain >= leaf_gain - 1e-9
+
+
+# --- 0.7: the calibrated path deliberately gives the guarantee up -----------
+
+
+def test_uncalibrated_monotonicity_is_unaffected_by_the_calibration_work():
+    """The guarantee documented in qshield.model still holds on the default path;
+    calibration is opt-in and changes nothing unless asked for."""
+    problem = make_instances(1, 1200)[0]
+    base = problem.evaluate(()).value
+    for names, _cost in problem.feasible_plans():
+        assert problem.evaluate(names).value <= base + 1e-9
+
+
+def test_calibrated_migration_of_a_short_lived_credential_raises_the_score():
+    """Not a defect. Over a short horizon the probability that a CRQC arrives at
+    all is smaller than the residual risk of a young post-quantum primitive, so
+    the model says leave a 90-day certificate alone. The uncalibrated model
+    multiplied a quantum factor of 1.00 by a longevity term and so could never
+    express this. Documented in docs/CALIBRATION.md."""
+    from qshield.calibration import DEFAULT_CALIBRATION
+    from qshield.model import AssetModel, apply_migration, objective
+    from qshield.threat import ThreatClass
+
+    leaf = AssetModel(
+        "leaf", "ECDSA", 0.8, 0.9, 15, 2, 24.0,
+        threat_class=ThreatClass.AUTHENTICATION, credential_validity_years=0.25,
+    )
+    before = objective([leaf], [], calibration=DEFAULT_CALIBRATION).value
+    after = objective(
+        apply_migration([leaf], ["leaf"], {"ECDSA": "ML-DSA"}),
+        [],
+        calibration=DEFAULT_CALIBRATION,
+    ).value
+    assert after > before
+
+
+def test_calibrated_migration_of_a_long_lived_anchor_still_helps():
+    from qshield.calibration import DEFAULT_CALIBRATION
+    from qshield.model import AssetModel, apply_migration, objective
+    from qshield.threat import ThreatClass
+
+    root = AssetModel(
+        "root", "ECDSA", 0.9, 0.3, 15, 8, 0.0,
+        threat_class=ThreatClass.AUTHENTICATION, credential_validity_years=20,
+    )
+    before = objective([root], [], calibration=DEFAULT_CALIBRATION).value
+    after = objective(
+        apply_migration([root], ["root"], {"ECDSA": "ML-DSA"}),
+        [],
+        calibration=DEFAULT_CALIBRATION,
+    ).value
+    assert after < before
+
+
+@pytest.mark.parametrize("seed", range(6))
+def test_planners_still_behave_without_the_monotonicity_guarantee(seed):
+    """Exhaustive enumeration includes the empty plan and greedy stops when no
+    move helps, so neither relies on monotonicity -- only the theorem does."""
+    from dataclasses import replace as _replace
+
+    from qshield.calibration import DEFAULT_CALIBRATION
+    from qshield.experiments.pki import make_instances as pki_instances
+    from qshield.planner import plan as choose_plan
+
+    problem = _replace(
+        pki_instances(1, seed + 1300)[0], calibration=DEFAULT_CALIBRATION
+    )
+    chosen = choose_plan(problem)
+    # Whatever it picks must be no worse than doing nothing: with the null plan
+    # in the candidate set, a planner that returned a harmful plan would be wrong.
+    assert chosen.objective <= problem.evaluate(()).value + 1e-9
+    assert chosen.cost <= problem.budget + 1e-9

@@ -1,0 +1,351 @@
+{
+  "experiment": "calibration_sensitivity",
+  "question": "How much does the calibrated recommendation depend on the parameters the calibration could not ground?",
+  "design": {
+    "instances": 200,
+    "settings_evaluated": 36,
+    "tier_b_swept": "doubling_time_years, forecast scenario",
+    "tier_c_swept": "pqc_residual_risk",
+    "baseline": {
+      "forecast": "central",
+      "doubling_time_years": 2.0,
+      "pqc_residual_risk": 0.05
+    },
+    "seed": 20260907
+  },
+  "agreement_across_settings": {
+    "n": 36,
+    "mean": 0.95375,
+    "stdev": 0.04022,
+    "p05": 0.865,
+    "p50": 0.95,
+    "p95": 1.0
+  },
+  "worst_case_agreement": 0.85,
+  "settings": [
+    {
+      "forecast": "conservative",
+      "doubling_time_years": 1.0,
+      "pqc_residual_risk": 0.01,
+      "agreement_with_default_calibration": 0.945,
+      "recommends_nothing": 86,
+      "mean_plan_size": 0.665,
+      "crossover_ecdsa_years": 4.2
+    },
+    {
+      "forecast": "conservative",
+      "doubling_time_years": 1.0,
+      "pqc_residual_risk": 0.02,
+      "agreement_with_default_calibration": 0.945,
+      "recommends_nothing": 86,
+      "mean_plan_size": 0.665,
+      "crossover_ecdsa_years": 4.4
+    },
+    {
+      "forecast": "conservative",
+      "doubling_time_years": 1.0,
+      "pqc_residual_risk": 0.05,
+      "agreement_with_default_calibration": 0.945,
+      "recommends_nothing": 86,
+      "mean_plan_size": 0.665,
+      "crossover_ecdsa_years": 4.95
+    },
+    {
+      "forecast": "conservative",
+      "doubling_time_years": 1.0,
+      "pqc_residual_risk": 0.1,
+      "agreement_with_default_calibration": 0.945,
+      "recommends_nothing": 86,
+      "mean_plan_size": 0.665,
+      "crossover_ecdsa_years": 5.9
+    },
+    {
+      "forecast": "conservative",
+      "doubling_time_years": 2.0,
+      "pqc_residual_risk": 0.01,
+      "agreement_with_default_calibration": 0.945,
+      "recommends_nothing": 86,
+      "mean_plan_size": 0.665,
+      "crossover_ecdsa_years": 3.4
+    },
+    {
+      "forecast": "conservative",
+      "doubling_time_years": 2.0,
+      "pqc_residual_risk": 0.02,
+      "agreement_with_default_calibration": 0.945,
+      "recommends_nothing": 86,
+      "mean_plan_size": 0.665,
+      "crossover_ecdsa_years": 3.6
+    },
+    {
+      "forecast": "conservative",
+      "doubling_time_years": 2.0,
+      "pqc_residual_risk": 0.05,
+      "agreement_with_default_calibration": 0.945,
+      "recommends_nothing": 86,
+      "mean_plan_size": 0.665,
+      "crossover_ecdsa_years": 4.15
+    },
+    {
+      "forecast": "conservative",
+      "doubling_time_years": 2.0,
+      "pqc_residual_risk": 0.1,
+      "agreement_with_default_calibration": 0.945,
+      "recommends_nothing": 86,
+      "mean_plan_size": 0.665,
+      "crossover_ecdsa_years": 5.05
+    },
+    {
+      "forecast": "conservative",
+      "doubling_time_years": 4.0,
+      "pqc_residual_risk": 0.01,
+      "agreement_with_default_calibration": 0.995,
+      "recommends_nothing": 76,
+      "mean_plan_size": 0.72,
+      "crossover_ecdsa_years": 1.75
+    },
+    {
+      "forecast": "conservative",
+      "doubling_time_years": 4.0,
+      "pqc_residual_risk": 0.02,
+      "agreement_with_default_calibration": 0.995,
+      "recommends_nothing": 76,
+      "mean_plan_size": 0.72,
+      "crossover_ecdsa_years": 1.95
+    },
+    {
+      "forecast": "conservative",
+      "doubling_time_years": 4.0,
+      "pqc_residual_risk": 0.05,
+      "agreement_with_default_calibration": 0.995,
+      "recommends_nothing": 76,
+      "mean_plan_size": 0.72,
+      "crossover_ecdsa_years": 2.5
+    },
+    {
+      "forecast": "conservative",
+      "doubling_time_years": 4.0,
+      "pqc_residual_risk": 0.1,
+      "agreement_with_default_calibration": 0.98,
+      "recommends_nothing": 76,
+      "mean_plan_size": 0.72,
+      "crossover_ecdsa_years": 3.45
+    },
+    {
+      "forecast": "central",
+      "doubling_time_years": 1.0,
+      "pqc_residual_risk": 0.01,
+      "agreement_with_default_calibration": 0.95,
+      "recommends_nothing": 85,
+      "mean_plan_size": 0.67,
+      "crossover_ecdsa_years": 0.9
+    },
+    {
+      "forecast": "central",
+      "doubling_time_years": 1.0,
+      "pqc_residual_risk": 0.02,
+      "agreement_with_default_calibration": 0.95,
+      "recommends_nothing": 85,
+      "mean_plan_size": 0.67,
+      "crossover_ecdsa_years": 2.55
+    },
+    {
+      "forecast": "central",
+      "doubling_time_years": 1.0,
+      "pqc_residual_risk": 0.05,
+      "agreement_with_default_calibration": 0.95,
+      "recommends_nothing": 85,
+      "mean_plan_size": 0.67,
+      "crossover_ecdsa_years": 4.5
+    },
+    {
+      "forecast": "central",
+      "doubling_time_years": 1.0,
+      "pqc_residual_risk": 0.1,
+      "agreement_with_default_calibration": 0.95,
+      "recommends_nothing": 85,
+      "mean_plan_size": 0.67,
+      "crossover_ecdsa_years": 5.2
+    },
+    {
+      "forecast": "central",
+      "doubling_time_years": 2.0,
+      "pqc_residual_risk": 0.01,
+      "agreement_with_default_calibration": 0.98,
+      "recommends_nothing": 77,
+      "mean_plan_size": 0.735,
+      "crossover_ecdsa_years": 0.05
+    },
+    {
+      "forecast": "central",
+      "doubling_time_years": 2.0,
+      "pqc_residual_risk": 0.02,
+      "agreement_with_default_calibration": 1.0,
+      "recommends_nothing": 77,
+      "mean_plan_size": 0.715,
+      "crossover_ecdsa_years": 1.75
+    },
+    {
+      "forecast": "central",
+      "doubling_time_years": 2.0,
+      "pqc_residual_risk": 0.05,
+      "agreement_with_default_calibration": 1.0,
+      "recommends_nothing": 77,
+      "mean_plan_size": 0.715,
+      "crossover_ecdsa_years": 3.7
+    },
+    {
+      "forecast": "central",
+      "doubling_time_years": 2.0,
+      "pqc_residual_risk": 0.1,
+      "agreement_with_default_calibration": 1.0,
+      "recommends_nothing": 77,
+      "mean_plan_size": 0.715,
+      "crossover_ecdsa_years": 4.4
+    },
+    {
+      "forecast": "central",
+      "doubling_time_years": 4.0,
+      "pqc_residual_risk": 0.01,
+      "agreement_with_default_calibration": 0.93,
+      "recommends_nothing": 71,
+      "mean_plan_size": 0.77,
+      "crossover_ecdsa_years": 0.05
+    },
+    {
+      "forecast": "central",
+      "doubling_time_years": 4.0,
+      "pqc_residual_risk": 0.02,
+      "agreement_with_default_calibration": 0.93,
+      "recommends_nothing": 71,
+      "mean_plan_size": 0.77,
+      "crossover_ecdsa_years": 0.1
+    },
+    {
+      "forecast": "central",
+      "doubling_time_years": 4.0,
+      "pqc_residual_risk": 0.05,
+      "agreement_with_default_calibration": 0.95,
+      "recommends_nothing": 71,
+      "mean_plan_size": 0.75,
+      "crossover_ecdsa_years": 2.05
+    },
+    {
+      "forecast": "central",
+      "doubling_time_years": 4.0,
+      "pqc_residual_risk": 0.1,
+      "agreement_with_default_calibration": 0.95,
+      "recommends_nothing": 71,
+      "mean_plan_size": 0.75,
+      "crossover_ecdsa_years": 2.75
+    },
+    {
+      "forecast": "aggressive",
+      "doubling_time_years": 1.0,
+      "pqc_residual_risk": 0.01,
+      "agreement_with_default_calibration": 0.975,
+      "recommends_nothing": 77,
+      "mean_plan_size": 0.73,
+      "crossover_ecdsa_years": 0.2
+    },
+    {
+      "forecast": "aggressive",
+      "doubling_time_years": 1.0,
+      "pqc_residual_risk": 0.02,
+      "agreement_with_default_calibration": 0.995,
+      "recommends_nothing": 77,
+      "mean_plan_size": 0.71,
+      "crossover_ecdsa_years": 1.2
+    },
+    {
+      "forecast": "aggressive",
+      "doubling_time_years": 1.0,
+      "pqc_residual_risk": 0.05,
+      "agreement_with_default_calibration": 0.995,
+      "recommends_nothing": 77,
+      "mean_plan_size": 0.71,
+      "crossover_ecdsa_years": 4.2
+    },
+    {
+      "forecast": "aggressive",
+      "doubling_time_years": 1.0,
+      "pqc_residual_risk": 0.1,
+      "agreement_with_default_calibration": 0.99,
+      "recommends_nothing": 77,
+      "mean_plan_size": 0.71,
+      "crossover_ecdsa_years": 4.8
+    },
+    {
+      "forecast": "aggressive",
+      "doubling_time_years": 2.0,
+      "pqc_residual_risk": 0.01,
+      "agreement_with_default_calibration": 0.955,
+      "recommends_nothing": 75,
+      "mean_plan_size": 0.75,
+      "crossover_ecdsa_years": 0.05
+    },
+    {
+      "forecast": "aggressive",
+      "doubling_time_years": 2.0,
+      "pqc_residual_risk": 0.02,
+      "agreement_with_default_calibration": 0.975,
+      "recommends_nothing": 75,
+      "mean_plan_size": 0.73,
+      "crossover_ecdsa_years": 0.4
+    },
+    {
+      "forecast": "aggressive",
+      "doubling_time_years": 2.0,
+      "pqc_residual_risk": 0.05,
+      "agreement_with_default_calibration": 0.975,
+      "recommends_nothing": 75,
+      "mean_plan_size": 0.73,
+      "crossover_ecdsa_years": 3.4
+    },
+    {
+      "forecast": "aggressive",
+      "doubling_time_years": 2.0,
+      "pqc_residual_risk": 0.1,
+      "agreement_with_default_calibration": 0.97,
+      "recommends_nothing": 75,
+      "mean_plan_size": 0.73,
+      "crossover_ecdsa_years": 3.95
+    },
+    {
+      "forecast": "aggressive",
+      "doubling_time_years": 4.0,
+      "pqc_residual_risk": 0.01,
+      "agreement_with_default_calibration": 0.85,
+      "recommends_nothing": 62,
+      "mean_plan_size": 0.835,
+      "crossover_ecdsa_years": 0.05
+    },
+    {
+      "forecast": "aggressive",
+      "doubling_time_years": 4.0,
+      "pqc_residual_risk": 0.02,
+      "agreement_with_default_calibration": 0.85,
+      "recommends_nothing": 62,
+      "mean_plan_size": 0.835,
+      "crossover_ecdsa_years": 0.05
+    },
+    {
+      "forecast": "aggressive",
+      "doubling_time_years": 4.0,
+      "pqc_residual_risk": 0.05,
+      "agreement_with_default_calibration": 0.87,
+      "recommends_nothing": 62,
+      "mean_plan_size": 0.815,
+      "crossover_ecdsa_years": 1.75
+    },
+    {
+      "forecast": "aggressive",
+      "doubling_time_years": 4.0,
+      "pqc_residual_risk": 0.1,
+      "agreement_with_default_calibration": 0.87,
+      "recommends_nothing": 62,
+      "mean_plan_size": 0.815,
+      "crossover_ecdsa_years": 2.35
+    }
+  ]
+}

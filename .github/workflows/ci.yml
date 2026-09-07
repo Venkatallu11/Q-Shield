@@ -40,6 +40,9 @@ jobs:
           qshield ingest --certs tests/fixtures/pki --budget 6 --quiet --output /tmp/case.json
           qshield robustness --input /tmp/case.json --draws 40 --quiet --output /tmp/rob.json
           qshield report --input /tmp/case.json --draws 40 --quiet --output /tmp/report.md
+          qshield calibration --quiet --output /tmp/cal.json
+          qshield calibration --impact --instances 8 --quiet --output /tmp/ci.json
+          qshield calibration --sweep --instances 6 --quiet --output /tmp/cs.json
       - name: Fixtures are rebuildable
         run: |
           bash scripts/make_fixtures.sh

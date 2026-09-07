@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "qshield"
-version = "0.6.0"
+version = "0.7.0"
 description = "Post-quantum migration planning from real certificate inventories, with trust-hierarchy modelling and decision-robustness analysis"
 readme = "README.md"
 requires-python = ">=3.10"

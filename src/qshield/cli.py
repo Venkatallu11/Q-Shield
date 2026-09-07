@@ -231,6 +231,23 @@ def build_parser() -> argparse.ArgumentParser:
     rep.add_argument("--draws", type=int, default=500, help="0 skips the robustness pass")
     rep.add_argument("--title", default="Post-quantum migration report")
 
+    cal = sub.add_parser(
+        "calibration",
+        parents=[common],
+        help="show the calibrated parameters, their sources, and what stays assumed",
+    )
+    cal.add_argument(
+        "--impact",
+        action="store_true",
+        help="measure whether calibration changes the recommendations",
+    )
+    cal.add_argument(
+        "--sweep",
+        action="store_true",
+        help="sweep the parameters the calibration could not ground",
+    )
+    cal.add_argument("--instances", type=int, default=300)
+
     c = sub.add_parser("cbom", parents=[common], help="export a CycloneDX CBOM")
     c.add_argument("--input", required=True)
 
@@ -305,6 +322,19 @@ def main(argv: Sequence[str] | None = None) -> int:
                      weights=weights)
     elif args.command == "report":
         return _report(args, weights)
+    elif args.command == "calibration":
+        from .calibration import provenance
+        from .experiments.calibration_impact import run as run_impact
+        from .experiments.calibration_impact import sweep
+
+        if args.sweep:
+            report = sweep(instances=args.instances, seed=args.seed, weights=weights)
+        elif args.impact:
+            report = run_impact(
+                instances=args.instances, seed=args.seed, weights=weights
+            )
+        else:
+            report = provenance()
     elif args.command == "cbom":
         from .cbom import to_cbom
         from .experiments.benchmark import load_case

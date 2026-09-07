@@ -11,15 +11,23 @@ Public surface::
     MigrationProblem, exhaustive, greedy_flat, ...       -- planners
     planner.choose                                       -- picks one that finishes
     sample_worlds, paired_comparison                     -- uncertainty
+    qshield.calibration                                  -- published estimates in
     qshield.ingest.x509                                  -- real certificates in
     qshield.report.render                                -- a readable report out
     qshield.experiments.{benchmark,ablation,generalization,sensitivity,
                          tail_risk,hierarchy,threat_class,personal,robustness}
 """
 
-__version__ = "0.6.0"
+__version__ = "0.7.0"
 
 from .algorithms import Family, Primitive, normalize, primitive, quantum_factor
+from .calibration import (
+    DEFAULT_CALIBRATION,
+    CalibrationConfig,
+    CRQCForecast,
+    capability_probability,
+    mosca_verdict,
+)
 from .model import (
     DEFAULT_WEIGHTS,
     NODE_ONLY_WEIGHTS,
@@ -56,6 +64,11 @@ from .uncertainty import (
 
 __all__ = [
     "__version__",
+    "mosca_verdict",
+    "capability_probability",
+    "DEFAULT_CALIBRATION",
+    "CalibrationConfig",
+    "CRQCForecast",
     "primitive",
     "longevity",
     "effective_node_risk",

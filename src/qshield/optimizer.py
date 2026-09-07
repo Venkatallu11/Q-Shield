@@ -23,6 +23,7 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from itertools import combinations
 
+from .calibration import CalibrationConfig
 from .model import (
     DEFAULT_WEIGHTS,
     AssetModel,
@@ -84,6 +85,10 @@ class MigrationProblem:
     replacements: Mapping[str, str]
     budget: float
     strict: bool = True
+    # When set, every evaluation of this instance uses the calibrated scoring
+    # path. Held on the problem rather than passed per call so that a plan and
+    # the score it is judged by can never be computed under different models.
+    calibration: CalibrationConfig | None = None
     path_set: PathSet = field(init=False)
 
     def __post_init__(self) -> None:
@@ -141,6 +146,7 @@ class MigrationProblem:
             weights=weights,
             path_set=self.path_set,
             strict=self.strict,
+            calibration=self.calibration,
         )
 
     def evaluate_world(
@@ -167,6 +173,7 @@ class MigrationProblem:
             qf_overrides=world.overrides_for(migrated),
             path_set=self.path_set.with_reliability(world.edges),
             strict=self.strict,
+            calibration=self.calibration,
         )
 
     def cost_of(self, selected: Sequence[str] | frozenset[str]) -> float:

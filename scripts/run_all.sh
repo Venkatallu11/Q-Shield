@@ -23,4 +23,9 @@ python3 -m qshield.cli robustness --input results/ingested_case.json --draws 100
 python3 -m qshield.cli robustness --input cases/pki_case.json --draws 1000 --output results/robustness_pki.json --quiet
 python3 -m qshield.cli report --input results/ingested_case.json --draws 1000 --output results/report_ingested.md --quiet \
   --title "Post-quantum migration report: ingested certificate estate"
+
+# --- 0.7: calibration --------------------------------------------------------
+python3 -m qshield.cli calibration --output results/calibration_provenance.json --quiet
+python3 -m qshield.cli calibration --impact --instances 300 --output results/calibration_impact.json --quiet
+python3 -m qshield.cli calibration --sweep --instances 200 --output results/calibration_sensitivity.json --quiet
 echo ALL_DONE

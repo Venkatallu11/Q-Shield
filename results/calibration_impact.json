@@ -1,0 +1,74 @@
+{
+  "experiment": "calibration_impact",
+  "question": "Does replacing the invented quantum factors and longevity term with published resource estimates and expert-elicited arrival probabilities change which assets get migrated?",
+  "design": {
+    "not_a_win_rate": "the two models optimise different objectives and no outcome data exists to adjudicate between them; this measures the size of the disagreement, which was free to be zero",
+    "calibration": {
+      "forecast": "central",
+      "doubling_time_years": 2.0,
+      "pqc_residual_risk": 0.05
+    },
+    "weights": [
+      0.55,
+      0.3,
+      0.15
+    ],
+    "seed": 20260907
+  },
+  "suites": {
+    "pki": {
+      "instances": 300,
+      "plan_agreement": 0.933333,
+      "calibrated_recommends_nothing": 115,
+      "uncalibrated_recommends_nothing": 124,
+      "both_recommend_nothing": 115,
+      "spend_delta": {
+        "n": 300,
+        "mean": 0.029333,
+        "stdev": 0.280479,
+        "p05": 0.0,
+        "p50": 0.0,
+        "p95": 0.0
+      },
+      "assets_gained_under_calibration": {
+        "elliptic-curve": 14
+      },
+      "assets_dropped_under_calibration": {
+        "elliptic-curve": 8,
+        "rsa/finite-field": 3
+      }
+    },
+    "generic": {
+      "instances": 300,
+      "plan_agreement": 0.896667,
+      "calibrated_recommends_nothing": 0,
+      "uncalibrated_recommends_nothing": 0,
+      "both_recommend_nothing": 0,
+      "spend_delta": {
+        "n": 300,
+        "mean": -0.010707,
+        "stdev": 0.140982,
+        "p05": -0.07085,
+        "p50": 0.0,
+        "p95": 0.0
+      },
+      "assets_gained_under_calibration": {
+        "elliptic-curve": 30,
+        "rsa/finite-field": 4
+      },
+      "assets_dropped_under_calibration": {
+        "rsa/finite-field": 21,
+        "elliptic-curve": 20
+      }
+    }
+  },
+  "migration_crossover_years": {
+    "RSA-2048 -> ML-KEM": 5.3,
+    "RSA-3072 -> ML-KEM": 6.5,
+    "ECDSA -> ML-DSA": 3.7,
+    "X25519 -> ML-KEM": 3.7,
+    "ED25519 -> ML-DSA": 3.7,
+    "_note": "the existence of a crossover follows from the calibrated form; its location depends on pqc_residual_risk, which is Tier C and uncalibrated"
+  },
+  "reading": "A low agreement rate means the uncalibrated model was recommending different work, not merely scoring the same work differently."
+}

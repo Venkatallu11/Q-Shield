@@ -20,6 +20,36 @@ qshield report --input case.json --draws 1000 --output migration.md
 
 ---
 
+## Is it calibrated?
+
+**Not against outcomes, and it cannot be.** No cryptographically relevant quantum
+computer exists and nothing has ever been compromised via Shor's algorithm, so
+there are zero outcome events to fit parameters against. Any tool advertising a
+calibrated quantum risk score is claiming data nobody has.
+
+What 0.7 does is replace invented constants with published estimates, and
+separate the parameters that can be grounded from the ones that cannot. Doing
+that found two errors in the model's own registry:
+
+- **Elliptic curve is a far easier quantum target than RSA** at equal classical
+  security — 2.6x fewer logical qubits, ~148x fewer Toffoli gates. Every version
+  through 0.6 scored `RSA-2048`, `ECDSA` and `X25519` at exactly 1.00, asserting
+  they fall at the same moment. An estate that sequenced RSA before ECDSA on this
+  model sequenced them **backwards**.
+- **Symmetric cryptography scored too high.** NIST makes AES-128 the *benchmark*
+  for post-quantum security, yet the registry rated `AES-128` (0.15) and
+  `AES-256` (0.08) as riskier than `ML-KEM` (0.05) — more quantum risk than the
+  algorithms it recommends migrating to.
+
+And it produced a constraint the old model could not express: **migration is not
+always worth doing.** Below a crossover horizon, the chance a CRQC arrives at all
+is smaller than the residual risk of a young post-quantum primitive. `ECDSA →
+ML-DSA` pays off only above **3.7 years**; a 90-day TLS certificate is 0.25.
+
+Honest headline: calibration corrected two real errors and mostly *confirmed* the
+existing recommendations — 93.3% plan agreement on PKI instances, and identical
+plans on both real-shaped estates. See **[docs/CALIBRATION.md](docs/CALIBRATION.md)**.
+
 ## Can you act on it without calibrating it?
 
 A certificate supplies about half of what the model needs — algorithm, validity
@@ -225,6 +255,7 @@ qshield/
   model.py          the objective -- node risk, trust inheritance, CVaR path risk
   optimizer.py      exhaustive / greedy planners, Pareto frontier
   planner.py        picks a planner that will finish, and says when it downgraded
+  calibration.py    published resource estimates, CRQC forecasts, Mosca's rule
   uncertainty.py    common-random-number sampling, paired stats, bootstrap CIs
   ingest/           real artifacts in: X.509 parsing, TLS scanning, provenance
   report.py         the Markdown a person actually reads
@@ -232,7 +263,7 @@ qshield/
   cli.py            qshield <command>
   experiments/      generator, pki, benchmark, ablation, generalization,
                     sensitivity, tail_risk, hierarchy, threat_class, personal,
-                    robustness
+                    robustness, calibration_impact
 ```
 
 The objective is a weighted mean of node risk, path risk and key-rotation
@@ -272,7 +303,7 @@ can lose. See **[docs/METHODOLOGY.md](docs/METHODOLOGY.md)**.
 ## Tests
 
 ```bash
-pytest                  # 302 tests
+pytest                  # 340 tests
 pytest -m "not slow"    # skip the full-experiment smoke tests
 ```
 
@@ -281,6 +312,7 @@ pytest -m "not slow"    # skip the full-experiment smoke tests
 | | |
 |---|---|
 | [docs/USING.md](docs/USING.md) | running it on a real estate |
+| [docs/CALIBRATION.md](docs/CALIBRATION.md) | what is grounded in published data, and what is not |
 | [docs/IDENTITY.md](docs/IDENTITY.md) | certificate hierarchies and the crypto-agility trap |
 | [docs/FINDINGS.md](docs/FINDINGS.md) | every measured result, with reproduction seeds |
 | [docs/METHODOLOGY.md](docs/METHODOLOGY.md) | the model, and why it is shaped this way |

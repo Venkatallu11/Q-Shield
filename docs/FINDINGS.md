@@ -288,6 +288,53 @@ Note the secondary finding, identical on both estates: the root came back
 **blocked by budget** — chosen ~90% of the times it was affordable, affordable
 under a third of the time. The binding constraint was money, not analysis.
 
+## 13. Calibration: two of the invented constants were wrong (0.7)
+
+The parameters had been called "uncalibrated hypotheses" since 0.3. That was
+honest but lazy — it lumped three different kinds of number together, and by
+treating them all as ungroundable never checked whether the groundable ones were
+right. Two were not. Full detail and sources in
+**[CALIBRATION.md](CALIBRATION.md)**.
+
+- **Elliptic curve is a much easier quantum target than RSA at equal classical
+  security** — 2.6x fewer logical qubits, ~148x fewer Toffoli gates
+  (Roetteler et al., ASIACRYPT 2017). Every version through 0.6 scored
+  `RSA-2048`, `ECDSA`, `X25519` and `ED25519` at exactly 1.00, asserting they fall
+  together. An estate that used this model to sequence RSA before ECDSA sequenced
+  them backwards.
+- **Symmetric cryptography is not meaningfully threatened.** NIST makes AES-128
+  the benchmark for post-quantum security; AES-256 key search costs about
+  2^298/MAXDEPTH gates. The registry scored AES-128 at 0.15 and AES-256 at 0.08 —
+  *above* the 0.05 it gave ML-KEM. The model rated symmetric cryptography riskier
+  than the post-quantum algorithms it recommends migrating to.
+- **Two invented factors became one probability.** Quantum factor x longevity is
+  replaced by P(the capability to break this primitive exists before this asset's
+  exposure horizon ends), anchored on the Global Risk Institute / evolutionQ
+  expert elicitation (26 experts: CRQC within 10 years 28-49%, within 15 years
+  51-70%) and shifted per primitive by published resource estimates.
+
+**Migration stops always being worthwhile.** Below a crossover horizon the chance
+a CRQC arrives at all is smaller than the residual risk of a young post-quantum
+primitive: `ECDSA -> ML-DSA` pays off only above **3.7 years**, `RSA-2048 ->
+ML-KEM` above 5.3, `AES-256` never. A 90-day certificate is 0.25 years, and on
+both the constructed hierarchy and the real ingested estate **half the migratable
+certificates sit below the crossover**. This gives up the monotonicity guarantee
+on the calibrated path, deliberately and with tests pinning it.
+
+**Did it change the answer? Mostly no, and that is the honest headline.** Plan
+agreement with the uncalibrated model is 93.3% on PKI instances and 89.7% on
+generic ones, and on both real-shaped estates the recommendation is *identical*.
+The trust-hierarchy model already excluded leaf certificates because their risk is
+pinned to an unmigrated issuer; the calibrated model excludes them again because
+their horizons are too short. Two unrelated lines of argument converge on
+"migrate the anchor, leave the leaves", and neither needed the other.
+
+Across all 36 combinations of the parameters calibration could *not* ground
+(forecast scenario x hardware doubling time x PQC residual risk), plan agreement
+averages **95.4%**, worst case **85.0%**. The recommendation is robust; the
+crossover horizon is not, ranging from 0.05 to 5.9 years over the same settings.
+Quote the plan, not the number.
+
 ## What none of this establishes
 
 - **Nothing here is validated against reality.** Quantum factors and objective
@@ -325,6 +372,13 @@ under a third of the time. The binding constraint was money, not analysis.
   the *model* is right. The quantum factors, the objective weights and the
   max-dominance trust semantics are held fixed throughout and remain
   uncalibrated; a robust answer from a wrong model is still wrong.
+- **Calibration is substitution of published estimates, not validation.** No
+  CRQC exists, nothing has been compromised via Shor's algorithm, and so there
+  are zero outcome events to fit against. Section 13 replaces invented constants
+  with other people's published numbers. That is a real improvement and it is not
+  the same as a model checked against reality.
+- **The expert survey is an elicitation.** It records what 26 people believed in
+  2025, and its own authors publish it as a range because they disagree.
 - **The ingested estate is a test fixture.** It is a real, correctly-signed
   OpenSSL hierarchy, not a production estate, and it is small. The agreement
   between it and the constructed case is encouraging, not conclusive.

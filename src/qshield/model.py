@@ -36,6 +36,7 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, replace
 
 from .algorithms import ROTATION_REFERENCE_HOURS, quantum_factor
+from .calibration import CalibrationConfig, horizon_for
 from .paths import EdgeModel, PathSet, delegation_parents, enumerate_paths
 from .threat import ThreatClass, default_threat_class, longevity
 
@@ -233,6 +234,7 @@ def node_risk(
     qf_override: float | None = None,
     *,
     strict: bool = False,
+    calibration: CalibrationConfig | None = None,
 ) -> float:
     """Modeled standalone risk of one asset, in ``[0, 100]``.
 
@@ -246,6 +248,34 @@ def node_risk(
     conflated a 90-day leaf certificate with the 20-year root above it. See
     :mod:`qshield.threat`.
     """
+    dependency = min(1.0, 0.5 + 0.1 * max(0, asset.dependency_count - 1))
+
+    if calibration is not None and qf_override is None:
+        # Calibrated path: one probability replaces the quantum-factor and
+        # longevity product. Both of those were dimensionless inventions; this is
+        # P(the capability to break this primitive exists before this asset's
+        # exposure horizon ends), anchored on published expert elicitation and
+        # shifted per primitive by published resource estimates. See
+        # :mod:`qshield.calibration`.
+        #
+        # Note this term is NOT monotone under migration the way the uncalibrated
+        # product is: over a short horizon the chance a CRQC arrives at all is
+        # smaller than the residual risk of a young post-quantum primitive, so
+        # the swap raises the score. That is a finding, not a defect -- see
+        # `docs/CALIBRATION.md` -- but it means the monotonicity guarantee
+        # documented above holds only on the uncalibrated path.
+        exposure_probability = calibration.probability(
+            asset.algorithm, horizon_for(asset)
+        )
+        return min(
+            100.0,
+            100.0
+            * asset.exposure
+            * asset.sensitivity
+            * exposure_probability
+            * dependency,
+        )
+
     q = quantum_factor(asset.algorithm, strict=strict) if qf_override is None else qf_override
     longevity_factor = longevity(
         asset.effective_threat_class,
@@ -253,7 +283,6 @@ def node_risk(
         credential_validity_years=asset.credential_validity_years,
         verification_horizon_years=asset.verification_horizon_years,
     )
-    dependency = min(1.0, 0.5 + 0.1 * max(0, asset.dependency_count - 1))
     return min(
         100.0, 100.0 * asset.exposure * asset.sensitivity * longevity_factor * q * dependency
     )
@@ -366,6 +395,7 @@ def objective(
     qf_overrides: Mapping[str, float] | None = None,
     path_set: PathSet | None = None,
     strict: bool = False,
+    calibration: CalibrationConfig | None = None,
 ) -> ObjectiveResult:
     """Aggregate system objective in ``[0, 100]``; lower is better.
 
@@ -375,7 +405,10 @@ def objective(
     """
     qf_overrides = qf_overrides or {}
     own_scores = {
-        a.name: node_risk(a, qf_overrides.get(a.name), strict=strict) for a in assets
+        a.name: node_risk(
+            a, qf_overrides.get(a.name), strict=strict, calibration=calibration
+        )
+        for a in assets
     }
     # Trust is inherited before anything else is computed: an asset's exposure to
     # its issuer is not something the path term can recover.
