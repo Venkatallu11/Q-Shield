@@ -18,7 +18,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install
-        run: pip install -e ".[dev]"
+        run: pip install -e ".[dev,scan]"
       - name: Lint
         run: ruff check src tests
       - name: Test
@@ -37,3 +37,11 @@ jobs:
           qshield threat-class --instances 8 --quiet --output /tmp/tc.json
           qshield personal --instances 8 --quiet --output /tmp/p.json
           qshield cbom --input cases/pki_case.json --quiet --output /tmp/c.json
+          qshield ingest --certs tests/fixtures/pki --budget 6 --quiet --output /tmp/case.json
+          qshield robustness --input /tmp/case.json --draws 40 --quiet --output /tmp/rob.json
+          qshield report --input /tmp/case.json --draws 40 --quiet --output /tmp/report.md
+      - name: Fixtures are rebuildable
+        run: |
+          bash scripts/make_fixtures.sh
+          git diff --exit-code --stat tests/fixtures/pki || \
+            echo "note: regenerated fixtures differ (new keys and dates); this is expected"

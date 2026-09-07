@@ -2,6 +2,7 @@
 the conclusions depend on."""
 
 import json
+import sys
 from pathlib import Path
 
 import pytest
@@ -294,3 +295,73 @@ def test_pki_replacements_map_signing_keys_to_signature_algorithms():
 
     assert REPLACEMENTS["RSA-2048"] == "ML-DSA"
     assert set(REPLACEMENTS.values()) == {"ML-DSA"}
+
+
+# --- 0.6: ingest, planning and reporting through the CLI --------------------
+
+PKI_FIXTURES = Path(__file__).resolve().parent / "fixtures" / "pki"
+
+
+def test_cli_ingest_builds_a_case_from_real_certificates(tmp_path):
+    pytest.importorskip("cryptography")
+    out = tmp_path / "case.json"
+    assert main(["ingest", "--certs", str(PKI_FIXTURES), "--budget", "6",
+                 "--quiet", "--output", str(out)]) == 0
+    case = json.loads(out.read_text())
+    assert len(case["assets"]) == 6
+    assert case["_provenance"]["summary"]["assumed_share"] > 0
+    # The case must load straight back into the model.
+    assert benchmark.problem_from_dict(case).candidates
+
+
+def test_cli_ingest_requires_a_source(tmp_path):
+    with pytest.raises(SystemExit):
+        main(["ingest", "--quiet", "--output", str(tmp_path / "x.json")])
+
+
+def test_cli_report_renders_markdown(tmp_path):
+    pytest.importorskip("cryptography")
+    case = tmp_path / "case.json"
+    main(["ingest", "--certs", str(PKI_FIXTURES), "--budget", "6",
+          "--quiet", "--output", str(case)])
+    out = tmp_path / "report.md"
+    assert main(["report", "--input", str(case), "--draws", "20",
+                 "--quiet", "--output", str(out)]) == 0
+    text = out.read_text()
+    assert text.startswith("# ")
+    assert "were not observed" in text  # provenance reached the reader
+
+
+def test_cli_report_can_skip_the_robustness_pass(tmp_path):
+    out = tmp_path / "r.md"
+    main(["report", "--input", str(CASE), "--draws", "0", "--quiet",
+          "--output", str(out)])
+    assert "Run `qshield robustness`" in out.read_text()
+
+
+def test_cli_robustness_emits_a_verdict_per_asset(tmp_path):
+    out = tmp_path / "rob.json"
+    assert main(["robustness", "--input", str(CASE), "--draws", "30",
+                 "--quiet", "--output", str(out)]) == 0
+    report = json.loads(out.read_text())
+    assert report["experiment"] == "robustness"
+    assert all("verdict" in entry for entry in report["assets"])
+
+
+def test_the_core_model_does_not_import_the_ingest_dependency():
+    """The zero-dependency claim covers the model and every experiment; only the
+    parser is allowed a third-party dependency."""
+    import subprocess
+
+    code = (
+        "import sys;"
+        "import qshield, qshield.experiments.ablation, qshield.report, qshield.planner;"
+        "assert 'cryptography' not in sys.modules, sorted(m for m in sys.modules "
+        "if 'crypt' in m);"
+        "print('clean')"
+    )
+    result = subprocess.run(
+        [sys.executable, "-c", code], capture_output=True, text=True, check=False
+    )
+    assert result.returncode == 0, result.stderr
+    assert "clean" in result.stdout

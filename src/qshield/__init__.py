@@ -9,11 +9,15 @@ Public surface::
 
     AssetModel, EdgeModel, ObjectiveWeights, objective   -- the model
     MigrationProblem, exhaustive, greedy_flat, ...       -- planners
+    planner.choose                                       -- picks one that finishes
     sample_worlds, paired_comparison                     -- uncertainty
-    qshield.experiments.{benchmark,ablation,generalization,sensitivity}
+    qshield.ingest.x509                                  -- real certificates in
+    qshield.report.render                                -- a readable report out
+    qshield.experiments.{benchmark,ablation,generalization,sensitivity,
+                         tail_risk,hierarchy,threat_class,personal,robustness}
 """
 
-__version__ = "0.5.0"
+__version__ = "0.6.0"
 
 from .algorithms import Family, Primitive, normalize, primitive, quantum_factor
 from .model import (

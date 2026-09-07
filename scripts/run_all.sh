@@ -15,4 +15,12 @@ python3 -m qshield.cli hierarchy --instances 300 --output results/hierarchy.json
 python3 -m qshield.cli hierarchy --instances 200 --sweep-root-cost --output results/hierarchy_root_cost.json --quiet
 python3 -m qshield.cli threat-class --instances 300 --output results/threat_class.json --quiet
 python3 -m qshield.cli personal --instances 300 --output results/personal_identity.json --quiet
+
+# --- 0.6: viability -- real input, planner scaling, decision robustness -----
+python3 scripts/scaling.py > /dev/null
+python3 -m qshield.cli ingest --certs tests/fixtures/pki --budget 6 --output results/ingested_case.json --quiet
+python3 -m qshield.cli robustness --input results/ingested_case.json --draws 1000 --output results/robustness_ingested.json --quiet
+python3 -m qshield.cli robustness --input cases/pki_case.json --draws 1000 --output results/robustness_pki.json --quiet
+python3 -m qshield.cli report --input results/ingested_case.json --draws 1000 --output results/report_ingested.md --quiet \
+  --title "Post-quantum migration report: ingested certificate estate"
 echo ALL_DONE

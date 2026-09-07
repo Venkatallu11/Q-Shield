@@ -253,6 +253,41 @@ concentrated 2.3:1 in the confidentiality class — the one where waiting is
 irreversible. Q-SHIELD models none of phishing, SIM-swap or credential theft,
 which dominate real personal identity compromise.
 
+## 12. The central recommendation survives total parameter ignorance (0.6)
+
+Ingesting a real certificate estate produces a case in which roughly **55% of the
+model's inputs are placeholders**. No certificate records how sensitive the data
+behind a key is, how exposed the host is, or what migrating it would cost.
+
+`qshield robustness` resamples every one of those fields across its full
+admissible range — sensitivity and exposure over most of the unit interval, data
+lifetime from 1 to 25 years, migration cost from 0.4x to 2.5x — and replans each
+draw. Observed and derived fields (algorithm, credential validity, the trust
+hierarchy, issued-certificate counts) are held fixed, because those are facts.
+
+1000 draws, on a constructed three-tier CA (`cases/pki_case.json`) and on a real
+certificate estate parsed from PEM files (`results/robustness_ingested.json`):
+
+| tier | affordable in | chosen when affordable |
+|---|---|---|
+| root CA | 28.7% / 34.8% of draws | **91.3% / 83.3%** |
+| intermediate CA | 76.1% / 100% | 21.8% / 34.3% |
+| TLS leaf certificates | **100%** of draws | **0.8% – 3.5%** |
+
+Leaf certificates are affordable in every single draw and are chosen in under 4%
+of them. The root is chosen almost every time it can be paid for.
+
+This is the independent confirmation of section 11. The hierarchy result was
+derived from a model with chosen parameters; here it survives replacing every
+choosable parameter with a uniform draw over its whole plausible range, on a real
+estate as well as a constructed one. **The recommendation to migrate the trust
+anchor rather than the leaves does not depend on the uncalibrated parameters at
+all**, which is what makes an uncalibrated model actionable.
+
+Note the secondary finding, identical on both estates: the root came back
+**blocked by budget** — chosen ~90% of the times it was affordable, affordable
+under a third of the time. The binding constraint was money, not analysis.
+
 ## What none of this establishes
 
 - **Nothing here is validated against reality.** Quantum factors and objective
@@ -285,3 +320,11 @@ which dominate real personal identity compromise.
   phishing, credential stuffing, SIM-swap, session-token theft, malware and device
   theft, which are the dominant real-world threats. Nothing here is a security
   assessment.
+- **Section 12 shows robustness, not correctness.** That a recommendation
+  survives every setting of the *guessed* parameters says nothing about whether
+  the *model* is right. The quantum factors, the objective weights and the
+  max-dominance trust semantics are held fixed throughout and remain
+  uncalibrated; a robust answer from a wrong model is still wrong.
+- **The ingested estate is a test fixture.** It is a real, correctly-signed
+  OpenSSL hierarchy, not a production estate, and it is small. The agreement
+  between it and the constructed case is encouraging, not conclusive.

@@ -12,6 +12,43 @@ It is a research instrument, not a compliance tool. The objective is a scenario
 model with uncalibrated parameters. A lower score means a plan is better *under
 this model*; it does not mean a system is safer.
 
+```bash
+pip install -e ".[scan]"
+qshield ingest --certs /etc/ssl/certs --budget 6 --output case.json
+qshield report --input case.json --draws 1000 --output migration.md
+```
+
+---
+
+## Can you act on it without calibrating it?
+
+A certificate supplies about half of what the model needs — algorithm, validity
+period, issuing authority — and none of the rest. Nothing in X.509 records how
+sensitive the data behind a key is, how exposed the host is, or what migrating it
+would cost.
+
+Rather than guess and present the result as a measurement, `qshield robustness`
+resamples every unobservable parameter across its full plausible range, replans
+each time, and reports what survives. Over 1000 redraws, on a constructed CA
+hierarchy and on a real certificate estate ingested from PEM files:
+
+| tier | affordable in | chosen when affordable |
+|---|---|---|
+| root CA | 28.7% / 34.8% of draws | **91.3% / 83.3%** |
+| intermediate CA | 76.1% / 100% | 21.8% / 34.3% |
+| TLS leaves | **100%** of draws | **0.8% – 3.5%** |
+
+Leaf certificates are affordable in every draw and almost never worth migrating;
+the root is chosen nearly every time it can be paid for. **That recommendation
+does not depend on any guessed parameter** — it holds across their entire
+admissible range, on both estates. So it can be acted on today, without
+calibrating anything.
+
+On both estates the root came back *blocked by budget*: the binding constraint
+was money, not analysis.
+
+See **[docs/USING.md](docs/USING.md)**.
+
 ---
 
 ## What the experiments found
@@ -108,14 +145,24 @@ This version uses common random numbers throughout.
 ## Install
 
 ```bash
-pip install -e ".[dev]"
+pip install -e ".[scan]"   # adds cryptography, for reading certificates
+pip install -e ".[dev]"    # tests and linting
 ```
 
-Python 3.10+. The library has **no runtime dependencies** — every number in a
-report is produced by code in this repository, so a result cannot silently change
-when a third-party default changes.
+Python 3.10+. The model and every experiment have **no runtime dependencies**, so
+no reported number can shift because a third-party default changed. Only the
+certificate parser takes one, and `qshield` imports cleanly without it — there is
+a test that asserts exactly this.
 
 ## Use
+
+```bash
+# Real infrastructure in, decision out
+qshield ingest --certs /etc/ssl/certs ./pki --budget 6 --output case.json
+qshield ingest --tls api.example.com www.example.com --budget 6 --output case.json
+qshield robustness --input case.json --draws 1000
+qshield report --input case.json --draws 1000 --output migration.md
+```
 
 ```bash
 # Full report for one system, with paired uncertainty analysis
@@ -177,11 +224,15 @@ qshield/
   paths.py          attack-path enumeration + delegation (trust) edges
   model.py          the objective -- node risk, trust inheritance, CVaR path risk
   optimizer.py      exhaustive / greedy planners, Pareto frontier
+  planner.py        picks a planner that will finish, and says when it downgraded
   uncertainty.py    common-random-number sampling, paired stats, bootstrap CIs
+  ingest/           real artifacts in: X.509 parsing, TLS scanning, provenance
+  report.py         the Markdown a person actually reads
   cbom.py           CycloneDX export
-  cli.py            qshield <experiment>
+  cli.py            qshield <command>
   experiments/      generator, pki, benchmark, ablation, generalization,
-                    sensitivity, tail_risk, hierarchy, threat_class, personal
+                    sensitivity, tail_risk, hierarchy, threat_class, personal,
+                    robustness
 ```
 
 The objective is a weighted mean of node risk, path risk and key-rotation
@@ -212,14 +263,27 @@ can lose. See **[docs/METHODOLOGY.md](docs/METHODOLOGY.md)**.
 - **The identity results are error sizes, not win rates.** The corrected planner
   minimises the metric it is scored on, so it cannot lose; what is measured is how
   large the modelling error is, and in the cheap-anchor regime it is nearly zero.
+- **Ingested parameters are half assumptions.** A certificate cannot tell you
+  sensitivity, exposure, data lifetime, criticality, cost or rotation cadence.
+  Every generated case records which fields were observed and which were filled
+  in; run the robustness pass before believing anything that depends on them.
 - **No standard is implemented and no conformance is claimed.**
 
 ## Tests
 
 ```bash
-pytest                  # 235 tests
+pytest                  # 302 tests
 pytest -m "not slow"    # skip the full-experiment smoke tests
 ```
+
+## Documentation
+
+| | |
+|---|---|
+| [docs/USING.md](docs/USING.md) | running it on a real estate |
+| [docs/IDENTITY.md](docs/IDENTITY.md) | certificate hierarchies and the crypto-agility trap |
+| [docs/FINDINGS.md](docs/FINDINGS.md) | every measured result, with reproduction seeds |
+| [docs/METHODOLOGY.md](docs/METHODOLOGY.md) | the model, and why it is shaped this way |
 
 ## License
 

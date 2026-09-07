@@ -1,0 +1,156 @@
+{
+  "experiment": "robustness",
+  "question": "Which recommendations survive every admissible setting of the parameters no artifact supplies?",
+  "design": {
+    "draws": 1000,
+    "seed": 20260907,
+    "resampled_fields": [
+      "business_criticality",
+      "cost_multiplier",
+      "data_lifetime_years",
+      "exposure",
+      "rotation_hours",
+      "sensitivity"
+    ],
+    "held_fixed": [
+      "algorithm",
+      "credential_validity_years",
+      "verification_horizon_years",
+      "threat_class",
+      "dependency_count",
+      "controllable",
+      "edges (dependency and delegation)",
+      "budget"
+    ],
+    "ranges": {
+      "sensitivity": [
+        0.3,
+        1.0
+      ],
+      "exposure": [
+        0.1,
+        1.0
+      ],
+      "data_lifetime_years": [
+        1.0,
+        25.0
+      ],
+      "business_criticality": [
+        0.3,
+        1.0
+      ],
+      "rotation_hours": [
+        0.0,
+        720.0
+      ],
+      "cost_multiplier": [
+        0.4,
+        2.5
+      ]
+    },
+    "weights": [
+      0.55,
+      0.3,
+      0.15
+    ],
+    "planner": "exhaustive"
+  },
+  "nominal_plan": {
+    "strategy": "exhaustive",
+    "selected": [
+      "root-ca"
+    ],
+    "cost": 2.0,
+    "objective": 12.957224,
+    "improvement": 2.603613,
+    "improvement_per_cost": 1.301807
+  },
+  "nominal_plan_reproduced_in_draws": 0.187,
+  "distinct_plans": 16,
+  "plan_size": {
+    "n": 1000,
+    "mean": 0.616,
+    "stdev": 0.686305,
+    "p05": 0.0,
+    "p50": 1.0,
+    "p95": 2.0
+  },
+  "spend": {
+    "n": 1000,
+    "mean": 0.740957,
+    "stdev": 0.783631,
+    "p05": 0.0,
+    "p50": 0.467942,
+    "p95": 1.917654
+  },
+  "assets": [
+    {
+      "asset": "root-ca",
+      "selection_rate": 0.262,
+      "mean_rank_when_selected": 1.019,
+      "affordable_rate": 0.287,
+      "selection_rate_when_affordable": 0.912892,
+      "verdict": "blocked by budget"
+    },
+    {
+      "asset": "intermediate-ca",
+      "selection_rate": 0.166,
+      "mean_rank_when_selected": 1.199,
+      "affordable_rate": 0.761,
+      "selection_rate_when_affordable": 0.218134,
+      "verdict": "contested"
+    },
+    {
+      "asset": "code-signing",
+      "selection_rate": 0.16,
+      "mean_rank_when_selected": 1.262,
+      "affordable_rate": 0.764,
+      "selection_rate_when_affordable": 0.209424,
+      "verdict": "contested"
+    },
+    {
+      "asset": "leaf-mtls-mesh",
+      "selection_rate": 0.011,
+      "mean_rank_when_selected": 2.091,
+      "affordable_rate": 1.0,
+      "selection_rate_when_affordable": 0.011,
+      "verdict": "not indicated"
+    },
+    {
+      "asset": "leaf-tls-web",
+      "selection_rate": 0.009,
+      "mean_rank_when_selected": 2.556,
+      "affordable_rate": 1.0,
+      "selection_rate_when_affordable": 0.009,
+      "verdict": "not indicated"
+    },
+    {
+      "asset": "leaf-tls-api",
+      "selection_rate": 0.008,
+      "mean_rank_when_selected": 2.375,
+      "affordable_rate": 1.0,
+      "selection_rate_when_affordable": 0.008,
+      "verdict": "not indicated"
+    },
+    {
+      "asset": "customer-records",
+      "selection_rate": 0.0,
+      "mean_rank_when_selected": null,
+      "affordable_rate": 0.0,
+      "selection_rate_when_affordable": 0.0,
+      "verdict": "never affordable"
+    }
+  ],
+  "act_now": [],
+  "contested": [
+    "intermediate-ca",
+    "code-signing"
+  ],
+  "blocked_by_budget": [
+    "root-ca"
+  ],
+  "never_affordable": [
+    "customer-records"
+  ],
+  "reading": "An asset selected in nearly every draw is a recommendation that does not depend on the guessed parameters; act on it without calibrating anything. A contested asset is a real open question, and the right response is to measure its sensitivity, exposure or migration cost rather than to let a placeholder decide. An asset blocked by budget would be chosen whenever it is affordable -- that finding is about money, not cryptography. An asset marked never affordable was not assessed at all: no draw could fit it in the budget."
+}

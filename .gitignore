@@ -11,3 +11,6 @@ venv/
 htmlcov/
 .DS_Store
 src/*.egg-info/
+
+# tests/fixtures/pki holds real certificates on purpose (no key material);
+# scripts/make_fixtures.sh rebuilds them.

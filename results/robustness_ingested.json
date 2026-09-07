@@ -1,0 +1,147 @@
+{
+  "experiment": "robustness",
+  "question": "Which recommendations survive every admissible setting of the parameters no artifact supplies?",
+  "design": {
+    "draws": 1000,
+    "seed": 20260907,
+    "resampled_fields": [
+      "business_criticality",
+      "cost_multiplier",
+      "data_lifetime_years",
+      "exposure",
+      "rotation_hours",
+      "sensitivity"
+    ],
+    "held_fixed": [
+      "algorithm",
+      "credential_validity_years",
+      "verification_horizon_years",
+      "threat_class",
+      "dependency_count",
+      "controllable",
+      "edges (dependency and delegation)",
+      "budget"
+    ],
+    "ranges": {
+      "sensitivity": [
+        0.3,
+        1.0
+      ],
+      "exposure": [
+        0.1,
+        1.0
+      ],
+      "data_lifetime_years": [
+        1.0,
+        25.0
+      ],
+      "business_criticality": [
+        0.3,
+        1.0
+      ],
+      "rotation_hours": [
+        0.0,
+        720.0
+      ],
+      "cost_multiplier": [
+        0.4,
+        2.5
+      ]
+    },
+    "weights": [
+      0.55,
+      0.3,
+      0.15
+    ],
+    "planner": "exhaustive"
+  },
+  "nominal_plan": {
+    "strategy": "exhaustive",
+    "selected": [
+      "Q-SHIELD Release Signing",
+      "Q-SHIELD Test Root CA"
+    ],
+    "cost": 5.5,
+    "objective": 3.068523,
+    "improvement": 4.795776,
+    "improvement_per_cost": 0.871959
+  },
+  "nominal_plan_reproduced_in_draws": 0.089,
+  "distinct_plans": 25,
+  "plan_size": {
+    "n": 1000,
+    "mean": 1.186,
+    "stdev": 1.113842,
+    "p05": 0.0,
+    "p50": 1.0,
+    "p95": 3.0
+  },
+  "spend": {
+    "n": 1000,
+    "mean": 2.382464,
+    "stdev": 2.292675,
+    "p05": 0.0,
+    "p50": 1.809506,
+    "p95": 5.848982
+  },
+  "assets": [
+    {
+      "asset": "Q-SHIELD Release Signing",
+      "selection_rate": 0.477,
+      "mean_rank_when_selected": 1.696,
+      "affordable_rate": 1.0,
+      "selection_rate_when_affordable": 0.477,
+      "verdict": "contested"
+    },
+    {
+      "asset": "Q-SHIELD Test Intermediate CA",
+      "selection_rate": 0.343,
+      "mean_rank_when_selected": 1.449,
+      "affordable_rate": 1.0,
+      "selection_rate_when_affordable": 0.343,
+      "verdict": "contested"
+    },
+    {
+      "asset": "Q-SHIELD Test Root CA",
+      "selection_rate": 0.29,
+      "mean_rank_when_selected": 1.131,
+      "affordable_rate": 0.348,
+      "selection_rate_when_affordable": 0.833333,
+      "verdict": "blocked by budget"
+    },
+    {
+      "asset": "legacy.example.test",
+      "selection_rate": 0.035,
+      "mean_rank_when_selected": 3.8,
+      "affordable_rate": 1.0,
+      "selection_rate_when_affordable": 0.035,
+      "verdict": "not indicated"
+    },
+    {
+      "asset": "api.example.test",
+      "selection_rate": 0.024,
+      "mean_rank_when_selected": 3.625,
+      "affordable_rate": 1.0,
+      "selection_rate_when_affordable": 0.024,
+      "verdict": "not indicated"
+    },
+    {
+      "asset": "web.example.test",
+      "selection_rate": 0.017,
+      "mean_rank_when_selected": 3.647,
+      "affordable_rate": 1.0,
+      "selection_rate_when_affordable": 0.017,
+      "verdict": "not indicated"
+    }
+  ],
+  "act_now": [],
+  "contested": [
+    "Q-SHIELD Release Signing",
+    "Q-SHIELD Test Intermediate CA"
+  ],
+  "blocked_by_budget": [
+    "Q-SHIELD Test Root CA"
+  ],
+  "never_affordable": [],
+  "reading": "An asset selected in nearly every draw is a recommendation that does not depend on the guessed parameters; act on it without calibrating anything. A contested asset is a real open question, and the right response is to measure its sensitivity, exposure or migration cost rather than to let a placeholder decide. An asset blocked by budget would be chosen whenever it is affordable -- that finding is about money, not cryptography. An asset marked never affordable was not assessed at all: no draw could fit it in the budget."
+}

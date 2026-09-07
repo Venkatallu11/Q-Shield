@@ -45,6 +45,73 @@ def _weights(raw: str | None) -> ObjectiveWeights:
         raise argparse.ArgumentTypeError(f"--weights: {exc}") from exc
 
 
+def _ingest(args: argparse.Namespace, parser: argparse.ArgumentParser) -> dict[str, Any]:
+    """Assemble a case from certificates on disk and/or live TLS endpoints."""
+    if not args.certs and not args.tls:
+        parser.error("ingest needs --certs and/or --tls")
+    try:
+        from .ingest.x509 import fetch_tls_chain, from_certificates, load_certificates
+    except ImportError as exc:
+        parser.error(str(exc))
+
+    collected = []
+    if args.certs:
+        collected.extend(load_certificates(args.certs))
+    for endpoint in args.tls:
+        host, _, port = endpoint.partition(":")
+        try:
+            chain = fetch_tls_chain(host, int(port) if port else 443)
+        except OSError as exc:
+            # One unreachable host must not discard the rest of a scan.
+            print(f"warning: {endpoint}: {exc}", file=sys.stderr)
+            continue
+        collected.extend((cert, endpoint) for cert in chain)
+
+    if not collected:
+        parser.error("no certificates were read")
+
+    inventory = from_certificates(collected)
+    return inventory.as_case(
+        budget=args.budget,
+        entrypoints=args.entrypoints,
+        targets=args.targets,
+    )
+
+
+def _report(args: argparse.Namespace, weights: ObjectiveWeights) -> int:
+    """Render Markdown rather than JSON, so this path bypasses _emit."""
+    import json as _json
+
+    from .experiments.benchmark import load_case
+    from .report import render
+
+    problem = load_case(args.input)
+    robustness = None
+    if args.draws > 0:
+        from .experiments.robustness import run as run_robustness
+
+        robustness = run_robustness(
+            problem, draws=args.draws, seed=args.seed, weights=weights
+        )
+    provenance = _json.loads(Path(args.input).read_text(encoding="utf-8")).get(
+        "_provenance"
+    )
+    text = render(
+        problem,
+        title=args.title,
+        weights=weights,
+        robustness=robustness,
+        provenance=provenance,
+    )
+    if args.output:
+        Path(args.output).parent.mkdir(parents=True, exist_ok=True)
+        Path(args.output).write_text(text, encoding="utf-8")
+        print(f"wrote {args.output}", file=sys.stderr)
+    if not args.quiet:
+        print(text)
+    return 0
+
+
 def _emit(report: dict[str, Any], output: str | None, quiet: bool) -> None:
     text = json.dumps(report, indent=2, default=str)
     if output:
@@ -126,6 +193,44 @@ def build_parser() -> argparse.ArgumentParser:
     )
     pi.add_argument("--instances", type=int, default=300)
 
+    ing = sub.add_parser(
+        "ingest",
+        parents=[common],
+        help="build a case from real certificates (files, directories, or live TLS)",
+    )
+    ing.add_argument(
+        "--certs",
+        nargs="+",
+        default=[],
+        metavar="PATH",
+        help="PEM/DER files or directories to scan",
+    )
+    ing.add_argument(
+        "--tls",
+        nargs="+",
+        default=[],
+        metavar="HOST[:PORT]",
+        help="TLS endpoints to fetch chains from (port defaults to 443)",
+    )
+    ing.add_argument("--budget", type=float, default=3.0)
+    ing.add_argument("--entrypoints", nargs="*", default=[])
+    ing.add_argument("--targets", nargs="*", default=[])
+
+    rob = sub.add_parser(
+        "robustness",
+        parents=[common],
+        help="which recommendations survive the parameters that had to be guessed?",
+    )
+    rob.add_argument("--input", required=True)
+    rob.add_argument("--draws", type=int, default=500)
+
+    rep = sub.add_parser(
+        "report", parents=[common], help="render a migration report as Markdown"
+    )
+    rep.add_argument("--input", required=True)
+    rep.add_argument("--draws", type=int, default=500, help="0 skips the robustness pass")
+    rep.add_argument("--title", default="Post-quantum migration report")
+
     c = sub.add_parser("cbom", parents=[common], help="export a CycloneDX CBOM")
     c.add_argument("--input", required=True)
 
@@ -190,6 +295,16 @@ def main(argv: Sequence[str] | None = None) -> int:
         from .experiments.personal import run
 
         report = run(instances=args.instances, seed=args.seed, weights=weights)
+    elif args.command == "ingest":
+        report = _ingest(args, parser)
+    elif args.command == "robustness":
+        from .experiments.benchmark import load_case
+        from .experiments.robustness import run
+
+        report = run(load_case(args.input), draws=args.draws, seed=args.seed,
+                     weights=weights)
+    elif args.command == "report":
+        return _report(args, weights)
     elif args.command == "cbom":
         from .cbom import to_cbom
         from .experiments.benchmark import load_case

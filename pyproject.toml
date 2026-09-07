@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "qshield"
-version = "0.5.0"
-description = "A falsifiable model for attack-path-aware post-quantum migration planning, with trust-hierarchy and threat-class modelling for identity infrastructure"
+version = "0.6.0"
+description = "Post-quantum migration planning from real certificate inventories, with trust-hierarchy modelling and decision-robustness analysis"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "Apache-2.0" }
@@ -25,7 +25,11 @@ classifiers = [
 dependencies = []
 
 [project.optional-dependencies]
-dev = ["pytest>=8", "ruff>=0.6"]
+# Parsing X.509 is the one job not worth doing by hand, so the ingest layer takes
+# a dependency. The model and every experiment stay dependency-free, so no
+# reported number can shift because a parser changed.
+scan = ["cryptography>=41"]
+dev = ["pytest>=8", "ruff>=0.6", "cryptography>=41"]
 
 [project.scripts]
 qshield = "qshield.cli:main"
