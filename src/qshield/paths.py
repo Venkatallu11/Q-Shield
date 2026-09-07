@@ -41,6 +41,12 @@ class EdgeKind(str, Enum):
 
     DEPENDENCY = "dependency"
     DELEGATION = "delegation"
+    #: Shared substrate rather than delegated trust: one HSM holding several
+    #: keys, one identity provider behind several accounts, one library linked
+    #: into several services, one administrator with all the credentials.
+    #: Compromising it compromises every dependent at once, exactly as a
+    #: certificate authority does, so it is a cause and not a traversal step.
+    SHARED = "shared"
 
 
 @dataclass(frozen=True)
@@ -124,6 +130,9 @@ def enumerate_paths(
         # Delegation is not traversal: it is handled by the trust closure in
         # qshield.model, not by walking it as a step in an attack chain.
         if e.kind is not EdgeKind.DEPENDENCY:
+            # Delegation and shared substrate are causes, handled by
+            # qshield.correlation; walking them as attack steps would both
+            # double-count them and mis-describe what they are.
             continue
         adjacency.setdefault(e.source, []).append(e.target)
         # Parallel edges collapse to the strongest available leverage.
@@ -165,6 +174,11 @@ def _clamp(x: float, lo: float = 0.0, hi: float = 1.0) -> float:
     return max(lo, min(hi, x))
 
 
+def cause_edges(edges: Sequence[EdgeModel]) -> list[EdgeModel]:
+    """Edges that express a common cause rather than a traversal step."""
+    return [e for e in edges if e.kind in (EdgeKind.DELEGATION, EdgeKind.SHARED)]
+
+
 def delegation_parents(
     edges: Sequence[EdgeModel],
 ) -> dict[str, list[tuple[str, float]]]:
@@ -175,6 +189,6 @@ def delegation_parents(
     """
     parents: dict[str, list[tuple[str, float]]] = {}
     for e in edges:
-        if e.kind is EdgeKind.DELEGATION:
+        if e.kind in (EdgeKind.DELEGATION, EdgeKind.SHARED):
             parents.setdefault(e.target, []).append((e.source, _clamp(e.reliability)))
     return parents

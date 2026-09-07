@@ -72,6 +72,20 @@ effective(v) = max(own(v), max over issuers u of effective(u) . strength(u, v))
 by fixpoint iteration, because cross-signed hierarchies contain cycles. Being a
 max of monotone terms, it preserves the objective's monotonicity.
 
+**0.9 supersedes this in correlated mode, because the max was only half right.**
+Two defects: taking the max of an asset's own risk and its inherited risk
+discards the asset's own contribution whenever the issuer dominates, and — worse —
+raising two siblings to the issuer's risk and then multiplying them through the
+path term counts one compromise twice. `qshield.correlation` replaces both with a
+generative model: a noisy-OR marginal over own risk and each cause, and a path
+term conditioned on the joint state of the causes. `EdgeKind.SHARED` extends the
+same treatment to substrate — one HSM or identity provider behind several
+assets — which is a common cause without being a trust relation. Measured
+effects are in [FINDINGS.md](FINDINGS.md#16-independent-hops-was-a-defect-not-a-caveat-09);
+the correction is worth 36.4% of the path term on shared-substrate estates and
+exactly nothing on the certificate hierarchies below, because those paths carry
+only one certificate each.
+
 ## The crypto-agility trap
 
 The two corrections combine into one operational conclusion:

@@ -43,8 +43,14 @@ so migrating an internet-facing entrypoint left the path term unchanged. And the
 expression is monotone non-decreasing in every node score, since `1 - PROD(1 - x)`
 increases in each `x`.
 
-Hops are assumed independent. Real infrastructure shares platforms, libraries and
-operators, so this overstates the value of breaking any single chain.
+Hops are assumed independent **on the default path**. That is wrong wherever two
+assets share a cause, and 0.5's delegation work made it wrong in a specific,
+measurable way: two certificates issued by one authority are raised to that
+authority's risk and then multiplied together as separate events, when they are
+one event. Passing ``correlated=True`` composes the joint distribution instead —
+conditioning on the state of each cause, inside which the nodes really are
+independent — and collapses exactly to the formula above when no causes are
+present. See :mod:`qshield.correlation` and FINDINGS section 16.
 
 ### Rotation pressure
 
@@ -76,6 +82,22 @@ two assets, migrating one from RSA-2048 to ML-KEM moved the objective from
 18.838393 to **19.329375**. `tests/test_monotonicity.py` tests the property by
 construction, across every feasible plan of randomised instances, and under
 randomised weightings.
+
+## Edge kinds
+
+Three relations, and the distinction decides how each is composed:
+
+| kind | meaning | composed as |
+|---|---|---|
+| `DEPENDENCY` | a step an adversary must traverse | a hop in the path term |
+| `DELEGATION` | trust: an authority signing what it issued | a cause |
+| `SHARED` | substrate: one HSM, identity provider, cloud account or library behind several assets | a cause |
+
+The last two are **causes**, not steps. Compromising them compromises every
+dependent directly and simultaneously, so they are never walked as attack steps —
+doing so would both understate them (diluting by a hop probability) and make
+their dependents look independently improvable. See
+[IDENTITY.md](IDENTITY.md) for what that does to migration order.
 
 ## Curvature
 

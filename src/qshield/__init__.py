@@ -13,13 +13,14 @@ Public surface::
     sample_worlds, paired_comparison                     -- uncertainty
     qshield.calibration                                  -- published estimates in
     qshield.hybrid                                       -- classical+PQC deployments
+    qshield.correlation                                  -- shared causes, joint paths
     qshield.ingest.x509                                  -- real certificates in
     qshield.report.render                                -- a readable report out
     qshield.experiments.{benchmark,ablation,generalization,sensitivity,
                          tail_risk,hierarchy,threat_class,personal,robustness}
 """
 
-__version__ = "0.8.0"
+__version__ = "0.9.0"
 
 from .algorithms import Family, Primitive, normalize, primitive, quantum_factor
 from .calibration import (
@@ -29,6 +30,7 @@ from .calibration import (
     capability_probability,
     mosca_verdict,
 )
+from .correlation import CauseStructure, build_causes, correlated_path_risk
 from .hybrid import Deployment, classify_deployment, migration_ladder
 from .model import (
     DEFAULT_WEIGHTS,
@@ -66,6 +68,9 @@ from .uncertainty import (
 
 __all__ = [
     "__version__",
+    "correlated_path_risk",
+    "build_causes",
+    "CauseStructure",
     "migration_ladder",
     "classify_deployment",
     "Deployment",

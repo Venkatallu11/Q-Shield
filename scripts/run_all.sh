@@ -32,4 +32,5 @@ python3 -m qshield.cli calibration --sweep --instances 200 --output results/cali
 # --- 0.8: curvature and hybrid deployments ----------------------------------
 python3 -m qshield.cli curvature --instances 200 --samples 40 --output results/curvature.json --quiet
 python3 -m qshield.cli hybrid --instances 300 --output results/hybrid_ladder.json --quiet
+python3 -m qshield.cli correlation --instances 200 --output results/correlation_impact.json --quiet
 echo ALL_DONE

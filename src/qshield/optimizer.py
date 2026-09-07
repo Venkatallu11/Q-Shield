@@ -89,6 +89,10 @@ class MigrationProblem:
     # path. Held on the problem rather than passed per call so that a plan and
     # the score it is judged by can never be computed under different models.
     calibration: CalibrationConfig | None = None
+    # When set, shared causes are conditioned on rather than multiplied through
+    # the path term. Held on the problem so a plan and the score judging it can
+    # never be computed under different models.
+    correlated: bool = False
     path_set: PathSet = field(init=False)
 
     def __post_init__(self) -> None:
@@ -147,6 +151,7 @@ class MigrationProblem:
             path_set=self.path_set,
             strict=self.strict,
             calibration=self.calibration,
+            correlated=self.correlated,
         )
 
     def evaluate_world(
@@ -174,6 +179,7 @@ class MigrationProblem:
             path_set=self.path_set.with_reliability(world.edges),
             strict=self.strict,
             calibration=self.calibration,
+            correlated=self.correlated,
         )
 
     def cost_of(self, selected: Sequence[str] | frozenset[str]) -> float:

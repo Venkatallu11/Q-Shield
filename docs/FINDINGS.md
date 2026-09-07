@@ -422,6 +422,51 @@ Given the choice, the ladder took the hybrid rung **every time** (866 of 866, an
 it protects; a `composition_risk` above the PQC residual removes it, and that
 parameter is Tier C.
 
+## 16. Independent hops was a defect, not a caveat (0.9)
+
+`METHODOLOGY.md` carried "path hops are treated as independent" as a limitation
+from 0.4 onward. 0.5's delegation work turned it into a defect. Two sibling
+certificates issued by one authority sit on an attack path;
+`effective_node_risk` correctly raises both to the issuer's risk — forge the
+root and you forge both — and then `path_risk` multiplies their probabilities as
+though they were independent events. **They are the same event.** On the worked
+case in `tests/test_correlation.py` that reports 31.8 where the joint
+distribution gives 19.7, and the overstatement grows with each additional sibling
+on the path.
+
+0.9 stops composing marginals and composes the generative model instead. Each
+asset carries its own compromise probability; each cause — an issuing authority,
+a shared HSM, an identity provider, a cloud account, a library — compromises its
+dependents with a propagation strength; path risk is the expectation over the
+joint state of the causes. With no causes present it collapses to the previous
+formula exactly, which is asserted by a test rather than assumed. A new
+`EdgeKind.SHARED` expresses substrate as distinct from delegated trust.
+
+**Fixing it properly moves two things in opposite directions**, so the net would
+hide what happened (`results/correlation_impact.json`, 200 instances per suite):
+
+| effect | what changed | pki delegation | shared substrate |
+|---|---|---|---|
+| **marginal** | max-dominance replaced by noisy-OR over own risk and causes | **−6.20** [−6.29, −6.11] | **−10.51** [−10.83, −10.20] |
+| **correlation** | independent hops replaced by conditioning | 0.00 | **+18.25** [17.37, 19.15] |
+| net on objective | | −6.20 | −5.03 |
+
+The marginal effect **raises** risk: taking the max of own and inherited risk
+discards an asset's own contribution whenever its issuer dominates, and about
+70–80% of these assets' risk turns out to be inherited. The correlation effect
+**lowers** path risk: on shared substrate the independent product overstates by
+**36.4%** (50.1 against 31.9).
+
+**And it matters exactly where two dependents of one cause share a path.** The
+PKI suite's correlation effect is precisely 0.00 — not small, zero — because
+those paths run `leaf -> service -> service` and contain only one certificate
+each, so there are no correlated siblings to double-count. That condition is
+stated as a test. Where services share an HSM and an identity provider, the same
+correction is worth a third of the path term.
+
+Plans disagree on **79%** of PKI instances and **63.5%** of shared-substrate ones,
+so this is not a rescaling — it changes what to migrate.
+
 ## What none of this establishes
 
 - **Nothing here is validated against reality.** Quantum factors and objective
@@ -476,10 +521,13 @@ parameter is Tier C.
   product is defensible for the *mathematics*; correlated **implementation**
   failure is real and is priced as `composition_risk`, which is itself an
   assumption.
-- **Attack-path hops are still modelled as independent.** Shared HSMs, identity
-  providers, cloud accounts and administrators create common-cause failures the
-  path term does not represent. Delegation edges capture one such pattern; the
-  general case is not modelled and remains the largest known structural gap.
+- **Causes are assumed independent of each other.** 0.9 conditions on shared
+  causes, but two HSMs from one supplier, or two providers on one cloud region,
+  are modelled as unrelated. That would need a cause over the causes, and is now
+  the largest known structural gap.
+- **Correlated mode is opt-in.** Sections 1-15 were measured under the
+  independent-hops model and are unchanged; they are internally consistent and,
+  where a path carries two dependents of one cause, they overstate the path term.
 - **The ingested estate is a test fixture.** It is a real, correctly-signed
   OpenSSL hierarchy, not a production estate, and it is small. The agreement
   between it and the constructed case is encouraging, not conclusive.

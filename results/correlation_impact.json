@@ -1,0 +1,283 @@
+{
+  "experiment": "correlation_impact",
+  "question": "What does treating attack-path hops as independent cost, once shared causes are modelled properly?",
+  "design": {
+    "arms": {
+      "legacy": "max-dominance marginals, independent hops (0.5 to 0.8)",
+      "noisy_or_only": "noisy-OR marginals, independent hops",
+      "conditioned": "noisy-OR marginals, paths conditioned on causes"
+    },
+    "decomposition": "noisy_or_only - legacy isolates the marginal change, which raises risk; conditioned - noisy_or_only isolates the correlation correction, which lowers path risk. They pull in opposite directions, so the net is not the story",
+    "not_a_win_rate": "there is no ground truth: only a coherent joint model and an incoherent product of marginals. What is measured is the size of the disagreement and whether it changes the plan",
+    "instances_per_suite": 200,
+    "weights": [
+      0.55,
+      0.3,
+      0.15
+    ],
+    "seed": 20260907
+  },
+  "suites": {
+    "pki_delegation": {
+      "instances": 200,
+      "baseline_objective": {
+        "legacy": {
+          "n": 200,
+          "mean": 13.141057,
+          "stdev": 3.199759,
+          "p05": 8.19102,
+          "p50": 13.188423,
+          "p95": 17.805546
+        },
+        "noisy_or_only": {
+          "n": 200,
+          "mean": 19.341303,
+          "stdev": 3.016292,
+          "p05": 14.556578,
+          "p50": 19.569709,
+          "p95": 24.066853
+        },
+        "conditioned": {
+          "n": 200,
+          "mean": 19.341303,
+          "stdev": 3.016292,
+          "p05": 14.556578,
+          "p50": 19.569709,
+          "p95": 24.066853
+        }
+      },
+      "baseline_path_risk": {
+        "legacy": {
+          "n": 200,
+          "mean": 19.039016,
+          "stdev": 4.308803,
+          "p05": 12.259718,
+          "p50": 19.175696,
+          "p95": 25.32668
+        },
+        "noisy_or_only": {
+          "n": 200,
+          "mean": 28.464678,
+          "stdev": 4.110651,
+          "p05": 21.685897,
+          "p50": 28.739817,
+          "p95": 34.863217
+        },
+        "conditioned": {
+          "n": 200,
+          "mean": 28.464678,
+          "stdev": 4.110651,
+          "p05": 21.685897,
+          "p50": 28.739817,
+          "p95": 34.863217
+        }
+      },
+      "marginal_effect": {
+        "comparison": "legacy - noisy_or_only",
+        "instances": 200,
+        "noisy_or_only_better": 0,
+        "legacy_better": 200,
+        "ties": 0,
+        "tie_rate": 0.0,
+        "mean_delta": -6.200246,
+        "mean_delta_ci95": [
+          -6.289881,
+          -6.112959
+        ],
+        "median_delta": -6.21981,
+        "max_delta": -4.597591,
+        "min_delta": -7.865351,
+        "decisive_instances": 200,
+        "mean_delta_when_decisive": -6.200246,
+        "mean_delta_when_decisive_ci95": [
+          -6.286101,
+          -6.11209
+        ],
+        "win_rate_given_decisive": 0.0
+      },
+      "correlation_effect": {
+        "comparison": "independent_hops - conditioned",
+        "instances": 200,
+        "conditioned_better": 0,
+        "independent_hops_better": 0,
+        "ties": 200,
+        "tie_rate": 1.0,
+        "mean_delta": 0.0,
+        "mean_delta_ci95": [
+          -0.0,
+          0.0
+        ],
+        "median_delta": 0.0,
+        "max_delta": 0.0,
+        "min_delta": -0.0,
+        "decisive_instances": 0,
+        "mean_delta_when_decisive": 0.0
+      },
+      "net_effect_on_objective": {
+        "comparison": "legacy - conditioned",
+        "instances": 200,
+        "conditioned_better": 0,
+        "legacy_better": 200,
+        "ties": 0,
+        "tie_rate": 0.0,
+        "mean_delta": -6.200246,
+        "mean_delta_ci95": [
+          -6.289881,
+          -6.112959
+        ],
+        "median_delta": -6.21981,
+        "max_delta": -4.597591,
+        "min_delta": -7.865351,
+        "decisive_instances": 200,
+        "mean_delta_when_decisive": -6.200246,
+        "mean_delta_when_decisive_ci95": [
+          -6.286101,
+          -6.11209
+        ],
+        "win_rate_given_decisive": 0.0
+      },
+      "plan_agreement_legacy_vs_conditioned": 0.21,
+      "mean_share_of_risk_that_is_inherited": {
+        "n": 200,
+        "mean": 0.798193,
+        "stdev": 0.033322,
+        "p05": 0.741781,
+        "p50": 0.803195,
+        "p95": 0.848354
+      }
+    },
+    "shared_substrate": {
+      "instances": 200,
+      "baseline_objective": {
+        "legacy": {
+          "n": 200,
+          "mean": 14.789507,
+          "stdev": 3.932671,
+          "p05": 9.047481,
+          "p50": 14.293199,
+          "p95": 22.575114
+        },
+        "noisy_or_only": {
+          "n": 200,
+          "mean": 25.29842,
+          "stdev": 5.287292,
+          "p05": 16.851784,
+          "p50": 25.38056,
+          "p95": 34.769123
+        },
+        "conditioned": {
+          "n": 200,
+          "mean": 19.824334,
+          "stdev": 3.618451,
+          "p05": 13.995367,
+          "p50": 19.661369,
+          "p95": 25.944163
+        }
+      },
+      "baseline_path_risk": {
+        "legacy": {
+          "n": 200,
+          "mean": 28.975276,
+          "stdev": 8.876036,
+          "p05": 16.307042,
+          "p50": 27.416595,
+          "p95": 46.242402
+        },
+        "noisy_or_only": {
+          "n": 200,
+          "mean": 50.1491,
+          "stdev": 11.326431,
+          "p05": 31.591291,
+          "p50": 50.429109,
+          "p95": 69.047536
+        },
+        "conditioned": {
+          "n": 200,
+          "mean": 31.902146,
+          "stdev": 5.824839,
+          "p05": 22.293462,
+          "p50": 32.050889,
+          "p95": 40.919227
+        }
+      },
+      "marginal_effect": {
+        "comparison": "legacy - noisy_or_only",
+        "instances": 200,
+        "noisy_or_only_better": 0,
+        "legacy_better": 200,
+        "ties": 0,
+        "tie_rate": 0.0,
+        "mean_delta": -10.508914,
+        "mean_delta_ci95": [
+          -10.832259,
+          -10.199444
+        ],
+        "median_delta": -10.458325,
+        "max_delta": -5.296242,
+        "min_delta": -16.391856,
+        "decisive_instances": 200,
+        "mean_delta_when_decisive": -10.508914,
+        "mean_delta_when_decisive_ci95": [
+          -10.815316,
+          -10.189431
+        ],
+        "win_rate_given_decisive": 0.0
+      },
+      "correlation_effect": {
+        "comparison": "independent_hops - conditioned",
+        "instances": 200,
+        "conditioned_better": 200,
+        "independent_hops_better": 0,
+        "ties": 0,
+        "tie_rate": 0.0,
+        "mean_delta": 18.246954,
+        "mean_delta_ci95": [
+          17.366534,
+          19.146076
+        ],
+        "median_delta": 18.121347,
+        "max_delta": 32.010394,
+        "min_delta": 3.928828,
+        "decisive_instances": 200,
+        "mean_delta_when_decisive": 18.246954,
+        "mean_delta_when_decisive_ci95": [
+          17.372926,
+          19.096032
+        ],
+        "win_rate_given_decisive": 1.0
+      },
+      "net_effect_on_objective": {
+        "comparison": "legacy - conditioned",
+        "instances": 200,
+        "conditioned_better": 2,
+        "legacy_better": 198,
+        "ties": 0,
+        "tie_rate": 0.0,
+        "mean_delta": -5.034827,
+        "mean_delta_ci95": [
+          -5.265126,
+          -4.795435
+        ],
+        "median_delta": -5.184551,
+        "max_delta": 0.216624,
+        "min_delta": -8.884024,
+        "decisive_instances": 200,
+        "mean_delta_when_decisive": -5.034827,
+        "mean_delta_when_decisive_ci95": [
+          -5.266703,
+          -4.801208
+        ],
+        "win_rate_given_decisive": 0.01
+      },
+      "plan_agreement_legacy_vs_conditioned": 0.365,
+      "mean_share_of_risk_that_is_inherited": {
+        "n": 200,
+        "mean": 0.677724,
+        "stdev": 0.075877,
+        "p05": 0.549661,
+        "p50": 0.686803,
+        "p95": 0.78158
+      }
+    }
+  }
+}

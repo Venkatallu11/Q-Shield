@@ -37,6 +37,7 @@ from dataclasses import dataclass, replace
 
 from .algorithms import ROTATION_REFERENCE_HOURS, quantum_factor
 from .calibration import CalibrationConfig, horizon_for
+from .correlation import build_causes, correlated_path_risk, marginal_risk
 from .paths import EdgeModel, PathSet, delegation_parents, enumerate_paths
 from .threat import ThreatClass, default_threat_class, longevity
 
@@ -396,6 +397,7 @@ def objective(
     path_set: PathSet | None = None,
     strict: bool = False,
     calibration: CalibrationConfig | None = None,
+    correlated: bool = False,
 ) -> ObjectiveResult:
     """Aggregate system objective in ``[0, 100]``; lower is better.
 
@@ -410,14 +412,27 @@ def objective(
         )
         for a in assets
     }
-    # Trust is inherited before anything else is computed: an asset's exposure to
-    # its issuer is not something the path term can recover.
-    scores = effective_node_risk(own_scores, edges)
-
     if path_set is None:
         path_set = enumerate_paths(edges, entrypoints, targets)
 
-    risks = tuple(path_risk(p, scores, path_set.reliability) for p in path_set.paths)
+    if correlated:
+        # Compose the generative model rather than the marginals. Two assets
+        # driven by one cause -- an issuing authority, a shared HSM -- are not two
+        # independent events, and multiplying their marginals through the path
+        # term counts the same compromise twice. See qshield.correlation.
+        structure = build_causes(edges)
+        scores = {
+            name: marginal_risk(name, own_scores, structure) for name in own_scores
+        }
+        risks = tuple(
+            correlated_path_risk(p, own_scores, path_set.reliability, structure)
+            for p in path_set.paths
+        )
+    else:
+        # Trust is inherited before anything else is computed: an asset's
+        # exposure to its issuer is not something the path term can recover.
+        scores = effective_node_risk(own_scores, edges)
+        risks = tuple(path_risk(p, scores, path_set.reliability) for p in path_set.paths)
 
     # Membership depends only on rotation_hours, never on the scores, so this
     # average cannot jump when an asset's risk falls. See the module docstring.

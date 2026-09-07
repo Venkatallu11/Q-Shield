@@ -20,7 +20,19 @@ qshield report --input case.json --draws 1000 --output migration.md
 
 ---
 
-## Two results worth knowing
+## Three results worth knowing
+
+**"Independent hops" was a defect, not a caveat.** Two certificates issued by one
+authority on the same attack path were raised to that authority's risk and then
+multiplied together as independent events — but they are the *same* event. 0.9
+conditions on shared causes instead of multiplying marginals. On estates where
+services share an HSM or identity provider, the old model overstated path risk by
+**36.4%**; where the two effects are decomposed, replacing max-dominance with a
+noisy-OR marginal *raises* risk by 6-10 points while the correlation correction
+*lowers* the path term by 18. Plans disagree on 63-79% of instances. It matters
+exactly when two dependents of one cause lie on one path — the PKI topology never
+produces that, so its correlation effect is precisely zero.
+
 
 **Migration actions are complements, not substitutes — so greedy planning has no
 approximation guarantee.** The risk-reduction function is *supermodular* on every
@@ -277,6 +289,7 @@ qshield/
   planner.py        picks a planner that will finish, and says when it downgraded
   calibration.py    published resource estimates, CRQC forecasts, Mosca's rule
   hybrid.py         classical+PQC compositions and the migration ladder
+  correlation.py    shared causes; path risk as a joint, not a product
   uncertainty.py    common-random-number sampling, paired stats, bootstrap CIs
   ingest/           real artifacts in: X.509 parsing, TLS scanning, provenance
   report.py         the Markdown a person actually reads
@@ -284,7 +297,8 @@ qshield/
   cli.py            qshield <command>
   experiments/      generator, pki, benchmark, ablation, generalization,
                     sensitivity, tail_risk, hierarchy, threat_class, personal,
-                    robustness, calibration_impact, curvature, hybrid_ladder
+                    robustness, calibration_impact, curvature, hybrid_ladder,
+                    correlation_impact
 ```
 
 The objective is a weighted mean of node risk, path risk and key-rotation
@@ -305,8 +319,9 @@ can lose. See **[docs/METHODOLOGY.md](docs/METHODOLOGY.md)**.
 - **Synthetic instances.** Every quantitative result comes from the generator in
   `experiments/generator.py`, whose structure is itself a hypothesis about what
   real infrastructure looks like.
-- **Independent hops.** Real systems share platforms, libraries and operators, so
-  compromises correlate; the model will overstate the value of breaking a chain.
+- **Causes are assumed independent of each other.** 0.9 conditions on shared
+  causes, but two HSMs from one supplier are modelled as unrelated. That needs a
+  cause over the causes, and is the largest known structural gap.
 - **Exponential exact planner.** `exhaustive` is `O(2^n)` in migration candidates
   and exists as a reference. Use `greedy_marginal` beyond ~20 candidates.
 - **Quantum risk only.** Phishing, credential stuffing, SIM-swap, session-token
@@ -324,7 +339,7 @@ can lose. See **[docs/METHODOLOGY.md](docs/METHODOLOGY.md)**.
 ## Tests
 
 ```bash
-pytest                  # 367 tests
+pytest                  # 383 tests
 pytest -m "not slow"    # skip the full-experiment smoke tests
 ```
 

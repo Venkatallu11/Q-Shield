@@ -263,6 +263,13 @@ def build_parser() -> argparse.ArgumentParser:
     )
     hyb.add_argument("--instances", type=int, default=300)
 
+    cor = sub.add_parser(
+        "correlation",
+        parents=[common],
+        help="what does treating attack-path hops as independent cost?",
+    )
+    cor.add_argument("--instances", type=int, default=200)
+
     c = sub.add_parser("cbom", parents=[common], help="export a CycloneDX CBOM")
     c.add_argument("--input", required=True)
 
@@ -361,6 +368,10 @@ def main(argv: Sequence[str] | None = None) -> int:
         )
     elif args.command == "hybrid":
         from .experiments.hybrid_ladder import run
+
+        report = run(instances=args.instances, seed=args.seed, weights=weights)
+    elif args.command == "correlation":
+        from .experiments.correlation_impact import run
 
         report = run(instances=args.instances, seed=args.seed, weights=weights)
     elif args.command == "cbom":
