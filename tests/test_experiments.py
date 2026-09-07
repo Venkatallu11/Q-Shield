@@ -153,3 +153,144 @@ def test_cli_accepts_custom_weights(tmp_path):
 def test_cli_rejects_a_malformed_weight_triple(tmp_path):
     with pytest.raises(SystemExit):
         main(["benchmark", "--input", str(CASE), "--weights", "1,0"])
+
+
+# --- 0.5 experiments --------------------------------------------------------
+
+PERSONAL_CASE = Path(__file__).resolve().parents[1] / "cases" / "personal_identity_case.json"
+
+
+def test_personal_case_loads_with_threat_classes_and_control_flags():
+    from qshield.threat import ThreatClass
+
+    problem = benchmark.load_case(PERSONAL_CASE)
+    names = {a.name for a in problem.assets}
+    assert {"identity-provider", "genomic-data", "passkey"} <= names
+    assert problem.uncontrollable, "third-party assets must be marked uncontrollable"
+    assert all(a.controllable for a in problem.candidates)
+    genome = next(a for a in problem.assets if a.name == "genomic-data")
+    assert genome.effective_threat_class is ThreatClass.CONFIDENTIALITY
+
+
+def test_case_loader_accepts_underscore_comment_keys():
+    """Case files carry provenance and caveats inline; the loader must not choke."""
+    problem = benchmark.problem_from_dict(
+        {
+            "_comment": "documentation, not data",
+            "assets": [{"_note": "x", "name": "a", "algorithm": "RSA-2048"}],
+            "edges": [],
+            "entrypoints": ["a"],
+            "targets": ["a"],
+            "replacements": {},
+            "budget": 1,
+        }
+    )
+    assert problem.assets[0].name == "a"
+
+
+def test_case_loader_resolves_edge_kind_from_a_string():
+    from qshield.paths import EdgeKind
+
+    problem = benchmark.problem_from_dict(
+        {
+            "assets": [{"name": "r", "algorithm": "ECDSA"}, {"name": "l", "algorithm": "ECDSA"}],
+            "edges": [{"source": "r", "target": "l", "kind": "delegation"}],
+            "entrypoints": ["r"],
+            "targets": ["l"],
+            "replacements": {},
+            "budget": 1,
+        }
+    )
+    assert problem.edges[0].kind is EdgeKind.DELEGATION
+
+
+@pytest.mark.slow
+def test_tail_risk_sweep_includes_the_0_4_anchor_and_is_reproducible():
+    from qshield.experiments import tail_risk
+
+    report = tail_risk.run(instances=10, alphas=(1.0, 0.25))
+    anchors = [r for r in report["sweep"] if r["is_0_4_behaviour"]]
+    assert len(anchors) == 1, "alpha=1 must be present as the 0.4 baseline"
+    assert tail_risk.run(instances=10, alphas=(1.0, 0.25)) == report
+
+
+@pytest.mark.slow
+def test_hierarchy_reports_error_size_not_a_win_rate():
+    from qshield.experiments import hierarchy
+
+    report = hierarchy.run(instances=10)
+    assert "not_a_win_rate" in report["design"]
+    aware = report["per_arm"]["hierarchy_aware"]
+    # The aware planner's own plan cannot be illusory: it is scored in its model.
+    assert aware["illusory_fraction"]["mean"] == pytest.approx(0.0, abs=1e-9)
+    assert aware["wasted_spend"]["mean"] == pytest.approx(0.0, abs=1e-9)
+
+
+@pytest.mark.slow
+def test_hierarchy_root_cost_sweep_bounds_the_claim():
+    from qshield.experiments import hierarchy
+
+    report = hierarchy.sweep_root_cost(instances=8, root_costs=(0.5, 3.0))
+    cheap, dear = report["sweep"]
+    # Cheap anchors get bought anyway, so the modelling refinement matters less.
+    assert cheap["blind_illusory_fraction"] < dear["blind_illusory_fraction"]
+
+
+@pytest.mark.slow
+def test_threat_class_experiment_reports_tier_selection():
+    from qshield.experiments import threat_class
+
+    report = threat_class.run(instances=10)
+    tiers = report["assets_selected_by_tier"]
+    assert set(tiers) == {"root", "intermediate", "leaf"}
+    assert 0.0 <= report["plan_agreement"] <= 1.0
+
+
+def test_pre_0_5_view_discards_the_class_specific_horizons():
+    from qshield.experiments.pki import make_instances as pki_instances
+    from qshield.experiments.threat_class import as_pre_0_5
+    from qshield.threat import ThreatClass
+
+    problem = pki_instances(1, 5)[0]
+    legacy = as_pre_0_5(problem)
+    assert all(a.credential_validity_years is None for a in legacy.assets)
+    assert all(
+        a.effective_threat_class is ThreatClass.CONFIDENTIALITY for a in legacy.assets
+    )
+    # Same graph, same budget: only the scoring differs.
+    assert legacy.edges == problem.edges and legacy.budget == problem.budget
+
+
+@pytest.mark.slow
+def test_personal_experiment_decomposes_rather_than_ranking():
+    from qshield.experiments import personal
+
+    report = personal.run(instances=10)
+    assert "not_a_win_rate" in report["design"]
+    assert "scope" in report["design"]
+    share = report["share_of_risk_on_assets_the_individual_controls"]["mean"]
+    assert 0.0 <= share <= 1.0
+
+
+def test_pki_generator_builds_a_real_hierarchy():
+    from qshield.experiments.pki import delegation_as_dependency
+    from qshield.experiments.pki import make_instances as pki
+    from qshield.paths import EdgeKind
+
+    problem = pki(1, 11)[0]
+    assert any(e.kind is EdgeKind.DELEGATION for e in problem.edges)
+    result = problem.evaluate(())
+    leaves = [a.name for a in problem.assets if a.name.startswith("leaf")]
+    # Every leaf inherits from its issuer, so effective exceeds own risk.
+    assert any(result.node_scores[n] > result.own_scores[n] + 1e-9 for n in leaves)
+    # The blind view has no delegation edges left.
+    assert all(e.kind is EdgeKind.DEPENDENCY for e in delegation_as_dependency(problem).edges)
+
+
+def test_pki_replacements_map_signing_keys_to_signature_algorithms():
+    """RSA defaults to ML-KEM because key transport is the usual driver; a
+    signing hierarchy must override that."""
+    from qshield.experiments.pki import REPLACEMENTS
+
+    assert REPLACEMENTS["RSA-2048"] == "ML-DSA"
+    assert set(REPLACEMENTS.values()) == {"ML-DSA"}

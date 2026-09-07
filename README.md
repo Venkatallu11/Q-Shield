@@ -16,7 +16,44 @@ this model*; it does not mean a system is safer.
 
 ## What the experiments found
 
-Full detail and reproduction seeds in **[docs/FINDINGS.md](docs/FINDINGS.md)**.
+Full detail and reproduction seeds in **[docs/FINDINGS.md](docs/FINDINGS.md)**;
+identity infrastructure in **[docs/IDENTITY.md](docs/IDENTITY.md)**.
+
+### Identity: a migration plan that buys nothing
+
+> **Migrating leaf certificates while their issuer still signs with a classical
+> algorithm reduces risk by exactly zero.**
+
+A forged root certificate forges everything beneath it — immediately, with
+nothing in between to defeat. So a leaf's effective risk is pinned to its
+issuer's, and a planner that cannot see trust relations spends its budget on
+cheap, highly-exposed leaves. Over 300 synthetic PKI instances:
+
+- trust-blind planning wastes **88.8%** of its budget, and in **265 of 300**
+  instances the *entire* spend achieves nothing;
+- a flat-priority heuristic wastes **99.4%**, with **297 of 300** spends
+  achieving nothing at all;
+- the blind planners *report more improvement* than the correct model — 2.2
+  against 0.57 — while delivering a quarter of it;
+- trust-aware and trust-blind planning agree on **0 of 300** instances.
+
+Bounded honestly: this needs trust anchors costing more than ~2.5x a leaf. Below
+that a blind planner buys the anchor anyway and the refinement barely matters.
+
+Separately, harvest-now-decrypt-later **does not apply to signatures**. Recording
+a signature gains an adversary nothing; forgery starts when a CRQC exists, not
+retroactively. Scoring signing keys by data retention — which every version
+through 0.4 did — made a 90-day TLS leaf and the 20-year root above it score
+*identically*. Correcting it inverts the recommendation: **1153 leaves / 33 roots**
+selected under the old scoring, **8 leaves / 175 roots** under the corrected one,
+with plans agreeing on 2.3% of instances.
+
+For an individual, ~70% of modeled quantum risk sits on assets they do not
+control, and the residual concentrates 2.3:1 in the class where waiting is
+irreversible. Q-SHIELD models none of phishing, SIM-swap or credential theft,
+which dominate real identity compromise — see the scope note in IDENTITY.md.
+
+### The generic model
 
 - **Path-awareness helps, modestly, on the objective.** Pooled over 300 instances
   and all 26 distinct weightings: mean improvement **+0.758** (95% CI
@@ -33,6 +70,11 @@ Full detail and reproduction seeds in **[docs/FINDINGS.md](docs/FINDINGS.md)**.
 - **Exhaustive search is mostly unnecessary.** A greedy cost-benefit planner
   recovers the exact optimum on **80.3%** of instances at a mean optimality gap of
   0.248, without the `O(2^n)` enumeration.
+- **The worst-case failure is fixable, at a price.** Replacing the mean with a
+  conditional value at risk over the worst 15% of paths turns a −0.736 worst-case
+  deficit into a **+0.171** advantage — but costs six sevenths of the mean-case
+  benefit (+2.487 → +0.412). A frontier, not a free upgrade, so the tail-aware
+  setting is opt-in.
 
 ## What the previous version got wrong
 
@@ -89,6 +131,19 @@ qshield generalization --instances 300 --output results/generalization.json
 # Is the recommendation stable across the weight simplex?
 qshield sensitivity --input cases/reference_case.json
 
+# Identity: how much of a trust-blind plan buys nothing?
+qshield hierarchy --instances 300 --output results/hierarchy.json
+qshield hierarchy --instances 200 --sweep-root-cost   # bound the claim
+
+# Does scoring signatures by credential validity change the plan?
+qshield threat-class --instances 300
+
+# Does a tail-aware path term repair the worst-case regression?
+qshield tail-risk --instances 400
+
+# Personal identity: how much of the risk is yours to fix?
+qshield personal --instances 300
+
 # CycloneDX cryptographic bill of materials
 qshield cbom --input cases/reference_case.json
 ```
@@ -117,14 +172,16 @@ print([p.as_dict() for p in pareto_frontier(all_plans)])
 
 ```
 qshield/
-  algorithms.py     single algorithm registry: aliases, families, quantum factors
-  paths.py          attack-path enumeration, cached across candidate plans
-  model.py          the objective -- node risk, path risk, rotation pressure
+  algorithms.py     single algorithm registry: aliases, families, primitive kinds
+  threat.py         threat classes and the horizon each is actually exposed over
+  paths.py          attack-path enumeration + delegation (trust) edges
+  model.py          the objective -- node risk, trust inheritance, CVaR path risk
   optimizer.py      exhaustive / greedy planners, Pareto frontier
   uncertainty.py    common-random-number sampling, paired stats, bootstrap CIs
   cbom.py           CycloneDX export
   cli.py            qshield <experiment>
-  experiments/      generator, benchmark, ablation, generalization, sensitivity
+  experiments/      generator, pki, benchmark, ablation, generalization,
+                    sensitivity, tail_risk, hierarchy, threat_class, personal
 ```
 
 The objective is a weighted mean of node risk, path risk and key-rotation
@@ -149,12 +206,18 @@ can lose. See **[docs/METHODOLOGY.md](docs/METHODOLOGY.md)**.
   compromises correlate; the model will overstate the value of breaking a chain.
 - **Exponential exact planner.** `exhaustive` is `O(2^n)` in migration candidates
   and exists as a reference. Use `greedy_marginal` beyond ~20 candidates.
+- **Quantum risk only.** Phishing, credential stuffing, SIM-swap, session-token
+  theft, malware and device theft are not modelled and dominate real identity
+  compromise. Nothing here is a security assessment.
+- **The identity results are error sizes, not win rates.** The corrected planner
+  minimises the metric it is scored on, so it cannot lose; what is measured is how
+  large the modelling error is, and in the cheap-anchor regime it is nearly zero.
 - **No standard is implemented and no conformance is claimed.**
 
 ## Tests
 
 ```bash
-pytest                  # 164 tests
+pytest                  # 235 tests
 pytest -m "not slow"    # skip the full-experiment smoke tests
 ```
 

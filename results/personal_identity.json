@@ -1,0 +1,83 @@
+{
+  "experiment": "personal_identity",
+  "question": "For an individual, how much modeled quantum risk is theirs to act on, and what is left once they have done everything they can?",
+  "design": {
+    "instances": 300,
+    "not_a_win_rate": "no strategy comparison: with a fixed feasible set the exhaustive planner cannot lose. This decomposes the risk instead.",
+    "scope": "quantum risk only. Phishing, credential stuffing, SIM-swap, malware and device theft are not modelled and dominate real personal identity compromise.",
+    "weights": [
+      0.55,
+      0.3,
+      0.15
+    ],
+    "seed": 20260907,
+    "generator": {
+      "controlled_accounts": 4,
+      "third_party_services": 5,
+      "long_lived_records": 2,
+      "budget_low": 1.0,
+      "budget_high": 4.0
+    }
+  },
+  "share_of_risk_on_assets_the_individual_controls": {
+    "n": 300,
+    "mean": 0.302058,
+    "stdev": 0.081283,
+    "p05": 0.181818,
+    "p50": 0.303313,
+    "p95": 0.443669
+  },
+  "share_of_objective_removable_within_budget": {
+    "n": 300,
+    "mean": 0.120791,
+    "stdev": 0.073901,
+    "p05": 0.014711,
+    "p50": 0.111875,
+    "p95": 0.258406
+  },
+  "residual_objective_after_best_available_plan": {
+    "n": 300,
+    "mean": 32.898505,
+    "stdev": 4.152009,
+    "p05": 25.668932,
+    "p50": 32.969262,
+    "p95": 39.627992
+  },
+  "risk_by_threat_class": {
+    "confidentiality": {
+      "n": 2706,
+      "mean": 26.156866,
+      "stdev": 11.184613,
+      "p05": 12.575759,
+      "p50": 23.609815,
+      "p95": 47.994613
+    },
+    "authentication": {
+      "n": 894,
+      "mean": 10.386512,
+      "stdev": 4.085248,
+      "p05": 4.082587,
+      "p50": 10.52661,
+      "p95": 16.296983
+    }
+  },
+  "residual_risk_by_threat_class": {
+    "confidentiality": {
+      "n": 2706,
+      "mean": 20.856909,
+      "stdev": 12.215019,
+      "p05": 1.37136,
+      "p50": 20.523355,
+      "p95": 42.249012
+    },
+    "authentication": {
+      "n": 894,
+      "mean": 9.139509,
+      "stdev": 5.043009,
+      "p05": 0.409829,
+      "p50": 9.291167,
+      "p95": 16.155104
+    }
+  },
+  "interpretation": "CONFIDENTIALITY residual is the part that cannot be deferred: data harvested today is harvested, and migrating later protects only future traffic. AUTHENTICATION residual is remediable later, because forgery is a live attack rather than a retroactive one."
+}

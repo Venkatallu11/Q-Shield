@@ -13,16 +13,19 @@ Public surface::
     qshield.experiments.{benchmark,ablation,generalization,sensitivity}
 """
 
-__version__ = "0.4.0"
+__version__ = "0.5.0"
 
-from .algorithms import Family, normalize, quantum_factor
+from .algorithms import Family, Primitive, normalize, primitive, quantum_factor
 from .model import (
     DEFAULT_WEIGHTS,
     NODE_ONLY_WEIGHTS,
+    TAIL_AWARE_WEIGHTS,
     AssetModel,
     ObjectiveResult,
     ObjectiveWeights,
+    aggregate_path_risk,
     apply_migration,
+    effective_node_risk,
     node_risk,
     objective,
     path_risk,
@@ -36,7 +39,8 @@ from .optimizer import (
     greedy_marginal,
     pareto_frontier,
 )
-from .paths import EdgeModel, PathSet, enumerate_paths
+from .paths import EdgeKind, EdgeModel, PathSet, delegation_parents, enumerate_paths
+from .threat import ThreatClass, default_threat_class, longevity
 from .uncertainty import (
     PerturbationModel,
     World,
@@ -48,6 +52,16 @@ from .uncertainty import (
 
 __all__ = [
     "__version__",
+    "primitive",
+    "longevity",
+    "effective_node_risk",
+    "delegation_parents",
+    "default_threat_class",
+    "aggregate_path_risk",
+    "ThreatClass",
+    "TAIL_AWARE_WEIGHTS",
+    "Primitive",
+    "EdgeKind",
     "AssetModel",
     "DEFAULT_WEIGHTS",
     "EdgeModel",

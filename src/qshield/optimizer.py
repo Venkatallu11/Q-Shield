@@ -100,8 +100,27 @@ class MigrationProblem:
 
     @property
     def candidates(self) -> tuple[AssetModel, ...]:
-        """Assets with a defined replacement — the decision variables."""
-        return tuple(a for a in self.assets if a.algorithm in self.replacements)
+        """The decision variables: assets that have a replacement *and* are ours
+        to change. Risk carried by assets outside our control is still scored —
+        it is real — but it is not something a plan can spend budget on."""
+        return tuple(
+            a
+            for a in self.assets
+            if a.algorithm in self.replacements and a.controllable
+        )
+
+    @property
+    def uncontrollable(self) -> tuple[AssetModel, ...]:
+        """Assets with a replacement that we nonetheless cannot act on.
+
+        Reported separately because the gap between "risk present" and "risk
+        addressable" is the whole story for an individual, and a plan that
+        silently ignores it looks better than the situation warrants."""
+        return tuple(
+            a
+            for a in self.assets
+            if a.algorithm in self.replacements and not a.controllable
+        )
 
     def evaluate(
         self,

@@ -34,35 +34,57 @@ class Family(str, Enum):
     UNKNOWN = "unknown"
 
 
-# canonical name -> (family, quantum factor)
-_REGISTRY: dict[str, tuple[Family, float]] = {
+class Primitive(str, Enum):
+    """What the algorithm is *for*.
+
+    This drives the threat class an asset defaults to, and that in turn selects
+    which time horizon its risk is measured against. Confidentiality primitives
+    are exposed to harvest-now-decrypt-later; signature primitives are not, and
+    scoring them against a data-retention horizon — which every version through
+    0.4 did — overstates the risk of short-lived credentials and understates
+    nothing in return. See :mod:`qshield.threat`.
+    """
+
+    KEY_ESTABLISHMENT = "key-establishment"  # KEM / key agreement / key transport
+    SIGNATURE = "signature"
+    SYMMETRIC = "symmetric"                  # bulk encryption
+    HASH = "hash"
+    UNKNOWN = "unknown"
+
+
+# canonical name -> (family, quantum factor, primitive kind)
+_REGISTRY: dict[str, tuple[Family, float, Primitive]] = {
     # --- Shor-vulnerable public-key primitives -------------------------------
-    "RSA": (Family.SHOR_VULNERABLE, 1.00),
-    "RSA-1024": (Family.SHOR_VULNERABLE, 1.00),
-    "RSA-2048": (Family.SHOR_VULNERABLE, 1.00),
-    "RSA-3072": (Family.SHOR_VULNERABLE, 1.00),
-    "RSA-4096": (Family.SHOR_VULNERABLE, 1.00),
-    "ECC": (Family.SHOR_VULNERABLE, 1.00),
-    "ECDSA": (Family.SHOR_VULNERABLE, 1.00),
-    "ECDH": (Family.SHOR_VULNERABLE, 1.00),
-    "X25519": (Family.SHOR_VULNERABLE, 1.00),
-    "ED25519": (Family.SHOR_VULNERABLE, 1.00),
-    "ED448": (Family.SHOR_VULNERABLE, 1.00),
-    "DH": (Family.SHOR_VULNERABLE, 1.00),
-    "DSA": (Family.SHOR_VULNERABLE, 1.00),
+    # RSA is used for both key transport and signatures. It is registered as
+    # key-establishment because that is the migration driver (harvested key
+    # exchanges are decryptable retroactively); an asset that uses RSA to sign
+    # should declare threat_class=AUTHENTICATION or NON_REPUDIATION explicitly.
+    "RSA": (Family.SHOR_VULNERABLE, 1.00, Primitive.KEY_ESTABLISHMENT),
+    "RSA-1024": (Family.SHOR_VULNERABLE, 1.00, Primitive.KEY_ESTABLISHMENT),
+    "RSA-2048": (Family.SHOR_VULNERABLE, 1.00, Primitive.KEY_ESTABLISHMENT),
+    "RSA-3072": (Family.SHOR_VULNERABLE, 1.00, Primitive.KEY_ESTABLISHMENT),
+    "RSA-4096": (Family.SHOR_VULNERABLE, 1.00, Primitive.KEY_ESTABLISHMENT),
+    "ECC": (Family.SHOR_VULNERABLE, 1.00, Primitive.KEY_ESTABLISHMENT),
+    "ECDH": (Family.SHOR_VULNERABLE, 1.00, Primitive.KEY_ESTABLISHMENT),
+    "X25519": (Family.SHOR_VULNERABLE, 1.00, Primitive.KEY_ESTABLISHMENT),
+    "DH": (Family.SHOR_VULNERABLE, 1.00, Primitive.KEY_ESTABLISHMENT),
+    "ECDSA": (Family.SHOR_VULNERABLE, 1.00, Primitive.SIGNATURE),
+    "ED25519": (Family.SHOR_VULNERABLE, 1.00, Primitive.SIGNATURE),
+    "ED448": (Family.SHOR_VULNERABLE, 1.00, Primitive.SIGNATURE),
+    "DSA": (Family.SHOR_VULNERABLE, 1.00, Primitive.SIGNATURE),
     # --- NIST post-quantum selections ----------------------------------------
-    "ML-KEM": (Family.POST_QUANTUM, 0.05),
-    "ML-DSA": (Family.POST_QUANTUM, 0.05),
-    "SLH-DSA": (Family.POST_QUANTUM, 0.05),
-    "FN-DSA": (Family.POST_QUANTUM, 0.05),
-    "HQC": (Family.POST_QUANTUM, 0.05),
+    "ML-KEM": (Family.POST_QUANTUM, 0.05, Primitive.KEY_ESTABLISHMENT),
+    "HQC": (Family.POST_QUANTUM, 0.05, Primitive.KEY_ESTABLISHMENT),
+    "ML-DSA": (Family.POST_QUANTUM, 0.05, Primitive.SIGNATURE),
+    "SLH-DSA": (Family.POST_QUANTUM, 0.05, Primitive.SIGNATURE),
+    "FN-DSA": (Family.POST_QUANTUM, 0.05, Primitive.SIGNATURE),
     # --- Symmetric / hash primitives -----------------------------------------
-    "AES-128": (Family.GROVER_WEAKENED, 0.15),
-    "AES-256": (Family.GROVER_WEAKENED, 0.08),
-    "SHA-256": (Family.GROVER_WEAKENED, 0.08),
-    "SHA-384": (Family.GROVER_WEAKENED, 0.08),
-    "SHA-512": (Family.GROVER_WEAKENED, 0.08),
-    "CHACHA20": (Family.GROVER_WEAKENED, 0.08),
+    "AES-128": (Family.GROVER_WEAKENED, 0.15, Primitive.SYMMETRIC),
+    "AES-256": (Family.GROVER_WEAKENED, 0.08, Primitive.SYMMETRIC),
+    "CHACHA20": (Family.GROVER_WEAKENED, 0.08, Primitive.SYMMETRIC),
+    "SHA-256": (Family.GROVER_WEAKENED, 0.08, Primitive.HASH),
+    "SHA-384": (Family.GROVER_WEAKENED, 0.08, Primitive.HASH),
+    "SHA-512": (Family.GROVER_WEAKENED, 0.08, Primitive.HASH),
 }
 
 # Spelling variants and pre-standardisation names -> canonical registry key.
@@ -107,6 +129,12 @@ def family(algorithm: str) -> Family:
     return entry[0] if entry else Family.UNKNOWN
 
 
+def primitive(algorithm: str) -> Primitive:
+    """What the algorithm is used for. Drives the default threat class."""
+    entry = _REGISTRY.get(normalize(algorithm))
+    return entry[2] if entry else Primitive.UNKNOWN
+
+
 def quantum_factor(algorithm: str, *, strict: bool = False) -> float:
     """Scenario susceptibility factor in ``(0, 1]``.
 
@@ -137,18 +165,14 @@ def default_replacement(algorithm: str) -> str | None:
     key = normalize(algorithm)
     if family(key) is not Family.SHOR_VULNERABLE:
         return None
-    signatures = {"ECDSA", "ED25519", "ED448", "DSA"}
-    if key in signatures or key.startswith("RSA-PSS"):
+    if primitive(key) is Primitive.SIGNATURE:
         return "ML-DSA"
-    if key.startswith("RSA"):
-        # RSA is used for both; key transport is the dominant migration driver.
-        return "ML-KEM"
     return "ML-KEM"
 
 
 def registry_snapshot() -> dict[str, dict[str, object]]:
     """Machine-readable dump of the registry, for embedding in result files."""
     return {
-        name: {"family": fam.value, "quantum_factor": qf}
-        for name, (fam, qf) in sorted(_REGISTRY.items())
+        name: {"family": fam.value, "quantum_factor": qf, "primitive": prim.value}
+        for name, (fam, qf, prim) in sorted(_REGISTRY.items())
     }

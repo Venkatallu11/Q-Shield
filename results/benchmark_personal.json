@@ -2,22 +2,22 @@
   "experiment": "benchmark",
   "qshield_version": "0.5.0",
   "instance": {
-    "assets": 5,
-    "edges": 3,
+    "assets": 9,
+    "edges": 11,
     "entrypoints": [
-      "edge-gateway"
+      "personal-email"
     ],
     "targets": [
-      "customer-db"
+      "health-records"
     ],
-    "attack_paths": 1,
+    "attack_paths": 2,
     "migration_candidates": [
-      "edge-gateway",
-      "service-mesh-ca",
-      "archive-signing"
+      "passkey",
+      "personal-email",
+      "cloud-backup"
     ],
-    "budget": 1.5,
-    "feasible_plans": 3
+    "budget": 3.0,
+    "feasible_plans": 7
   },
   "assumptions": {
     "weights": [
@@ -160,27 +160,41 @@
     }
   },
   "baseline": {
-    "objective": 15.729445,
-    "node_mean": 12.4729,
-    "path_mean": 27.43039,
-    "path_max": 27.43039,
-    "path_component": 27.43039,
-    "rotation_pressure": 4.268223,
+    "objective": 40.889895,
+    "node_mean": 22.525556,
+    "path_mean": 88.082933,
+    "path_max": 89.019314,
+    "path_component": 88.082933,
+    "rotation_pressure": 13.839732,
     "node_scores": {
-      "edge-gateway": 6.4125,
-      "service-mesh-ca": 24.0,
-      "archive-signing": 30.0,
-      "cold-storage": 0.8,
-      "customer-db": 1.152
+      "identity-provider": 14.25,
+      "passkey": 14.25,
+      "personal-email": 80.75,
+      "messaging": 1.89,
+      "cloud-backup": 38.0,
+      "bank": 13.23,
+      "signed-documents": 14.4,
+      "health-records": 1.96,
+      "genomic-data": 24.0
+    },
+    "risk_inherited_from_issuer": {
+      "passkey": 4.8
     },
     "path_risks": [
-      27.43039
+      89.019314,
+      87.146552
     ],
     "paths": [
       [
-        "edge-gateway",
-        "service-mesh-ca",
-        "customer-db"
+        "personal-email",
+        "cloud-backup",
+        "genomic-data",
+        "health-records"
+      ],
+      [
+        "personal-email",
+        "cloud-backup",
+        "health-records"
       ]
     ]
   },
@@ -189,98 +203,96 @@
       "strategy": "do_nothing",
       "selected": [],
       "cost": 0.0,
-      "objective": 15.729445,
+      "objective": 40.889895,
       "improvement": 0.0,
       "improvement_per_cost": null
     },
     "flat_priority": {
       "strategy": "flat_priority",
       "selected": [
-        "archive-signing"
+        "cloud-backup",
+        "personal-email"
       ],
-      "cost": 1.5,
-      "objective": 12.13641,
-      "improvement": 3.593036,
-      "improvement_per_cost": 2.395357
+      "cost": 3.0,
+      "objective": 14.047325,
+      "improvement": 26.84257,
+      "improvement_per_cost": 8.947523
     },
     "greedy_marginal": {
       "strategy": "greedy_marginal",
       "selected": [
-        "service-mesh-ca"
+        "cloud-backup",
+        "personal-email"
       ],
-      "cost": 1.5,
-      "objective": 7.401107,
-      "improvement": 8.328338,
-      "improvement_per_cost": 5.552226
+      "cost": 3.0,
+      "objective": 14.047325,
+      "improvement": 26.84257,
+      "improvement_per_cost": 8.947523
     },
     "path_aware": {
       "strategy": "path_aware",
       "selected": [
-        "service-mesh-ca"
+        "cloud-backup",
+        "personal-email"
       ],
-      "cost": 1.5,
-      "objective": 7.401107,
-      "improvement": 8.328338,
-      "improvement_per_cost": 5.552226
+      "cost": 3.0,
+      "objective": 14.047325,
+      "improvement": 26.84257,
+      "improvement_per_cost": 8.947523
     }
   },
   "uncertainty": {
     "do_nothing": {
       "n": 4000,
-      "mean": 14.417246,
-      "stdev": 1.284225,
-      "p05": 12.289155,
-      "p50": 14.398878,
-      "p95": 16.553465
+      "mean": 37.527238,
+      "stdev": 2.239989,
+      "p05": 33.615739,
+      "p50": 37.699728,
+      "p95": 40.894675
     },
     "flat_priority": {
       "n": 4000,
-      "mean": 11.273508,
-      "stdev": 1.211056,
-      "p05": 9.29837,
-      "p50": 11.273121,
-      "p95": 13.292794
+      "mean": 12.847795,
+      "stdev": 0.817703,
+      "p05": 11.415071,
+      "p50": 12.888365,
+      "p95": 14.124223
     },
     "greedy_marginal": {
       "n": 4000,
-      "mean": 6.714712,
-      "stdev": 0.542558,
-      "p05": 5.81344,
-      "p50": 6.723509,
-      "p95": 7.602218
+      "mean": 12.847795,
+      "stdev": 0.817703,
+      "p05": 11.415071,
+      "p50": 12.888365,
+      "p95": 14.124223
     },
     "path_aware": {
       "n": 4000,
-      "mean": 6.714712,
-      "stdev": 0.542558,
-      "p05": 5.81344,
-      "p50": 6.723509,
-      "p95": 7.602218
+      "mean": 12.847795,
+      "stdev": 0.817703,
+      "p05": 11.415071,
+      "p50": 12.888365,
+      "p95": 14.124223
     }
   },
   "paired_comparisons": {
     "flat_priority_vs_path_aware": {
       "comparison": "flat_priority - path_aware",
       "instances": 4000,
-      "path_aware_better": 4000,
+      "path_aware_better": 0,
       "flat_priority_better": 0,
-      "ties": 0,
-      "tie_rate": 0.0,
-      "mean_delta": 4.558796,
+      "ties": 4000,
+      "tie_rate": 1.0,
+      "mean_delta": 0.0,
       "mean_delta_ci95": [
-        4.522182,
-        4.592822
+        0.0,
+        0.0
       ],
-      "median_delta": 4.546077,
-      "max_delta": 8.507866,
-      "min_delta": 1.060572,
-      "decisive_instances": 4000,
-      "mean_delta_when_decisive": 4.558796,
-      "mean_delta_when_decisive_ci95": [
-        4.522848,
-        4.593898
-      ],
-      "win_rate_given_decisive": 1.0,
+      "median_delta": 0.0,
+      "max_delta": 0.0,
+      "min_delta": 0.0,
+      "decisive_instances": 0,
+      "mean_delta_when_decisive": 0.0,
       "note": "paired over shared Monte Carlo worlds; positive means path_aware scored lower (better) in that world"
     },
     "greedy_marginal_vs_path_aware": {
@@ -308,19 +320,30 @@
       "strategy": "path_aware",
       "selected": [],
       "cost": 0,
-      "objective": 15.729445,
+      "objective": 40.889895,
       "improvement": 0.0,
       "improvement_per_cost": null
     },
     {
       "strategy": "path_aware",
       "selected": [
-        "service-mesh-ca"
+        "personal-email"
       ],
       "cost": 1.5,
-      "objective": 7.401107,
-      "improvement": 8.328338,
-      "improvement_per_cost": 5.552226
+      "objective": 21.406877,
+      "improvement": 19.483018,
+      "improvement_per_cost": 12.988679
+    },
+    {
+      "strategy": "path_aware",
+      "selected": [
+        "cloud-backup",
+        "personal-email"
+      ],
+      "cost": 3.0,
+      "objective": 14.047325,
+      "improvement": 26.84257,
+      "improvement_per_cost": 8.947523
     }
   ],
   "caveats": [

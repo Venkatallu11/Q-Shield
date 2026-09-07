@@ -195,6 +195,64 @@ the only path from the entrypoint to the target, and the archive sits on none.
 This case is constructed to make the mechanism visible; it demonstrates that the
 mechanism exists, **not** how often it matters. Section 3 answers that.
 
+## 10. The worst-case regression is fixable, at a price (0.5)
+
+Section 4 found that minimising the *mean* of the path risks made worst-case path
+exposure significantly worse. 0.5 replaces the mean with a conditional value at
+risk over the worst `alpha` fraction of paths and sweeps `alpha`
+(`results/tail_risk.json`, 400 instances, control = exhaustive search with no
+path term at all):
+
+| `path_alpha` | paths averaged | worst-case Δ | 95% CI | mean-path Δ | 95% CI |
+|---|---|---|---|---|---|
+| 1.00 *(0.4 behaviour)* | 4.40 | **−0.736** | [−0.971, −0.516] | +2.487 | [+2.017, +2.970] |
+| 0.75 | 3.65 | −0.506 | [−0.707, −0.319] | +2.278 | [+1.821, +2.755] |
+| 0.50 | 2.42 | −0.157 | [−0.307, −0.011] | +1.415 | [+1.031, +1.819] |
+| 0.35 | 2.13 | −0.060 | [−0.188, +0.064] | +1.197 | [+0.851, +1.566] |
+| 0.25 | 1.43 | +0.079 | [−0.017, +0.177] | +0.714 | [+0.413, +1.037] |
+| **0.15** | 1.16 | **+0.171** | [+0.096, +0.253] | +0.412 | [+0.180, +0.667] |
+| 0.05 | 1.00 | +0.191 | [+0.117, +0.272] | +0.396 | [+0.175, +0.651] |
+
+Positive means better than the path-blind control. Only `alpha <= 0.15` beats it
+on worst-case **and** mean with intervals excluding zero, so that is what
+`TAIL_AWARE_WEIGHTS` ships as. An earlier pilot at 80 instances suggested 0.25
+sufficed; at 400 instances its interval straddles zero, which is why the default
+is set from the full run and not the pilot.
+
+**The fix is not free.** Moving from `alpha = 1` to `alpha = 0.15` converts a
+−0.736 worst-case deficit into a +0.171 advantage, but the mean-path advantage
+falls from +2.487 to +0.412 — six sevenths of it. This is a genuine frontier, not
+a strictly better setting, and the right point on it depends on whether you are
+defending against the average way in or the worst one. `DEFAULT_WEIGHTS` still
+ships `alpha = 1.0` so that existing results remain comparable; the tail-aware
+setting is opt-in and documented rather than silently substituted.
+
+## 11. Identity infrastructure (0.5)
+
+Two errors that specifically break certificate hierarchies, and the operational
+consequence — a migration plan that spends real budget for **exactly zero** risk
+reduction — are documented with their measurements in
+**[IDENTITY.md](IDENTITY.md)**. Headline numbers, over 300 synthetic PKI
+instances:
+
+- Scoring signatures by data-retention rather than credential-validity horizon
+  inverts the recommendation: 1153 leaves and 33 roots selected under the old
+  scoring, 8 leaves and 175 roots under the corrected one. Plans agree on 2.3% of
+  instances; real risk reduction 1.205 versus 4.290.
+- Trust-blind planning wastes **88.8%** of its budget, and in 265 of 300
+  instances the *entire* spend achieves nothing. A flat-priority heuristic wastes
+  99.4%, with 297 of 300 spends achieving nothing at all.
+- Blind planners report *higher* improvement than the correct model — 2.2 against
+  0.57 — while delivering a quarter of it.
+- The effect is bounded: it requires trust anchors costing more than ~2.5x a leaf.
+  Below that a blind planner buys the anchor anyway. See the root-cost sweep.
+
+For an individual, ~70% of modeled quantum risk sits on assets they do not
+control, a realistic budget removes ~12% of the objective, and the residual is
+concentrated 2.3:1 in the confidentiality class — the one where waiting is
+irreversible. Q-SHIELD models none of phishing, SIM-swap or credential theft,
+which dominate real personal identity compromise.
+
 ## What none of this establishes
 
 - **Nothing here is validated against reality.** Quantum factors and objective
@@ -214,3 +272,16 @@ mechanism exists, **not** how often it matters. Section 3 answers that.
   as probabilities inside `path_risk` purely as a combination rule.
 - **Effects are small and mostly absent.** Two thirds of instances tie. Quoting
   the conditional effect without the tie rate would misrepresent the result.
+- **The identity results are not win rates and must not be quoted as such.** In
+  sections 10 and 11 the corrected planner minimises the metric it is scored on
+  and every rival plan is feasible for it, so it cannot lose. What is reported is
+  the size of a modelling error, which was free to come out zero and in the
+  cheap-anchor regime very nearly does.
+- **The trust semantics are a modelling choice.** That a forged root certificate
+  forges everything beneath it is a cryptographic fact; that this is best modelled
+  as complete max-dominance is a decision, and the magnitude of every number in
+  section 11 depends on it along with the generator's cost structure.
+- **Q-SHIELD models quantum risk only.** For identity in particular this excludes
+  phishing, credential stuffing, SIM-swap, session-token theft, malware and device
+  theft, which are the dominant real-world threats. Nothing here is a security
+  assessment.

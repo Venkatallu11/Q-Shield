@@ -2,22 +2,25 @@
   "experiment": "benchmark",
   "qshield_version": "0.5.0",
   "instance": {
-    "assets": 5,
-    "edges": 3,
+    "assets": 7,
+    "edges": 9,
     "entrypoints": [
-      "edge-gateway"
+      "leaf-tls-web"
     ],
     "targets": [
-      "customer-db"
+      "customer-records"
     ],
-    "attack_paths": 1,
+    "attack_paths": 2,
     "migration_candidates": [
-      "edge-gateway",
-      "service-mesh-ca",
-      "archive-signing"
+      "root-ca",
+      "intermediate-ca",
+      "leaf-tls-web",
+      "leaf-tls-api",
+      "leaf-mtls-mesh",
+      "code-signing"
     ],
-    "budget": 1.5,
-    "feasible_plans": 3
+    "budget": 2.0,
+    "feasible_plans": 24
   },
   "assumptions": {
     "weights": [
@@ -160,27 +163,42 @@
     }
   },
   "baseline": {
-    "objective": 15.729445,
-    "node_mean": 12.4729,
-    "path_mean": 27.43039,
-    "path_max": 27.43039,
-    "path_component": 27.43039,
-    "rotation_pressure": 4.268223,
+    "objective": 15.560837,
+    "node_mean": 13.131429,
+    "path_mean": 25.677172,
+    "path_max": 35.864745,
+    "path_component": 25.677172,
+    "rotation_pressure": 4.236,
     "node_scores": {
-      "edge-gateway": 6.4125,
-      "service-mesh-ca": 24.0,
-      "archive-signing": 30.0,
-      "cold-storage": 0.8,
-      "customer-db": 1.152
+      "root-ca": 15.0,
+      "intermediate-ca": 15.0,
+      "leaf-tls-web": 15.0,
+      "leaf-tls-api": 15.0,
+      "leaf-mtls-mesh": 15.0,
+      "code-signing": 15.0,
+      "customer-records": 1.92
+    },
+    "risk_inherited_from_issuer": {
+      "intermediate-ca": 1.7,
+      "leaf-tls-web": 10.345,
+      "leaf-tls-api": 10.59,
+      "leaf-mtls-mesh": 10.58,
+      "code-signing": 1.5
     },
     "path_risks": [
-      27.43039
+      15.4896,
+      35.864745
     ],
     "paths": [
       [
-        "edge-gateway",
-        "service-mesh-ca",
-        "customer-db"
+        "leaf-tls-web",
+        "customer-records"
+      ],
+      [
+        "leaf-tls-web",
+        "leaf-tls-api",
+        "leaf-mtls-mesh",
+        "customer-records"
       ]
     ]
   },
@@ -189,73 +207,75 @@
       "strategy": "do_nothing",
       "selected": [],
       "cost": 0.0,
-      "objective": 15.729445,
+      "objective": 15.560837,
       "improvement": 0.0,
       "improvement_per_cost": null
     },
     "flat_priority": {
       "strategy": "flat_priority",
       "selected": [
-        "archive-signing"
+        "leaf-mtls-mesh",
+        "leaf-tls-api",
+        "leaf-tls-web"
       ],
-      "cost": 1.5,
-      "objective": 12.13641,
-      "improvement": 3.593036,
-      "improvement_per_cost": 2.395357
+      "cost": 1.2,
+      "objective": 15.560837,
+      "improvement": 0.0,
+      "improvement_per_cost": 0.0
     },
     "greedy_marginal": {
       "strategy": "greedy_marginal",
       "selected": [
-        "service-mesh-ca"
+        "root-ca"
       ],
-      "cost": 1.5,
-      "objective": 7.401107,
-      "improvement": 8.328338,
-      "improvement_per_cost": 5.552226
+      "cost": 2.0,
+      "objective": 12.957224,
+      "improvement": 2.603613,
+      "improvement_per_cost": 1.301807
     },
     "path_aware": {
       "strategy": "path_aware",
       "selected": [
-        "service-mesh-ca"
+        "root-ca"
       ],
-      "cost": 1.5,
-      "objective": 7.401107,
-      "improvement": 8.328338,
-      "improvement_per_cost": 5.552226
+      "cost": 2.0,
+      "objective": 12.957224,
+      "improvement": 2.603613,
+      "improvement_per_cost": 1.301807
     }
   },
   "uncertainty": {
     "do_nothing": {
       "n": 4000,
-      "mean": 14.417246,
-      "stdev": 1.284225,
-      "p05": 12.289155,
-      "p50": 14.398878,
-      "p95": 16.553465
+      "mean": 14.329555,
+      "stdev": 2.168068,
+      "p05": 11.189932,
+      "p50": 14.036864,
+      "p95": 18.480704
     },
     "flat_priority": {
       "n": 4000,
-      "mean": 11.273508,
-      "stdev": 1.211056,
-      "p05": 9.29837,
-      "p50": 11.273121,
-      "p95": 13.292794
+      "mean": 14.329555,
+      "stdev": 2.168068,
+      "p05": 11.189932,
+      "p50": 14.036864,
+      "p95": 18.480704
     },
     "greedy_marginal": {
       "n": 4000,
-      "mean": 6.714712,
-      "stdev": 0.542558,
-      "p05": 5.81344,
-      "p50": 6.723509,
-      "p95": 7.602218
+      "mean": 11.688072,
+      "stdev": 1.310359,
+      "p05": 9.47295,
+      "p50": 11.706893,
+      "p95": 13.792176
     },
     "path_aware": {
       "n": 4000,
-      "mean": 6.714712,
-      "stdev": 0.542558,
-      "p05": 5.81344,
-      "p50": 6.723509,
-      "p95": 7.602218
+      "mean": 11.688072,
+      "stdev": 1.310359,
+      "p05": 9.47295,
+      "p50": 11.706893,
+      "p95": 13.792176
     }
   },
   "paired_comparisons": {
@@ -266,19 +286,19 @@
       "flat_priority_better": 0,
       "ties": 0,
       "tie_rate": 0.0,
-      "mean_delta": 4.558796,
+      "mean_delta": 2.641482,
       "mean_delta_ci95": [
-        4.522182,
-        4.592822
+        2.573102,
+        2.709274
       ],
-      "median_delta": 4.546077,
-      "max_delta": 8.507866,
-      "min_delta": 1.060572,
+      "median_delta": 1.715938,
+      "max_delta": 11.867244,
+      "min_delta": 0.393157,
       "decisive_instances": 4000,
-      "mean_delta_when_decisive": 4.558796,
+      "mean_delta_when_decisive": 2.641482,
       "mean_delta_when_decisive_ci95": [
-        4.522848,
-        4.593898
+        2.573592,
+        2.710358
       ],
       "win_rate_given_decisive": 1.0,
       "note": "paired over shared Monte Carlo worlds; positive means path_aware scored lower (better) in that world"
@@ -308,19 +328,19 @@
       "strategy": "path_aware",
       "selected": [],
       "cost": 0,
-      "objective": 15.729445,
+      "objective": 15.560837,
       "improvement": 0.0,
       "improvement_per_cost": null
     },
     {
       "strategy": "path_aware",
       "selected": [
-        "service-mesh-ca"
+        "root-ca"
       ],
-      "cost": 1.5,
-      "objective": 7.401107,
-      "improvement": 8.328338,
-      "improvement_per_cost": 5.552226
+      "cost": 2.0,
+      "objective": 12.957224,
+      "improvement": 2.603613,
+      "improvement_per_cost": 1.301807
     }
   ],
   "caveats": [

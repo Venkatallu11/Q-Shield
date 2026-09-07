@@ -18,18 +18,46 @@ from __future__ import annotations
 
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
+from enum import Enum
 
 Path = tuple[str, ...]
 
 
+class EdgeKind(str, Enum):
+    """What kind of relation an edge encodes.
+
+    The distinction is not cosmetic. A ``DEPENDENCY`` edge is something an
+    adversary must *traverse*: it costs them a step, and every node on the way
+    is another thing that has to fail. A ``DELEGATION`` edge is a trust
+    relation, and compromising its source compromises its target **directly and
+    simultaneously** — no traversal, no intervening defence.
+
+    Public-key infrastructure is built almost entirely out of the second kind,
+    and Q-SHIELD through 0.4 had no way to say so. Modelling a root CA as an
+    ordinary dependency understates it twice over: the root's risk is diluted by
+    the hop probability, and the certificates beneath it look independently
+    improvable. They are not. See :func:`qshield.model.effective_node_risk`.
+    """
+
+    DEPENDENCY = "dependency"
+    DELEGATION = "delegation"
+
+
 @dataclass(frozen=True)
 class EdgeModel:
-    """A directed dependency. ``reliability`` scales how well an adversary who
-    holds ``source`` can leverage that position against ``target``."""
+    """A directed relation between two assets.
+
+    For a ``DEPENDENCY`` edge, ``reliability`` scales how well an adversary who
+    holds ``source`` can leverage that position against ``target``. For a
+    ``DELEGATION`` edge it is the strength of the trust relation: how completely
+    compromising the issuer compromises what it issued. For a certificate
+    authority signing a subordinate this is essentially 1.0.
+    """
 
     source: str
     target: str
     reliability: float = 1.0
+    kind: EdgeKind = EdgeKind.DEPENDENCY
 
 
 class PathBudgetExceeded(RuntimeError):
@@ -60,6 +88,8 @@ class PathSet:
         """
         reliability: dict[tuple[str, str], float] = {}
         for e in edges:
+            if e.kind is not EdgeKind.DEPENDENCY:
+                continue
             key = (e.source, e.target)
             reliability[key] = max(reliability.get(key, 0.0), _clamp(e.reliability))
         return PathSet(paths=self.paths, reliability=reliability)
@@ -91,6 +121,10 @@ def enumerate_paths(
     adjacency: dict[str, list[str]] = {}
     reliability: dict[tuple[str, str], float] = {}
     for e in edges:
+        # Delegation is not traversal: it is handled by the trust closure in
+        # qshield.model, not by walking it as a step in an attack chain.
+        if e.kind is not EdgeKind.DEPENDENCY:
+            continue
         adjacency.setdefault(e.source, []).append(e.target)
         # Parallel edges collapse to the strongest available leverage.
         key = (e.source, e.target)
@@ -129,3 +163,18 @@ def enumerate_paths(
 
 def _clamp(x: float, lo: float = 0.0, hi: float = 1.0) -> float:
     return max(lo, min(hi, x))
+
+
+def delegation_parents(
+    edges: Sequence[EdgeModel],
+) -> dict[str, list[tuple[str, float]]]:
+    """Trust relations, as ``target -> [(issuer, strength), ...]``.
+
+    Separated from the traversal graph because the two are combined differently:
+    dependencies compose along a path, delegations dominate.
+    """
+    parents: dict[str, list[tuple[str, float]]] = {}
+    for e in edges:
+        if e.kind is EdgeKind.DELEGATION:
+            parents.setdefault(e.target, []).append((e.source, _clamp(e.reliability)))
+    return parents

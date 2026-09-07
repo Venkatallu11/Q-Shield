@@ -33,7 +33,8 @@ from ..optimizer import (
     greedy_marginal,
     pareto_frontier,
 )
-from ..paths import EdgeModel
+from ..paths import EdgeKind, EdgeModel
+from ..threat import ThreatClass
 from ..uncertainty import (
     PerturbationModel,
     paired_comparison,
@@ -53,8 +54,8 @@ def problem_from_dict(data: Mapping[str, Any]) -> MigrationProblem:
     missing = [k for k in REQUIRED_KEYS if k not in data]
     if missing:
         raise ValueError(f"case is missing required keys: {missing}")
-    assets = tuple(AssetModel(**a) for a in data["assets"])
-    edges = tuple(EdgeModel(**e) for e in data["edges"])
+    assets = tuple(_asset(a) for a in data["assets"])
+    edges = tuple(_edge(e) for e in data["edges"])
     names = {a.name for a in assets}
     dangling = {
         n
@@ -76,6 +77,25 @@ def problem_from_dict(data: Mapping[str, Any]) -> MigrationProblem:
         replacements=dict(data["replacements"]),
         budget=float(data["budget"]),
     )
+
+
+def _asset(raw: Mapping[str, Any]) -> AssetModel:
+    """Build an asset, resolving the threat class from its string form.
+
+    Keys beginning with an underscore are treated as documentation, so a case
+    file can carry per-asset commentary without the loader rejecting it.
+    """
+    fields = {k: v for k, v in raw.items() if not k.startswith("_")}
+    if isinstance(fields.get("threat_class"), str):
+        fields["threat_class"] = ThreatClass(fields["threat_class"])
+    return AssetModel(**fields)
+
+
+def _edge(raw: Mapping[str, Any]) -> EdgeModel:
+    fields = {k: v for k, v in raw.items() if not k.startswith("_")}
+    if isinstance(fields.get("kind"), str):
+        fields["kind"] = EdgeKind(fields["kind"])
+    return EdgeModel(**fields)
 
 
 def run(

@@ -1,6 +1,6 @@
 {
   "experiment": "benchmark",
-  "qshield_version": "0.4.0",
+  "qshield_version": "0.5.0",
   "instance": {
     "assets": 5,
     "edges": 6,
@@ -40,99 +40,123 @@
     "algorithm_registry": {
       "AES-128": {
         "family": "grover-weakened",
-        "quantum_factor": 0.15
+        "quantum_factor": 0.15,
+        "primitive": "symmetric"
       },
       "AES-256": {
         "family": "grover-weakened",
-        "quantum_factor": 0.08
+        "quantum_factor": 0.08,
+        "primitive": "symmetric"
       },
       "CHACHA20": {
         "family": "grover-weakened",
-        "quantum_factor": 0.08
+        "quantum_factor": 0.08,
+        "primitive": "symmetric"
       },
       "DH": {
         "family": "shor-vulnerable",
-        "quantum_factor": 1.0
+        "quantum_factor": 1.0,
+        "primitive": "key-establishment"
       },
       "DSA": {
         "family": "shor-vulnerable",
-        "quantum_factor": 1.0
+        "quantum_factor": 1.0,
+        "primitive": "signature"
       },
       "ECC": {
         "family": "shor-vulnerable",
-        "quantum_factor": 1.0
+        "quantum_factor": 1.0,
+        "primitive": "key-establishment"
       },
       "ECDH": {
         "family": "shor-vulnerable",
-        "quantum_factor": 1.0
+        "quantum_factor": 1.0,
+        "primitive": "key-establishment"
       },
       "ECDSA": {
         "family": "shor-vulnerable",
-        "quantum_factor": 1.0
+        "quantum_factor": 1.0,
+        "primitive": "signature"
       },
       "ED25519": {
         "family": "shor-vulnerable",
-        "quantum_factor": 1.0
+        "quantum_factor": 1.0,
+        "primitive": "signature"
       },
       "ED448": {
         "family": "shor-vulnerable",
-        "quantum_factor": 1.0
+        "quantum_factor": 1.0,
+        "primitive": "signature"
       },
       "FN-DSA": {
         "family": "post-quantum",
-        "quantum_factor": 0.05
+        "quantum_factor": 0.05,
+        "primitive": "signature"
       },
       "HQC": {
         "family": "post-quantum",
-        "quantum_factor": 0.05
+        "quantum_factor": 0.05,
+        "primitive": "key-establishment"
       },
       "ML-DSA": {
         "family": "post-quantum",
-        "quantum_factor": 0.05
+        "quantum_factor": 0.05,
+        "primitive": "signature"
       },
       "ML-KEM": {
         "family": "post-quantum",
-        "quantum_factor": 0.05
+        "quantum_factor": 0.05,
+        "primitive": "key-establishment"
       },
       "RSA": {
         "family": "shor-vulnerable",
-        "quantum_factor": 1.0
+        "quantum_factor": 1.0,
+        "primitive": "key-establishment"
       },
       "RSA-1024": {
         "family": "shor-vulnerable",
-        "quantum_factor": 1.0
+        "quantum_factor": 1.0,
+        "primitive": "key-establishment"
       },
       "RSA-2048": {
         "family": "shor-vulnerable",
-        "quantum_factor": 1.0
+        "quantum_factor": 1.0,
+        "primitive": "key-establishment"
       },
       "RSA-3072": {
         "family": "shor-vulnerable",
-        "quantum_factor": 1.0
+        "quantum_factor": 1.0,
+        "primitive": "key-establishment"
       },
       "RSA-4096": {
         "family": "shor-vulnerable",
-        "quantum_factor": 1.0
+        "quantum_factor": 1.0,
+        "primitive": "key-establishment"
       },
       "SHA-256": {
         "family": "grover-weakened",
-        "quantum_factor": 0.08
+        "quantum_factor": 0.08,
+        "primitive": "hash"
       },
       "SHA-384": {
         "family": "grover-weakened",
-        "quantum_factor": 0.08
+        "quantum_factor": 0.08,
+        "primitive": "hash"
       },
       "SHA-512": {
         "family": "grover-weakened",
-        "quantum_factor": 0.08
+        "quantum_factor": 0.08,
+        "primitive": "hash"
       },
       "SLH-DSA": {
         "family": "post-quantum",
-        "quantum_factor": 0.05
+        "quantum_factor": 0.05,
+        "primitive": "signature"
       },
       "X25519": {
         "family": "shor-vulnerable",
-        "quantum_factor": 1.0
+        "quantum_factor": 1.0,
+        "primitive": "key-establishment"
       }
     }
   },
@@ -141,6 +165,7 @@
     "node_mean": 31.809,
     "path_mean": 72.062011,
     "path_max": 84.616481,
+    "path_component": 72.062011,
     "rotation_pressure": 4.564714,
     "node_scores": {
       "public-api": 64.125,

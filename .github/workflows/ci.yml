@@ -29,3 +29,11 @@ jobs:
           qshield ablation --instances 10 --trials 10 --quiet --output /tmp/a.json
           qshield generalization --instances 10 --quiet --output /tmp/g.json
           qshield sensitivity --input cases/chokepoint_case.json --quiet --output /tmp/s.json
+          qshield benchmark --input cases/pki_case.json --trials 20 --quiet --output /tmp/pki.json
+          qshield benchmark --input cases/personal_identity_case.json --trials 20 --quiet --output /tmp/pi.json
+          qshield tail-risk --instances 8 --quiet --output /tmp/t.json
+          qshield hierarchy --instances 8 --quiet --output /tmp/h.json
+          qshield hierarchy --instances 6 --sweep-root-cost --quiet --output /tmp/hs.json
+          qshield threat-class --instances 8 --quiet --output /tmp/tc.json
+          qshield personal --instances 8 --quiet --output /tmp/p.json
+          qshield cbom --input cases/pki_case.json --quiet --output /tmp/c.json

@@ -93,6 +93,39 @@ def build_parser() -> argparse.ArgumentParser:
     )
     s.add_argument("--input", required=True)
 
+    t = sub.add_parser(
+        "tail-risk",
+        parents=[common],
+        help="sweep the path tail parameter against the worst-case regression",
+    )
+    t.add_argument("--instances", type=int, default=300)
+
+    h = sub.add_parser(
+        "hierarchy",
+        parents=[common],
+        help="the crypto-agility trap: how much of a trust-blind plan buys nothing?",
+    )
+    h.add_argument("--instances", type=int, default=300)
+    h.add_argument(
+        "--sweep-root-cost",
+        action="store_true",
+        help="vary the trust anchor's migration cost to bound the effect",
+    )
+
+    tc = sub.add_parser(
+        "threat-class",
+        parents=[common],
+        help="does scoring signatures against a credential horizon change the plan?",
+    )
+    tc.add_argument("--instances", type=int, default=300)
+
+    pi = sub.add_parser(
+        "personal",
+        parents=[common],
+        help="personal identity: how much of the risk is the individual's to fix?",
+    )
+    pi.add_argument("--instances", type=int, default=300)
+
     c = sub.add_parser("cbom", parents=[common], help="export a CycloneDX CBOM")
     c.add_argument("--input", required=True)
 
@@ -137,6 +170,26 @@ def main(argv: Sequence[str] | None = None) -> int:
         from .experiments.sensitivity import run
 
         report = run(load_case(args.input), reference=weights)
+    elif args.command == "tail-risk":
+        from .experiments.tail_risk import run
+
+        report = run(instances=args.instances, seed=args.seed, base_weights=weights)
+    elif args.command == "hierarchy":
+        from .experiments.hierarchy import run, sweep_root_cost
+
+        report = (
+            sweep_root_cost(instances=args.instances, seed=args.seed, weights=weights)
+            if args.sweep_root_cost
+            else run(instances=args.instances, seed=args.seed, weights=weights)
+        )
+    elif args.command == "threat-class":
+        from .experiments.threat_class import run
+
+        report = run(instances=args.instances, seed=args.seed, weights=weights)
+    elif args.command == "personal":
+        from .experiments.personal import run
+
+        report = run(instances=args.instances, seed=args.seed, weights=weights)
     elif args.command == "cbom":
         from .cbom import to_cbom
         from .experiments.benchmark import load_case

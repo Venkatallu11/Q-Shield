@@ -1,0 +1,201 @@
+{
+  "_comment": "A person's digital identity, modelled for QUANTUM risk only. Q-SHIELD does not model phishing, SIM swap, credential stuffing or device compromise, which dominate real personal identity risk -- see docs/IDENTITY.md. Two structures matter here: account-recovery chains are attack paths (email resets the bank), and a federated identity provider is a trust anchor exactly like a root CA (compromising it compromises every relying party at once). Assets the individual cannot change -- a provider's TLS, a hospital's archive -- are marked controllable=false: their risk is still scored, because it is real, but no budget can be spent on them. Pricing them out with a huge migration_cost would only work until the budget grew.",
+  "budget": 3.0,
+  "entrypoints": [
+    "personal-email"
+  ],
+  "targets": [
+    "health-records"
+  ],
+  "assets": [
+    {
+      "name": "identity-provider",
+      "algorithm": "ECDSA",
+      "sensitivity": 0.95,
+      "exposure": 0.6,
+      "data_lifetime_years": 10,
+      "dependency_count": 9,
+      "rotation_hours": 168,
+      "migration_cost": 2.0,
+      "business_criticality": 1.0,
+      "threat_class": "authentication",
+      "credential_validity_years": 5,
+      "controllable": false
+    },
+    {
+      "name": "passkey",
+      "algorithm": "ED25519",
+      "sensitivity": 0.9,
+      "exposure": 0.7,
+      "data_lifetime_years": 10,
+      "dependency_count": 6,
+      "rotation_hours": 24,
+      "migration_cost": 1.0,
+      "business_criticality": 0.9,
+      "threat_class": "authentication",
+      "credential_validity_years": 3
+    },
+    {
+      "name": "personal-email",
+      "algorithm": "X25519",
+      "sensitivity": 0.85,
+      "exposure": 0.95,
+      "data_lifetime_years": 20,
+      "dependency_count": 8,
+      "rotation_hours": 48,
+      "migration_cost": 1.5,
+      "business_criticality": 1.0,
+      "threat_class": "confidentiality"
+    },
+    {
+      "name": "messaging",
+      "algorithm": "ML-KEM",
+      "sensitivity": 0.9,
+      "exposure": 0.8,
+      "data_lifetime_years": 15,
+      "dependency_count": 3,
+      "rotation_hours": 1,
+      "migration_cost": 0.5,
+      "business_criticality": 0.7,
+      "threat_class": "confidentiality"
+    },
+    {
+      "name": "cloud-backup",
+      "algorithm": "RSA-2048",
+      "sensitivity": 0.95,
+      "exposure": 0.5,
+      "data_lifetime_years": 20,
+      "dependency_count": 4,
+      "rotation_hours": 720,
+      "migration_cost": 1.5,
+      "business_criticality": 0.9,
+      "threat_class": "confidentiality"
+    },
+    {
+      "name": "bank",
+      "algorithm": "ECDH",
+      "sensitivity": 0.9,
+      "exposure": 0.6,
+      "data_lifetime_years": 7,
+      "dependency_count": 3,
+      "rotation_hours": 72,
+      "migration_cost": 1.0,
+      "business_criticality": 1.0,
+      "threat_class": "confidentiality",
+      "controllable": false
+    },
+    {
+      "name": "signed-documents",
+      "algorithm": "RSA-2048",
+      "sensitivity": 0.8,
+      "exposure": 0.3,
+      "data_lifetime_years": 5,
+      "dependency_count": 2,
+      "rotation_hours": 0,
+      "migration_cost": 1.0,
+      "business_criticality": 0.8,
+      "threat_class": "non-repudiation",
+      "verification_horizon_years": 25,
+      "controllable": false
+    },
+    {
+      "name": "health-records",
+      "algorithm": "AES-256",
+      "sensitivity": 1.0,
+      "exposure": 0.35,
+      "data_lifetime_years": 60,
+      "dependency_count": 3,
+      "rotation_hours": 0,
+      "migration_cost": 1.0,
+      "business_criticality": 1.0,
+      "threat_class": "confidentiality",
+      "controllable": false
+    },
+    {
+      "name": "genomic-data",
+      "algorithm": "RSA-2048",
+      "sensitivity": 1.0,
+      "exposure": 0.4,
+      "data_lifetime_years": 100,
+      "dependency_count": 2,
+      "rotation_hours": 0,
+      "migration_cost": 1.0,
+      "business_criticality": 1.0,
+      "threat_class": "confidentiality",
+      "controllable": false
+    }
+  ],
+  "edges": [
+    {
+      "source": "identity-provider",
+      "target": "passkey",
+      "reliability": 1.0,
+      "kind": "delegation"
+    },
+    {
+      "source": "identity-provider",
+      "target": "bank",
+      "reliability": 0.9,
+      "kind": "delegation"
+    },
+    {
+      "source": "identity-provider",
+      "target": "cloud-backup",
+      "reliability": 1.0,
+      "kind": "delegation"
+    },
+    {
+      "source": "personal-email",
+      "target": "passkey",
+      "reliability": 0.8,
+      "kind": "dependency"
+    },
+    {
+      "source": "personal-email",
+      "target": "cloud-backup",
+      "reliability": 0.85,
+      "kind": "dependency"
+    },
+    {
+      "source": "passkey",
+      "target": "bank",
+      "reliability": 0.9,
+      "kind": "dependency"
+    },
+    {
+      "source": "cloud-backup",
+      "target": "health-records",
+      "reliability": 0.7,
+      "kind": "dependency"
+    },
+    {
+      "source": "cloud-backup",
+      "target": "genomic-data",
+      "reliability": 0.6,
+      "kind": "dependency"
+    },
+    {
+      "source": "bank",
+      "target": "signed-documents",
+      "reliability": 0.5,
+      "kind": "dependency"
+    },
+    {
+      "source": "messaging",
+      "target": "personal-email",
+      "reliability": 0.4,
+      "kind": "dependency"
+    },
+    {
+      "source": "genomic-data",
+      "target": "health-records",
+      "reliability": 0.8,
+      "kind": "dependency"
+    }
+  ],
+  "replacements": {
+    "X25519": "ML-KEM",
+    "ED25519": "ML-DSA",
+    "RSA-2048": "ML-KEM"
+  }
+}

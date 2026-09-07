@@ -31,17 +31,21 @@ tests this by construction and over random cases.
 
 from __future__ import annotations
 
+import math
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, replace
 
 from .algorithms import ROTATION_REFERENCE_HOURS, quantum_factor
-from .paths import EdgeModel, PathSet, enumerate_paths
+from .paths import EdgeModel, PathSet, delegation_parents, enumerate_paths
+from .threat import ThreatClass, default_threat_class, longevity
 
 __all__ = [
     "AssetModel",
     "EdgeModel",
     "ObjectiveWeights",
     "ObjectiveResult",
+    "aggregate_path_risk",
+    "effective_node_risk",
     "node_risk",
     "path_risk",
     "objective",
@@ -71,6 +75,27 @@ class AssetModel:
     rotation_hours: float = 0.0
     migration_cost: float = 1.0
     business_criticality: float = 0.5
+    # Which quantum threat this asset is actually exposed to. Defaults from the
+    # algorithm's primitive kind: signatures to AUTHENTICATION, everything else
+    # to CONFIDENTIALITY. Override when a signing key produces artifacts that
+    # must verify long after the key is retired (NON_REPUDIATION).
+    # Whether the party running this analysis can actually change this asset.
+    # An individual cannot migrate their bank's key exchange or a hospital's
+    # archive; an enterprise cannot migrate a SaaS vendor's TLS. Encoding that as
+    # a very large migration_cost works only until the budget grows, at which
+    # point the planner cheerfully "buys" something that was never for sale.
+    controllable: bool = True
+    threat_class: ThreatClass | None = None
+    # How long the credential stays in service (AUTHENTICATION), and how long a
+    # signed artifact must remain verifiable (NON_REPUDIATION). Both fall back
+    # to data_lifetime_years, which reproduces the pre-0.5 conflation, so set
+    # the one your assets actually face.
+    credential_validity_years: float | None = None
+    verification_horizon_years: float | None = None
+
+    @property
+    def effective_threat_class(self) -> ThreatClass:
+        return self.threat_class or default_threat_class(self.algorithm)
 
     def __post_init__(self) -> None:
         for field in ("sensitivity", "exposure", "business_criticality"):
@@ -85,6 +110,10 @@ class AssetModel:
             raise ValueError(f"{self.name}: migration_cost must be non-negative")
         if self.dependency_count < 0:
             raise ValueError(f"{self.name}: dependency_count must be non-negative")
+        for field in ("credential_validity_years", "verification_horizon_years"):
+            value = getattr(self, field)
+            if value is not None and value < 0:
+                raise ValueError(f"{self.name}: {field} must be non-negative")
 
 
 @dataclass(frozen=True)
@@ -100,21 +129,42 @@ class ObjectiveWeights:
     node: float = 0.55
     path: float = 0.30
     rotation: float = 0.15
+    # Tail parameter for the path term: the fraction of worst paths averaged
+    # over. 1.0 is the mean (the 0.4 behaviour); values below 1 shift weight to
+    # the worst paths, and the limit is the single worst path. This lives on the
+    # weights object rather than as a separate argument because the set of
+    # functions needing it is exactly the set that already takes weights, and
+    # threading it separately invites passing it at some call sites and not
+    # others. See :func:`aggregate_path_risk`.
+    path_alpha: float = 1.0
 
     def __post_init__(self) -> None:
         if min(self.node, self.path, self.rotation) < 0:
             raise ValueError("objective weights must be non-negative")
         if self.node + self.path + self.rotation <= 0:
             raise ValueError("at least one objective weight must be positive")
+        if not 0.0 < self.path_alpha <= 1.0:
+            raise ValueError("path_alpha must lie in (0, 1]")
 
     def normalized(self) -> ObjectiveWeights:
         total = self.node + self.path + self.rotation
-        return ObjectiveWeights(self.node / total, self.path / total, self.rotation / total)
+        return ObjectiveWeights(
+            self.node / total, self.path / total, self.rotation / total, self.path_alpha
+        )
 
-    def key(self, digits: int = 9) -> tuple[float, float, float]:
-        """Hashable identity on the simplex, for de-duplicating weight grids."""
+    def key(self, digits: int = 9) -> tuple[float, float, float, float]:
+        """Hashable identity of the objective, for de-duplicating grids.
+
+        Includes ``path_alpha``: two settings agreeing on the weights but
+        differing on the tail parameter are different objectives.
+        """
         n = self.normalized()
-        return (round(n.node, digits), round(n.path, digits), round(n.rotation, digits))
+        return (
+            round(n.node, digits),
+            round(n.path, digits),
+            round(n.rotation, digits),
+            round(n.path_alpha, digits),
+        )
 
     def as_tuple(self) -> tuple[float, float, float]:
         return (self.node, self.path, self.rotation)
@@ -124,6 +174,15 @@ DEFAULT_WEIGHTS = ObjectiveWeights()
 # Ablation weighting: node risk only. Used as the control arm that isolates the
 # contribution of path-awareness from the contribution of exhaustive search.
 NODE_ONLY_WEIGHTS = ObjectiveWeights(node=1.0, path=0.0, rotation=0.0)
+# Tail-aware weighting, for callers who care about the worst way in rather than
+# the average one. alpha is 0.15 because that is what the evidence supports, not
+# because it is a round number: over 400 instances, alpha values of 0.25 and
+# above did not beat a path-blind planner on worst-case exposure with a
+# confidence interval excluding zero (at 0.25 the interval was [-0.017, +0.177]),
+# while 0.15 and 0.05 did. The choice is not free -- see docs/FINDINGS.md section
+# 10: buying that worst-case improvement costs most of the mean-case advantage.
+# qshield.experiments.tail_risk reproduces the sweep.
+TAIL_AWARE_WEIGHTS = ObjectiveWeights(path_alpha=0.15)
 
 
 @dataclass(frozen=True)
@@ -134,8 +193,15 @@ class ObjectiveResult:
     node_mean: float
     path_mean: float
     path_max: float
+    # The aggregate actually used in `value`: the mean when path_alpha is 1, the
+    # conditional mean of the worst paths otherwise.
+    path_component: float
     rotation_pressure: float
+    # Risk after trust inheritance -- what the objective uses.
     node_scores: Mapping[str, float]
+    # Risk before trust inheritance. The gap between the two is how much of an
+    # asset's exposure comes from what issued it rather than from its own crypto.
+    own_scores: Mapping[str, float]
     path_risks: tuple[float, ...]
     paths: tuple[tuple[str, ...], ...]
 
@@ -145,10 +211,18 @@ class ObjectiveResult:
             "node_mean": round(self.node_mean, 6),
             "path_mean": round(self.path_mean, 6),
             "path_max": round(self.path_max, 6),
+            "path_component": round(self.path_component, 6),
             "rotation_pressure": round(self.rotation_pressure, 6),
         }
         if include_detail:
             out["node_scores"] = {k: round(v, 6) for k, v in self.node_scores.items()}
+            inherited = {
+                k: round(v - self.own_scores[k], 6)
+                for k, v in self.node_scores.items()
+                if v - self.own_scores.get(k, v) > 1e-9
+            }
+            if inherited:
+                out["risk_inherited_from_issuer"] = inherited
             out["path_risks"] = [round(p, 6) for p in self.path_risks]
             out["paths"] = [list(p) for p in self.paths]
         return out
@@ -165,11 +239,95 @@ def node_risk(
     ``exposure x sensitivity x longevity x quantum susceptibility x dependency``.
     Every factor is in ``(0, 1]``, so the product is monotone non-decreasing in
     each — in particular in the quantum factor, which is what migration changes.
+
+    The longevity factor is now selected by the asset's threat class rather than
+    always taken from ``data_lifetime_years``. A signing key is not exposed to
+    harvest-now-decrypt-later, so measuring it against a data-retention horizon
+    conflated a 90-day leaf certificate with the 20-year root above it. See
+    :mod:`qshield.threat`.
     """
     q = quantum_factor(asset.algorithm, strict=strict) if qf_override is None else qf_override
-    longevity = min(1.0, max(0.1, asset.data_lifetime_years / LONGEVITY_HORIZON_YEARS))
+    longevity_factor = longevity(
+        asset.effective_threat_class,
+        data_lifetime_years=asset.data_lifetime_years,
+        credential_validity_years=asset.credential_validity_years,
+        verification_horizon_years=asset.verification_horizon_years,
+    )
     dependency = min(1.0, 0.5 + 0.1 * max(0, asset.dependency_count - 1))
-    return min(100.0, 100.0 * asset.exposure * asset.sensitivity * longevity * q * dependency)
+    return min(
+        100.0, 100.0 * asset.exposure * asset.sensitivity * longevity_factor * q * dependency
+    )
+
+
+def effective_node_risk(
+    own_scores: Mapping[str, float],
+    edges: Sequence[EdgeModel],
+) -> dict[str, float]:
+    """Standalone risk raised to account for inherited trust.
+
+    A certificate is no more trustworthy than the authority that issued it. If a
+    root CA's key is forgeable, every certificate beneath it is forgeable too —
+    immediately, without an adversary traversing anything. So an asset's
+    effective risk is the worst of its own and what it inherits:
+
+    ``effective(v) = max(own(v), max over issuers u of effective(u) . strength(u, v))``
+
+    **This is the crypto-agility trap.** Migrating leaf certificates to ML-DSA
+    while their issuer still signs with ECDSA buys nothing: the leaves' effective
+    risk stays pinned at the root's. Every version through 0.4 had no delegation
+    edge and so could not express this, and would happily spend a budget on
+    leaves. ``qshield.experiments.hierarchy`` measures how much that costs.
+
+    Computed by fixpoint iteration rather than a topological sort, because
+    cross-signed hierarchies contain cycles. Values only increase and are bounded
+    by 100, so iteration converges; the loop is capped at the number of assets,
+    which is the longest possible simple chain.
+    """
+    parents = delegation_parents(edges)
+    effective = dict(own_scores)
+    if not parents:
+        return effective
+    for _ in range(len(own_scores) + 1):
+        changed = False
+        for node, issuers in parents.items():
+            if node not in effective:
+                continue
+            inherited = max(
+                (effective.get(issuer, 0.0) * strength for issuer, strength in issuers),
+                default=0.0,
+            )
+            if inherited > effective[node] + 1e-12:
+                effective[node] = inherited
+                changed = True
+        if not changed:
+            break
+    return effective
+
+
+def aggregate_path_risk(risks: Sequence[float], alpha: float = 1.0) -> float:
+    """Combine per-path risks into the path component.
+
+    ``alpha`` is the fraction of worst paths averaged over — the upper
+    conditional value at risk. ``alpha = 1`` is the plain mean, which is what 0.4
+    used; as ``alpha`` falls the aggregate concentrates on the worst paths, and
+    the limit is the single worst path.
+
+    The mean was not a neutral choice. Measured over 400 instances, minimising it
+    made worst-case path exposure *significantly worse* than a graph-blind
+    planner (mean -0.736, 95% CI [-0.971, -0.516]) — the cheapest way to lower an
+    average is to improve the many moderate paths and let the worst one stand.
+    CVaR is used rather than a separate max term because it is a coherent risk
+    measure, it interpolates continuously between the two behaviours, and it
+    keeps the objective monotone: an average of the ``k`` largest values is
+    non-decreasing in every value.
+    """
+    if not risks:
+        return 0.0
+    if alpha >= 1.0:
+        return sum(risks) / len(risks)
+    ordered = sorted(risks, reverse=True)
+    k = max(1, math.ceil(alpha * len(ordered)))
+    return sum(ordered[:k]) / k
 
 
 def path_risk(
@@ -216,9 +374,12 @@ def objective(
     threads the result through, rather than re-running a DFS per subset.
     """
     qf_overrides = qf_overrides or {}
-    scores = {
+    own_scores = {
         a.name: node_risk(a, qf_overrides.get(a.name), strict=strict) for a in assets
     }
+    # Trust is inherited before anything else is computed: an asset's exposure to
+    # its issuer is not something the path term can recover.
+    scores = effective_node_risk(own_scores, edges)
 
     if path_set is None:
         path_set = enumerate_paths(edges, entrypoints, targets)
@@ -239,15 +400,18 @@ def objective(
     rotation_pressure = _mean(rotation_terms)
 
     w = weights.normalized()
-    value = w.node * node_mean + w.path * path_mean + w.rotation * rotation_pressure
+    path_component = aggregate_path_risk(risks, w.path_alpha)
+    value = w.node * node_mean + w.path * path_component + w.rotation * rotation_pressure
 
     return ObjectiveResult(
         value=value,
         node_mean=node_mean,
         path_mean=path_mean,
         path_max=path_max,
+        path_component=path_component,
         rotation_pressure=rotation_pressure,
         node_scores=scores,
+        own_scores=own_scores,
         path_risks=risks,
         paths=path_set.paths,
     )

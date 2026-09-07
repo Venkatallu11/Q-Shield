@@ -91,3 +91,46 @@ def test_generator_replacements_are_all_strict_improvements():
     for source, target in REPLACEMENTS.items():
         assert quantum_factor(target) < quantum_factor(source)
         assert default_replacement(source) == target
+
+
+# --- 0.5 additions: the property must survive trust inheritance and CVaR -----
+
+
+@pytest.mark.parametrize("alpha", [1.0, 0.5, 0.25, 0.05])
+def test_monotone_under_every_tail_parameter(alpha):
+    """CVaR is an average of the k largest values, so it is non-decreasing in
+    each; the objective's monotonicity must not depend on alpha."""
+    from qshield.model import ObjectiveWeights
+
+    problem = make_instances(1, 900)[0]
+    weights = ObjectiveWeights(0.55, 0.30, 0.15, alpha)
+    base = problem.evaluate((), weights=weights).value
+    for names, _cost in problem.feasible_plans():
+        assert problem.evaluate(names, weights=weights).value <= base + 1e-9
+
+
+@pytest.mark.parametrize("seed", range(8))
+def test_monotone_across_a_trust_hierarchy(seed):
+    """Effective risk is a max over products of monotone terms, so inheritance
+    preserves the property -- including where a migration changes nothing."""
+    from qshield.experiments.pki import make_instances as pki_instances
+
+    problem = pki_instances(1, seed + 1000)[0]
+    base = problem.evaluate(()).value
+    for names, _cost in problem.feasible_plans():
+        assert problem.evaluate(names).value <= base + 1e-9, names
+
+
+def test_migrating_an_issuer_helps_at_least_as_much_as_migrating_its_leaves():
+    """The operational form of the crypto-agility trap: under trust inheritance
+    an anchor dominates everything beneath it."""
+    from qshield.experiments.pki import make_instances as pki_instances
+
+    for seed in range(6):
+        problem = pki_instances(1, seed + 2000)[0]
+        base = problem.evaluate(()).value
+        roots = [a.name for a in problem.assets if a.name.startswith("root")]
+        leaves = [a.name for a in problem.assets if a.name.startswith("leaf")]
+        root_gain = base - problem.evaluate(roots).value
+        leaf_gain = base - problem.evaluate(leaves).value
+        assert root_gain >= leaf_gain - 1e-9

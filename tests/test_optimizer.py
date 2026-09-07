@@ -175,3 +175,25 @@ def test_weights_flow_through_to_the_selection():
     a, _ = exhaustive(problem, weights=ObjectiveWeights(1.0, 0.0, 0.0))
     b, _ = exhaustive(problem, weights=ObjectiveWeights(0.0, 1.0, 0.0))
     assert a.objective != pytest.approx(b.objective)
+
+
+def test_uncontrollable_assets_are_not_decision_variables():
+    """An individual cannot migrate their bank's key exchange. Pricing that out
+    with a huge migration_cost works only until the budget grows."""
+    assets = (
+        AssetModel("mine", "RSA-2048", migration_cost=1.0, controllable=True),
+        AssetModel("theirs", "RSA-2048", migration_cost=1.0, controllable=False),
+    )
+    problem = MigrationProblem(assets, (), (), (), {"RSA-2048": "ML-KEM"}, budget=100)
+    assert [a.name for a in problem.candidates] == ["mine"]
+    assert [a.name for a in problem.uncontrollable] == ["theirs"]
+    # Even with a budget that could afford everything, no plan names it.
+    assert all("theirs" not in names for names, _ in problem.feasible_plans())
+
+
+def test_uncontrollable_risk_is_still_scored():
+    """Not actionable is not the same as not there; a plan that ignored it would
+    look better than the situation warrants."""
+    assets = (AssetModel("theirs", "RSA-2048", 0.9, 0.9, 20, controllable=False),)
+    problem = MigrationProblem(assets, (), (), (), {"RSA-2048": "ML-KEM"}, budget=100)
+    assert problem.evaluate(()).value > 0

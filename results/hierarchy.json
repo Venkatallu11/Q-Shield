@@ -1,0 +1,309 @@
+{
+  "experiment": "hierarchy",
+  "question": "In a trust hierarchy, how much of a plan chosen without modelling delegation actually reduces risk?",
+  "design": {
+    "instances": 300,
+    "arms": {
+      "flat_priority": "graph-blind heuristic",
+      "blind_omits_trust": "exhaustive search, trust edges dropped",
+      "blind_trust_as_dependency": "exhaustive search, trust edges drawn as dependencies",
+      "hierarchy_aware": "exhaustive search over the true model"
+    },
+    "scoring": "every plan is evaluated in the true (delegation-aware) model",
+    "not_a_win_rate": "hierarchy_aware minimises the metric it is scored on and every rival plan is feasible for it, so it cannot lose; the reported quantities are the size of the modelling error, which is not structurally determined",
+    "weights": [
+      0.55,
+      0.3,
+      0.15
+    ],
+    "seed": 20260907,
+    "generator": {
+      "roots": 1,
+      "intermediates": 2,
+      "leaves": 5,
+      "services": 3,
+      "root_validity_years": 20.0,
+      "intermediate_validity_years": 8.0,
+      "leaf_validity_years": 0.25,
+      "root_cost": 3.0,
+      "intermediate_cost": 1.5,
+      "leaf_cost": 0.4,
+      "budget_low": 1.5,
+      "budget_high": 5.0
+    }
+  },
+  "per_arm": {
+    "flat_priority": {
+      "actual_improvement": {
+        "n": 300,
+        "mean": 0.002928,
+        "stdev": 0.037882,
+        "p05": 0.0,
+        "p50": 0.0,
+        "p95": 0.0
+      },
+      "claimed_improvement": {
+        "n": 300,
+        "mean": 2.020955,
+        "stdev": 0.456763,
+        "p05": 1.375988,
+        "p50": 2.050121,
+        "p95": 2.702778
+      },
+      "illusory_fraction": {
+        "n": 300,
+        "mean": 0.998748,
+        "stdev": 0.015929,
+        "p05": 1.0,
+        "p50": 1.0,
+        "p95": 1.0
+      },
+      "wasted_spend": {
+        "n": 300,
+        "mean": 2.555333,
+        "stdev": 0.824908,
+        "p05": 1.6,
+        "p50": 2.0,
+        "p95": 3.5
+      },
+      "cost": {
+        "n": 300,
+        "mean": 2.570333,
+        "stdev": 0.828316,
+        "p05": 1.6,
+        "p50": 2.0,
+        "p95": 3.5
+      }
+    },
+    "blind_omits_trust": {
+      "actual_improvement": {
+        "n": 300,
+        "mean": 1.137729,
+        "stdev": 3.306409,
+        "p05": 0.0,
+        "p50": 0.0,
+        "p95": 10.654787
+      },
+      "claimed_improvement": {
+        "n": 300,
+        "mean": 2.202031,
+        "stdev": 0.404943,
+        "p05": 1.55291,
+        "p50": 2.192236,
+        "p95": 2.904832
+      },
+      "illusory_fraction": {
+        "n": 300,
+        "mean": 0.892136,
+        "stdev": 0.309156,
+        "p05": 0.0,
+        "p50": 1.0,
+        "p95": 1.0
+      },
+      "wasted_spend": {
+        "n": 300,
+        "mean": 2.686333,
+        "stdev": 1.039382,
+        "p05": 1.2,
+        "p50": 2.7,
+        "p95": 4.6
+      },
+      "cost": {
+        "n": 300,
+        "mean": 3.026333,
+        "stdev": 0.98623,
+        "p05": 1.6,
+        "p50": 3.1,
+        "p95": 4.6
+      }
+    },
+    "blind_trust_as_dependency": {
+      "actual_improvement": {
+        "n": 300,
+        "mean": 1.137729,
+        "stdev": 3.306409,
+        "p05": 0.0,
+        "p50": 0.0,
+        "p95": 10.654787
+      },
+      "claimed_improvement": {
+        "n": 300,
+        "mean": 2.202031,
+        "stdev": 0.404943,
+        "p05": 1.55291,
+        "p50": 2.192236,
+        "p95": 2.904832
+      },
+      "illusory_fraction": {
+        "n": 300,
+        "mean": 0.892136,
+        "stdev": 0.309156,
+        "p05": 0.0,
+        "p50": 1.0,
+        "p95": 1.0
+      },
+      "wasted_spend": {
+        "n": 300,
+        "mean": 2.686333,
+        "stdev": 1.039382,
+        "p05": 1.2,
+        "p50": 2.7,
+        "p95": 4.6
+      },
+      "cost": {
+        "n": 300,
+        "mean": 3.026333,
+        "stdev": 0.98623,
+        "p05": 1.6,
+        "p50": 3.1,
+        "p95": 4.6
+      }
+    },
+    "hierarchy_aware": {
+      "actual_improvement": {
+        "n": 300,
+        "mean": 4.289961,
+        "stdev": 4.486348,
+        "p05": 0.0,
+        "p50": 3.139406,
+        "p95": 12.207183
+      },
+      "claimed_improvement": {
+        "n": 300,
+        "mean": 0.570753,
+        "stdev": 0.594409,
+        "p05": 0.0,
+        "p50": 0.570757,
+        "p95": 1.537902
+      },
+      "illusory_fraction": {
+        "n": 300,
+        "mean": 0.002704,
+        "stdev": 0.046827,
+        "p05": 0.0,
+        "p50": 0.0,
+        "p95": 0.0
+      },
+      "wasted_spend": {
+        "n": 300,
+        "mean": 0.0,
+        "stdev": 0.0,
+        "p05": 0.0,
+        "p50": 0.0,
+        "p95": 0.0
+      },
+      "cost": {
+        "n": 300,
+        "mean": 1.945667,
+        "stdev": 1.712285,
+        "p05": 0.0,
+        "p50": 3.0,
+        "p95": 4.5
+      }
+    }
+  },
+  "wasted_spend_share": {
+    "flat_priority": {
+      "wasted_share_of_total_budget": 0.994164,
+      "mean_wasted_share_per_instance": 0.995714,
+      "instances_where_entire_spend_was_wasted": 297,
+      "instances": 300
+    },
+    "blind_omits_trust": {
+      "wasted_share_of_total_budget": 0.887653,
+      "mean_wasted_share_per_instance": 0.918277,
+      "instances_where_entire_spend_was_wasted": 265,
+      "instances": 300
+    },
+    "blind_trust_as_dependency": {
+      "wasted_share_of_total_budget": 0.887653,
+      "mean_wasted_share_per_instance": 0.918277,
+      "instances_where_entire_spend_was_wasted": 265,
+      "instances": 300
+    },
+    "hierarchy_aware": {
+      "wasted_share_of_total_budget": 0.0,
+      "mean_wasted_share_per_instance": 0.0,
+      "instances_where_entire_spend_was_wasted": 0,
+      "instances": 300
+    }
+  },
+  "plan_agreement_with_hierarchy_aware": {
+    "flat_priority": 0.0,
+    "blind_omits_trust": 0.0,
+    "blind_trust_as_dependency": 0.0,
+    "hierarchy_aware": 1.0
+  },
+  "contrasts": {
+    "flat_priority_vs_hierarchy_aware": {
+      "comparison": "flat_priority - hierarchy_aware",
+      "instances": 300,
+      "hierarchy_aware_better": 176,
+      "flat_priority_better": 0,
+      "ties": 124,
+      "tie_rate": 0.413333,
+      "mean_delta": 4.287033,
+      "mean_delta_ci95": [
+        3.792771,
+        4.795368
+      ],
+      "median_delta": 3.139406,
+      "max_delta": 14.75549,
+      "min_delta": 0.0,
+      "decisive_instances": 176,
+      "mean_delta_when_decisive": 7.307443,
+      "mean_delta_when_decisive_ci95": [
+        6.794611,
+        7.812579
+      ],
+      "win_rate_given_decisive": 1.0
+    },
+    "blind_omits_trust_vs_hierarchy_aware": {
+      "comparison": "blind_omits_trust - hierarchy_aware",
+      "instances": 300,
+      "hierarchy_aware_better": 156,
+      "blind_omits_trust_better": 0,
+      "ties": 144,
+      "tie_rate": 0.48,
+      "mean_delta": 3.152232,
+      "mean_delta_ci95": [
+        2.730669,
+        3.57619
+      ],
+      "median_delta": 1.485496,
+      "max_delta": 13.11606,
+      "min_delta": 0.0,
+      "decisive_instances": 156,
+      "mean_delta_when_decisive": 6.061984,
+      "mean_delta_when_decisive_ci95": [
+        5.586358,
+        6.545714
+      ],
+      "win_rate_given_decisive": 1.0
+    },
+    "blind_trust_as_dependency_vs_hierarchy_aware": {
+      "comparison": "blind_trust_as_dependency - hierarchy_aware",
+      "instances": 300,
+      "hierarchy_aware_better": 156,
+      "blind_trust_as_dependency_better": 0,
+      "ties": 144,
+      "tie_rate": 0.48,
+      "mean_delta": 3.152232,
+      "mean_delta_ci95": [
+        2.730669,
+        3.57619
+      ],
+      "median_delta": 1.485496,
+      "max_delta": 13.11606,
+      "min_delta": 0.0,
+      "decisive_instances": 156,
+      "mean_delta_when_decisive": 6.061984,
+      "mean_delta_when_decisive_ci95": [
+        5.586358,
+        6.545714
+      ],
+      "win_rate_given_decisive": 1.0
+    }
+  },
+  "note_on_contrast_sign": "deltas are hierarchy_aware improvement minus the arm's improvement, so a positive mean means the blind arm achieved less real risk reduction"
+}

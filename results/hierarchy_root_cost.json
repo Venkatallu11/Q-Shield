@@ -1,0 +1,77 @@
+{
+  "experiment": "hierarchy_root_cost_sweep",
+  "question": "Does the crypto-agility trap survive when trust anchors are cheap to migrate, or is it an artifact of the generator pricing roots high?",
+  "design": {
+    "instances_per_point": 200,
+    "root_costs": [
+      0.5,
+      1.0,
+      2.0,
+      3.0,
+      5.0,
+      8.0
+    ],
+    "leaf_cost": 0.4,
+    "budget_range": [
+      1.5,
+      5.0
+    ],
+    "seed": 20260907
+  },
+  "sweep": [
+    {
+      "root_cost": 0.5,
+      "root_cost_in_leaf_units": 1.25,
+      "blind_illusory_fraction": 0.012793,
+      "blind_wasted_share": 0.319654,
+      "blind_actual_improvement": 8.28323,
+      "aware_actual_improvement": 9.77302,
+      "plan_agreement": 0.13
+    },
+    {
+      "root_cost": 1.0,
+      "root_cost_in_leaf_units": 2.5,
+      "blind_illusory_fraction": 0.039508,
+      "blind_wasted_share": 0.325589,
+      "blind_actual_improvement": 7.721655,
+      "aware_actual_improvement": 9.132835,
+      "plan_agreement": 0.08
+    },
+    {
+      "root_cost": 2.0,
+      "root_cost_in_leaf_units": 5.0,
+      "blind_illusory_fraction": 0.469496,
+      "blind_wasted_share": 0.566032,
+      "blind_actual_improvement": 4.48533,
+      "aware_actual_improvement": 6.850638,
+      "plan_agreement": 0.03
+    },
+    {
+      "root_cost": 3.0,
+      "root_cost_in_leaf_units": 7.5,
+      "blind_illusory_fraction": 0.918204,
+      "blind_wasted_share": 0.912718,
+      "blind_actual_improvement": 0.882151,
+      "aware_actual_improvement": 4.096054,
+      "plan_agreement": 0.0
+    },
+    {
+      "root_cost": 5.0,
+      "root_cost_in_leaf_units": 12.5,
+      "blind_illusory_fraction": 0.998204,
+      "blind_wasted_share": 0.992505,
+      "blind_actual_improvement": 0.004392,
+      "aware_actual_improvement": 0.00493,
+      "plan_agreement": 0.0
+    },
+    {
+      "root_cost": 8.0,
+      "root_cost_in_leaf_units": 20.0,
+      "blind_illusory_fraction": 0.998204,
+      "blind_wasted_share": 0.992505,
+      "blind_actual_improvement": 0.004392,
+      "aware_actual_improvement": 0.00493,
+      "plan_agreement": 0.0
+    }
+  ]
+}

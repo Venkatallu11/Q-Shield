@@ -13,7 +13,7 @@ from collections.abc import Sequence
 from pathlib import Path
 from typing import Any
 
-from .algorithms import family, normalize, quantum_factor
+from .algorithms import family, normalize, primitive, quantum_factor
 from .model import AssetModel
 
 CYCLONEDX_SPEC_VERSION = "1.6"
@@ -30,6 +30,7 @@ def to_cbom(assets: Sequence[AssetModel]) -> dict[str, Any]:
                     "assetType": "algorithm",
                     "algorithmProperties": {
                         "algorithmFamily": normalize(a.algorithm),
+                        "primitive": primitive(a.algorithm).value,
                         "classification": family(a.algorithm).value,
                     },
                 },
@@ -42,6 +43,8 @@ def to_cbom(assets: Sequence[AssetModel]) -> dict[str, Any]:
                     {"name": "qshield:exposure", "value": str(a.exposure)},
                     {"name": "qshield:dependencyCount", "value": str(a.dependency_count)},
                     {"name": "qshield:quantumFactor", "value": str(quantum_factor(a.algorithm))},
+                    {"name": "qshield:threatClass", "value": a.effective_threat_class.value},
+                    {"name": "qshield:controllable", "value": str(a.controllable).lower()},
                 ],
             }
         )

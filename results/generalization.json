@@ -120,7 +120,8 @@
       "normalized": [
         0.4,
         0.4,
-        0.2
+        0.2,
+        1.0
       ],
       "is_training_point": false,
       "mean_objective": {
@@ -184,7 +185,8 @@
       "normalized": [
         0.285714286,
         0.285714286,
-        0.428571429
+        0.428571429,
+        1.0
       ],
       "is_training_point": false,
       "mean_objective": {
@@ -248,7 +250,8 @@
       "normalized": [
         0.222222222,
         0.222222222,
-        0.555555556
+        0.555555556,
+        1.0
       ],
       "is_training_point": false,
       "mean_objective": {
@@ -312,7 +315,8 @@
       "normalized": [
         0.285714286,
         0.571428571,
-        0.142857143
+        0.142857143,
+        1.0
       ],
       "is_training_point": false,
       "mean_objective": {
@@ -376,7 +380,8 @@
       "normalized": [
         0.222222222,
         0.444444444,
-        0.333333333
+        0.333333333,
+        1.0
       ],
       "is_training_point": false,
       "mean_objective": {
@@ -440,7 +445,8 @@
       "normalized": [
         0.181818182,
         0.363636364,
-        0.454545455
+        0.454545455,
+        1.0
       ],
       "is_training_point": false,
       "mean_objective": {
@@ -504,7 +510,8 @@
       "normalized": [
         0.222222222,
         0.666666667,
-        0.111111111
+        0.111111111,
+        1.0
       ],
       "is_training_point": false,
       "mean_objective": {
@@ -568,7 +575,8 @@
       "normalized": [
         0.181818182,
         0.545454545,
-        0.272727273
+        0.272727273,
+        1.0
       ],
       "is_training_point": false,
       "mean_objective": {
@@ -632,7 +640,8 @@
       "normalized": [
         0.153846154,
         0.461538462,
-        0.384615385
+        0.384615385,
+        1.0
       ],
       "is_training_point": false,
       "mean_objective": {
@@ -696,7 +705,8 @@
       "normalized": [
         0.571428571,
         0.285714286,
-        0.142857143
+        0.142857143,
+        1.0
       ],
       "is_training_point": false,
       "mean_objective": {
@@ -760,7 +770,8 @@
       "normalized": [
         0.444444444,
         0.222222222,
-        0.333333333
+        0.333333333,
+        1.0
       ],
       "is_training_point": false,
       "mean_objective": {
@@ -824,7 +835,8 @@
       "normalized": [
         0.363636364,
         0.181818182,
-        0.454545455
+        0.454545455,
+        1.0
       ],
       "is_training_point": false,
       "mean_objective": {
@@ -888,7 +900,8 @@
       "normalized": [
         0.444444444,
         0.444444444,
-        0.111111111
+        0.111111111,
+        1.0
       ],
       "is_training_point": false,
       "mean_objective": {
@@ -952,7 +965,8 @@
       "normalized": [
         0.363636364,
         0.363636364,
-        0.272727273
+        0.272727273,
+        1.0
       ],
       "is_training_point": false,
       "mean_objective": {
@@ -1016,7 +1030,8 @@
       "normalized": [
         0.307692308,
         0.307692308,
-        0.384615385
+        0.384615385,
+        1.0
       ],
       "is_training_point": false,
       "mean_objective": {
@@ -1080,7 +1095,8 @@
       "normalized": [
         0.363636364,
         0.545454545,
-        0.090909091
+        0.090909091,
+        1.0
       ],
       "is_training_point": false,
       "mean_objective": {
@@ -1144,7 +1160,8 @@
       "normalized": [
         0.307692308,
         0.461538462,
-        0.230769231
+        0.230769231,
+        1.0
       ],
       "is_training_point": false,
       "mean_objective": {
@@ -1208,7 +1225,8 @@
       "normalized": [
         0.266666667,
         0.4,
-        0.333333333
+        0.333333333,
+        1.0
       ],
       "is_training_point": false,
       "mean_objective": {
@@ -1272,7 +1290,8 @@
       "normalized": [
         0.666666667,
         0.222222222,
-        0.111111111
+        0.111111111,
+        1.0
       ],
       "is_training_point": false,
       "mean_objective": {
@@ -1336,7 +1355,8 @@
       "normalized": [
         0.545454545,
         0.181818182,
-        0.272727273
+        0.272727273,
+        1.0
       ],
       "is_training_point": false,
       "mean_objective": {
@@ -1400,7 +1420,8 @@
       "normalized": [
         0.461538462,
         0.153846154,
-        0.384615385
+        0.384615385,
+        1.0
       ],
       "is_training_point": false,
       "mean_objective": {
@@ -1464,7 +1485,8 @@
       "normalized": [
         0.545454545,
         0.363636364,
-        0.090909091
+        0.090909091,
+        1.0
       ],
       "is_training_point": false,
       "mean_objective": {
@@ -1528,7 +1550,8 @@
       "normalized": [
         0.461538462,
         0.307692308,
-        0.230769231
+        0.230769231,
+        1.0
       ],
       "is_training_point": false,
       "mean_objective": {
@@ -1592,7 +1615,8 @@
       "normalized": [
         0.4,
         0.266666667,
-        0.333333333
+        0.333333333,
+        1.0
       ],
       "is_training_point": false,
       "mean_objective": {
@@ -1656,7 +1680,8 @@
       "normalized": [
         0.461538462,
         0.461538462,
-        0.076923077
+        0.076923077,
+        1.0
       ],
       "is_training_point": false,
       "mean_objective": {
@@ -1720,7 +1745,8 @@
       "normalized": [
         0.352941176,
         0.352941176,
-        0.294117647
+        0.294117647,
+        1.0
       ],
       "is_training_point": false,
       "mean_objective": {

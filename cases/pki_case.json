@@ -1,0 +1,41 @@
+{
+  "_comment": "CONSTRUCTED ILLUSTRATION, NOT EVIDENCE. A three-tier certificate authority hierarchy sized so the budget affords either the root or every leaf beneath it, but not both. Delegation edges carry trust: compromising an issuer compromises everything it issued, at once and without traversal. All five certificates use ECDSA behind the same 15-year data-retention horizon, so a pre-0.5 model scored them by that shared term and preferred the cheap high-exposure leaves. Migrating those leaves reduces risk by exactly zero. See docs/IDENTITY.md; measured effects are in results/hierarchy.json.",
+  "budget": 2.0,
+  "entrypoints": ["leaf-tls-web"],
+  "targets": ["customer-records"],
+  "assets": [
+    {"name":"root-ca","algorithm":"ECDSA","sensitivity":1.0,"exposure":0.15,"data_lifetime_years":15,"dependency_count":9,"rotation_hours":0,"migration_cost":2.0,"business_criticality":1.0,
+     "threat_class":"authentication","credential_validity_years":20},
+
+    {"name":"intermediate-ca","algorithm":"ECDSA","sensitivity":0.95,"exposure":0.35,"data_lifetime_years":15,"dependency_count":6,"rotation_hours":168,"migration_cost":1.0,"business_criticality":0.95,
+     "threat_class":"authentication","credential_validity_years":8},
+
+    {"name":"leaf-tls-web","algorithm":"ECDSA","sensitivity":0.7,"exposure":0.95,"data_lifetime_years":15,"dependency_count":3,"rotation_hours":24,"migration_cost":0.4,"business_criticality":0.8,
+     "threat_class":"authentication","credential_validity_years":0.25},
+
+    {"name":"leaf-tls-api","algorithm":"ECDSA","sensitivity":0.7,"exposure":0.9,"data_lifetime_years":15,"dependency_count":3,"rotation_hours":24,"migration_cost":0.4,"business_criticality":0.8,
+     "threat_class":"authentication","credential_validity_years":0.25},
+
+    {"name":"leaf-mtls-mesh","algorithm":"ECDSA","sensitivity":0.65,"exposure":0.85,"data_lifetime_years":15,"dependency_count":4,"rotation_hours":12,"migration_cost":0.4,"business_criticality":0.85,
+     "threat_class":"authentication","credential_validity_years":0.08},
+
+    {"name":"code-signing","algorithm":"RSA-2048","sensitivity":0.9,"exposure":0.25,"data_lifetime_years":15,"dependency_count":2,"rotation_hours":0,"migration_cost":1.0,"business_criticality":0.9,
+     "threat_class":"non-repudiation","verification_horizon_years":25},
+
+    {"name":"customer-records","algorithm":"AES-256","sensitivity":1.0,"exposure":0.3,"data_lifetime_years":20,"dependency_count":4,"rotation_hours":72,"migration_cost":0.5,"business_criticality":1.0,
+     "threat_class":"confidentiality"}
+  ],
+  "edges": [
+    {"source":"root-ca","target":"intermediate-ca","reliability":1.0,"kind":"delegation"},
+    {"source":"root-ca","target":"code-signing","reliability":1.0,"kind":"delegation"},
+    {"source":"intermediate-ca","target":"leaf-tls-web","reliability":1.0,"kind":"delegation"},
+    {"source":"intermediate-ca","target":"leaf-tls-api","reliability":1.0,"kind":"delegation"},
+    {"source":"intermediate-ca","target":"leaf-mtls-mesh","reliability":1.0,"kind":"delegation"},
+
+    {"source":"leaf-tls-web","target":"leaf-tls-api","reliability":0.8,"kind":"dependency"},
+    {"source":"leaf-tls-api","target":"leaf-mtls-mesh","reliability":0.85,"kind":"dependency"},
+    {"source":"leaf-mtls-mesh","target":"customer-records","reliability":0.9,"kind":"dependency"},
+    {"source":"leaf-tls-web","target":"customer-records","reliability":0.3,"kind":"dependency"}
+  ],
+  "replacements": {"ECDSA":"ML-DSA","RSA-2048":"ML-DSA"}
+}

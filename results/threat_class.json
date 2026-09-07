@@ -1,0 +1,91 @@
+{
+  "experiment": "threat_class",
+  "question": "Does scoring signatures against a credential-validity horizon rather than a data-retention horizon change which assets get migrated?",
+  "design": {
+    "instances": 300,
+    "arms": {
+      "pre_0_5_scoring": "every asset measured against data_lifetime_years",
+      "threat_class_scoring": "horizon selected by the asset's threat class"
+    },
+    "scoring": "both plans evaluated under the corrected model",
+    "not_a_win_rate": "the corrected planner minimises the metric it is scored on and the mis-scored plan is feasible for it, so it cannot lose; the reported quantity is the size of the error",
+    "weights": [
+      0.55,
+      0.3,
+      0.15
+    ],
+    "seed": 20260907,
+    "generator": {
+      "roots": 1,
+      "intermediates": 2,
+      "leaves": 5,
+      "services": 3,
+      "root_validity_years": 20.0,
+      "intermediate_validity_years": 8.0,
+      "leaf_validity_years": 0.25,
+      "root_cost": 3.0,
+      "intermediate_cost": 1.5,
+      "leaf_cost": 0.4,
+      "budget_low": 1.5,
+      "budget_high": 5.0
+    }
+  },
+  "plan_agreement": 0.023333,
+  "risk_reduction": {
+    "pre_0_5_plan": {
+      "n": 300,
+      "mean": 1.20535,
+      "stdev": 3.458312,
+      "p05": 0.0,
+      "p50": 0.0,
+      "p95": 10.888828
+    },
+    "threat_class_plan": {
+      "n": 300,
+      "mean": 4.289961,
+      "stdev": 4.486348,
+      "p05": 0.0,
+      "p50": 3.139406,
+      "p95": 12.207183
+    }
+  },
+  "shortfall": {
+    "comparison": "pre_0_5_scoring - threat_class_scoring",
+    "instances": 300,
+    "threat_class_scoring_better": 151,
+    "pre_0_5_scoring_better": 0,
+    "ties": 149,
+    "tie_rate": 0.496667,
+    "mean_delta": 3.084611,
+    "mean_delta_ci95": [
+      2.664923,
+      3.498628
+    ],
+    "median_delta": 0.059462,
+    "max_delta": 13.11606,
+    "min_delta": 0.0,
+    "decisive_instances": 151,
+    "mean_delta_when_decisive": 6.128367,
+    "mean_delta_when_decisive_ci95": [
+      5.644986,
+      6.619495
+    ],
+    "win_rate_given_decisive": 1.0,
+    "note": "positive delta means the mis-scored plan achieved less real risk reduction than the corrected one"
+  },
+  "assets_selected_by_tier": {
+    "root": {
+      "pre_0_5": 33,
+      "threat_class": 175
+    },
+    "intermediate": {
+      "pre_0_5": 201,
+      "threat_class": 37
+    },
+    "leaf": {
+      "pre_0_5": 1153,
+      "threat_class": 8
+    }
+  },
+  "reading": "the tier counts are the mechanism: the pre-0.5 horizon flattens a 90-day leaf certificate and a 20-year root into the same score, so a planner using it buys cheap leaves"
+}
