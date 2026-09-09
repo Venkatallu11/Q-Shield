@@ -22,6 +22,17 @@ qshield report --input case.json --draws 1000 --output migration.md
 
 ## Three results worth knowing
 
+**The one result checked against something other than itself.** The cause model
+states a generative story, so it can be simulated. Doing that caught the model
+shipped hours earlier: exact when a cause propagates with certainty, **biased
+upward by nine standard errors** when propagation was partial and a cause stood
+behind another cause. 0.10 enumerates cause states in topological order over the
+DAG using direct parents only. On estates where two hardware modules share a
+supplier, the independent-hops model overstates path risk by **13.8%**; where
+services share one HSM, by **36.4%**. But mapping that supplier out changes the
+risk *number* by 3 points and the *plan* on 1% of instances — a supplier is a
+cause you cannot buy, so it moves the assessment, not the menu.
+
 **"Independent hops" was a defect, not a caveat.** Two certificates issued by one
 authority on the same attack path were raised to that authority's risk and then
 multiplied together as independent events — but they are the *same* event. 0.9
@@ -319,9 +330,9 @@ can lose. See **[docs/METHODOLOGY.md](docs/METHODOLOGY.md)**.
 - **Synthetic instances.** Every quantitative result comes from the generator in
   `experiments/generator.py`, whose structure is itself a hypothesis about what
   real infrastructure looks like.
-- **Causes are assumed independent of each other.** 0.9 conditions on shared
-  causes, but two HSMs from one supplier are modelled as unrelated. That needs a
-  cause over the causes, and is the largest known structural gap.
+- **Cause edges fire independently.** Causes over causes are modelled as of 0.10,
+  but a defect that deterministically affects every unit of one firmware build is
+  not the same as two independent firings, and is not represented.
 - **Exponential exact planner.** `exhaustive` is `O(2^n)` in migration candidates
   and exists as a reference. Use `greedy_marginal` beyond ~20 candidates.
 - **Quantum risk only.** Phishing, credential stuffing, SIM-swap, session-token
@@ -339,7 +350,7 @@ can lose. See **[docs/METHODOLOGY.md](docs/METHODOLOGY.md)**.
 ## Tests
 
 ```bash
-pytest                  # 383 tests
+pytest                  # 393 tests
 pytest -m "not slow"    # skip the full-experiment smoke tests
 ```
 

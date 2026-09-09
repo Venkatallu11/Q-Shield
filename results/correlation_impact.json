@@ -278,6 +278,160 @@
         "p50": 0.686803,
         "p95": 0.78158
       }
+    },
+    "supply_chain": {
+      "instances": 200,
+      "baseline_objective": {
+        "legacy": {
+          "n": 200,
+          "mean": 9.030469,
+          "stdev": 2.167883,
+          "p05": 5.735236,
+          "p50": 8.906778,
+          "p95": 12.482088
+        },
+        "noisy_or_only": {
+          "n": 200,
+          "mean": 15.216566,
+          "stdev": 3.569733,
+          "p05": 9.751287,
+          "p50": 14.946511,
+          "p95": 20.557823
+        },
+        "conditioned": {
+          "n": 200,
+          "mean": 14.002778,
+          "stdev": 3.023482,
+          "p05": 9.33102,
+          "p50": 14.014558,
+          "p95": 18.59997
+        }
+      },
+      "baseline_path_risk": {
+        "legacy": {
+          "n": 200,
+          "mean": 16.679837,
+          "stdev": 5.503631,
+          "p05": 8.678397,
+          "p50": 16.521693,
+          "p95": 26.250393
+        },
+        "noisy_or_only": {
+          "n": 200,
+          "mean": 29.314812,
+          "stdev": 8.742994,
+          "p05": 16.989691,
+          "p50": 29.202861,
+          "p95": 43.435924
+        },
+        "conditioned": {
+          "n": 200,
+          "mean": 25.268853,
+          "stdev": 6.938448,
+          "p05": 14.81517,
+          "p50": 25.43195,
+          "p95": 37.195648
+        }
+      },
+      "marginal_effect": {
+        "comparison": "legacy - noisy_or_only",
+        "instances": 200,
+        "noisy_or_only_better": 0,
+        "legacy_better": 200,
+        "ties": 0,
+        "tie_rate": 0.0,
+        "mean_delta": -6.186097,
+        "mean_delta_ci95": [
+          -6.439372,
+          -5.936781
+        ],
+        "median_delta": -6.175767,
+        "max_delta": -1.485372,
+        "min_delta": -11.342128,
+        "decisive_instances": 200,
+        "mean_delta_when_decisive": -6.186097,
+        "mean_delta_when_decisive_ci95": [
+          -6.435039,
+          -5.932985
+        ],
+        "win_rate_given_decisive": 0.0
+      },
+      "correlation_effect": {
+        "comparison": "independent_hops - conditioned",
+        "instances": 200,
+        "conditioned_better": 190,
+        "independent_hops_better": 0,
+        "ties": 10,
+        "tie_rate": 0.05,
+        "mean_delta": 4.045959,
+        "mean_delta_ci95": [
+          3.631953,
+          4.481042
+        ],
+        "median_delta": 3.562422,
+        "max_delta": 14.29108,
+        "min_delta": -0.0,
+        "decisive_instances": 190,
+        "mean_delta_when_decisive": 4.258905,
+        "mean_delta_when_decisive_ci95": [
+          3.834526,
+          4.685164
+        ],
+        "win_rate_given_decisive": 1.0
+      },
+      "net_effect_on_objective": {
+        "comparison": "legacy - conditioned",
+        "instances": 200,
+        "conditioned_better": 0,
+        "legacy_better": 200,
+        "ties": 0,
+        "tie_rate": 0.0,
+        "mean_delta": -4.97231,
+        "mean_delta_ci95": [
+          -5.16034,
+          -4.78061
+        ],
+        "median_delta": -4.931908,
+        "max_delta": -1.262302,
+        "min_delta": -8.557989,
+        "decisive_instances": 200,
+        "mean_delta_when_decisive": -4.97231,
+        "mean_delta_when_decisive_ci95": [
+          -5.159945,
+          -4.782678
+        ],
+        "win_rate_given_decisive": 0.0
+      },
+      "plan_agreement_legacy_vs_conditioned": 0.57,
+      "mean_share_of_risk_that_is_inherited": {
+        "n": 200,
+        "mean": 0.441567,
+        "stdev": 0.07319,
+        "p05": 0.312821,
+        "p50": 0.4415,
+        "p95": 0.561333
+      }
     }
+  },
+  "unrecorded_supplier": {
+    "instances": 200,
+    "path_risk_understated_by_omitting_the_supplier": {
+      "n": 200,
+      "mean": 3.022739,
+      "stdev": 1.395656,
+      "p05": 1.068293,
+      "p50": 2.837407,
+      "p95": 5.697001
+    },
+    "plan_agreement": 0.99,
+    "risk_reduction_forgone_by_the_blind_plan": {
+      "n": 200,
+      "mean": -9.6e-05,
+      "stdev": 0.000982,
+      "p05": 0.0,
+      "p50": 0.0,
+      "p95": 0.0
+    },
+    "reading": "both estates are the same infrastructure with the same inventory, budget and candidate set; the supplier is present in both but only one model records that the modules share it. The difference is what that single fact is worth"
   }
 }

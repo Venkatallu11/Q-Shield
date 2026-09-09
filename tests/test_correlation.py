@@ -50,27 +50,48 @@ def test_causes_do_not_include_traversal_edges():
     assert structure.causes == ()
 
 
-def test_influence_accumulates_along_a_chain():
-    """A root reaching a leaf through an intermediate influences it by the
-    product of the strengths."""
+def test_a_chain_records_only_direct_channels_for_probability():
+    """The transitive closure decides which causes are *relevant*; probabilities
+    are computed from direct parents only. Using the closure for both is what
+    biased 0.9: an upstream cause got a second, independent shot at a node
+    through a channel its child had already carried."""
     edges = (
         EdgeModel("root", "mid", 0.5, EdgeKind.DELEGATION),
         EdgeModel("mid", "leaf", 0.5, EdgeKind.DELEGATION),
     )
     structure = build_causes(edges)
-    assert structure.influence["leaf"]["mid"] == pytest.approx(0.5)
+    assert structure.direct["leaf"] == {"mid": pytest.approx(0.5)}
+    assert "root" not in structure.direct["leaf"]
+    # ...but the root is still known to reach the leaf, so it is enumerated.
     assert structure.influence["leaf"]["root"] == pytest.approx(0.25)
+    assert set(structure.causes_for(["leaf"])) == {"root", "mid"}
 
 
-def test_cross_signing_cycles_terminate():
+def test_cross_signed_authorities_collapse_into_one_cause():
+    """Two authorities that certify each other fall together, so treating them
+    as a single cause is the semantics rather than a way of avoiding a cycle.
+    Validated against a fixpoint Monte Carlo in test_matches_monte_carlo_*."""
     edges = (
         EdgeModel("a", "b", 1.0, EdgeKind.DELEGATION),
         EdgeModel("b", "a", 1.0, EdgeKind.DELEGATION),
     )
     structure = build_causes(edges)
-    assert "b" in structure.influence["a"]
-    # A node is never its own cause.
-    assert "a" not in structure.influence.get("a", {})
+    assert structure.group_of["a"] == structure.group_of["b"]
+    assert set(structure.group_members[structure.group_of["a"]]) == {"a", "b"}
+    # Collapsed, so neither is left as a parent of the other.
+    assert not structure.direct.get(structure.group_of["a"])
+
+
+def test_a_collapsed_cycle_falls_if_any_member_does():
+    edges = (
+        EdgeModel("ca-1", "ca-2", 1.0, EdgeKind.DELEGATION),
+        EdgeModel("ca-2", "ca-1", 1.0, EdgeKind.DELEGATION),
+        EdgeModel("ca-1", "leaf", 1.0, EdgeKind.DELEGATION),
+    )
+    structure = build_causes(edges)
+    # Only ca-2 is weak, but the leaf inherits through the cycle regardless.
+    own = {"ca-1": 0.0, "ca-2": 40.0, "leaf": 0.0}
+    assert marginal_risk("leaf", own, structure) == pytest.approx(40.0, abs=0.5)
 
 
 def test_causes_for_returns_only_those_touching_the_path():
@@ -158,6 +179,20 @@ def test_noisy_or_marginal_exceeds_max_dominance():
     combined = marginal_risk("leaf", own, structure)
     assert combined > max(own["root"], own["leaf"])
     assert combined == pytest.approx(100 * (1 - (1 - 0.126) * (1 - 0.168)), abs=0.01)
+
+
+def test_a_cause_over_causes_is_not_double_counted():
+    """One vendor behind two modules. 0.9 applied the vendor's transitive
+    influence *in addition to* the module's direct influence, overstating risk
+    whenever propagation was partial."""
+    edges = (
+        EdgeModel("vendor", "hsm", 0.5, EdgeKind.SHARED),
+        EdgeModel("hsm", "svc", 0.5, EdgeKind.SHARED),
+    )
+    structure = build_causes(edges)
+    own = {"vendor": 20.0, "hsm": 0.0, "svc": 0.0}
+    # vendor fires to hsm with 0.5, hsm fires to svc with 0.5: 0.2*0.5*0.5 = 0.05
+    assert marginal_risk("svc", own, structure) == pytest.approx(5.0, abs=0.01)
 
 
 def test_partial_strength_scales_the_inherited_part():

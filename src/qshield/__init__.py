@@ -20,7 +20,7 @@ Public surface::
                          tail_risk,hierarchy,threat_class,personal,robustness}
 """
 
-__version__ = "0.9.0"
+__version__ = "0.10.0"
 
 from .algorithms import Family, Primitive, normalize, primitive, quantum_factor
 from .calibration import (

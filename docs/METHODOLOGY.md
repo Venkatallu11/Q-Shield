@@ -50,7 +50,16 @@ authority's risk and then multiplied together as separate events, when they are
 one event. Passing ``correlated=True`` composes the joint distribution instead —
 conditioning on the state of each cause, inside which the nodes really are
 independent — and collapses exactly to the formula above when no causes are
-present. See :mod:`qshield.correlation` and FINDINGS section 16.
+present.
+
+Causes may themselves have causes: a supplier behind two hardware modules, a
+cloud region behind two identity providers. States are enumerated in topological
+order over the cause DAG using **direct** parents only, so each channel of
+influence is counted exactly once; cross-signed cycles are collapsed into a
+single cause. The result is checked against an independent Monte Carlo simulation
+of the same generative model in `tests/test_correlation_montecarlo.py` — the one
+place in this repository where a result is validated against something other than
+its own definition. See :mod:`qshield.correlation` and FINDINGS sections 16-17.
 
 ### Rotation pressure
 

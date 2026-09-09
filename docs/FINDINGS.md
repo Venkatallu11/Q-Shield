@@ -467,6 +467,70 @@ correction is worth a third of the path term.
 Plans disagree on **79%** of PKI instances and **63.5%** of shared-substrate ones,
 so this is not a rescaling — it changes what to migrate.
 
+## 17. A cause over the causes — and the first ground truth (0.10)
+
+0.9 conditioned path risk on shared causes and left one gap: its cause model was
+**flat**. Every cause was an independent source, and a cause standing behind
+another — one supplier behind two hardware modules, one cloud region behind two
+identity providers — was folded in by accumulating influence along the chain.
+
+**Checking that against simulation is the first ground truth this project has
+had.** Every earlier result checks internal consistency: the objective against
+its own definition, a planner against exhaustive enumeration. But the cause model
+states a *generative* story — assets self-compromise, cause edges fire, a node
+falls if it self-compromises or a live parent's edge fires — and that story can be
+simulated directly. Analytic and simulation are then two independent computations
+of one number.
+
+0.9 failed it. **Exact whenever propagation was certain; biased upward by up to a
+full risk point, at nine standard errors, whenever propagation was partial.** Two
+errors in the same place that cancel at strength 1.0: the transitive term gave an
+upstream cause a second, independent shot at a node through a channel its child
+had already carried, and the state weight treated a cause and its own parent as
+independent, leaving weight on incompatible states. No amount of internal
+consistency would have found either.
+
+0.10 replaces it with a noisy-OR Bayesian network on the cause DAG, enumerating
+cause states in topological order using **direct** parents only, so each channel
+counts exactly once. Cross-signed authorities are collapsed into a single cause —
+if two mutually certify, compromising either compromises both — and that decision
+is itself checked against a fixpoint simulation rather than asserted. The
+simulator shares no code with the analytic path
+(`tests/test_correlation_montecarlo.py`).
+
+Writing that test immediately caught a second bug: when a node is itself one of
+the causes being conditioned on, its state is *decided* by the cause state, and
+recomputing its own risk counted the self-compromise twice. It reported 23.9
+where simulation said 14.5.
+
+**What the correction is worth** (`results/correlation_impact.json`, 200
+instances per suite):
+
+| suite | independent hops | conditioned | overstated by |
+|---|---|---|---|
+| PKI delegation | 28.47 | 28.47 | 0.0% |
+| shared substrate | 50.15 | 31.90 | **36.4%** |
+| supply chain (causes over causes) | 29.32 | 25.27 | **13.8%** |
+
+The supply-chain row is the one 0.9 could not have produced correctly.
+
+**And the honest negative that follows.** Take two identical estates — same
+inventory, same budget, same candidate set — where one model records that the
+modules share a supplier and the other does not:
+
+| | |
+|---|---|
+| path risk understated by omitting it | **3.02** (p05 1.07, p95 5.70) |
+| plan agreement | **99%** |
+| risk reduction forgone by the blind plan | **~0** |
+
+Not recording a shared supplier makes you understate your risk by about three
+points **and does not change what you should do.** The reason is structural: a
+supplier is a cause you cannot buy — you cannot migrate someone else's firmware —
+so knowing about it changes the number, not the menu of actions. It matters for
+assessment and not for prioritisation, which is worth knowing before anyone
+spends effort mapping their supply chain to feed this model.
+
 ## What none of this establishes
 
 - **Nothing here is validated against reality.** Quantum factors and objective
@@ -521,10 +585,13 @@ so this is not a rescaling — it changes what to migrate.
   product is defensible for the *mathematics*; correlated **implementation**
   failure is real and is priced as `composition_risk`, which is itself an
   assumption.
-- **Causes are assumed independent of each other.** 0.9 conditions on shared
-  causes, but two HSMs from one supplier, or two providers on one cloud region,
-  are modelled as unrelated. That would need a cause over the causes, and is now
-  the largest known structural gap.
+- **The generative model is validated; the model itself is not.** Section 17
+  shows the analytic code computes what the cause model says. Whether that model
+  describes real infrastructure is a separate question no simulation can settle.
+- **Cause edges fire independently.** A supplier reaching two modules is now
+  modelled, but the two firings are independent draws. A defect that
+  deterministically affects every unit of one firmware build is not the same
+  thing, and is not represented.
 - **Correlated mode is opt-in.** Sections 1-15 were measured under the
   independent-hops model and are unchanged; they are internally consistent and,
   where a path carries two dependents of one cause, they overstate the path term.
